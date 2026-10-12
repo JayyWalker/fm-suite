@@ -49,6 +49,20 @@ test("shows a Preview label and the full breakdown in preview mode", () => {
   expect(screen.queryByText("Edit")).not.toBeInTheDocument();
 });
 
+test("shows the holy trinity and categories as grade chips, not raw labels", () => {
+  render(<DetailPanel staff={sample} mode="preview" />);
+
+  // holy trinity: determination 6 -> 4 stars, authority 5 -> 3 stars, motivating 5 -> 3 stars
+  expect(screen.getByText("4★ Strong")).toBeInTheDocument();
+  expect(screen.getAllByText("3★ Good").length).toBeGreaterThanOrEqual(2);
+
+  // categories: Fitness 5 -> elite, Goalkeeping 1 -> poor
+  expect(screen.getByText("5★ Elite")).toBeInTheDocument();
+  expect(screen.getByText("1★ Poor")).toBeInTheDocument();
+
+  expect(screen.queryByText("Outstanding")).not.toBeInTheDocument();
+});
+
 test("shows a Pinned label and Edit/Delete buttons in pinned mode", () => {
   const onEdit = vi.fn();
   const onDelete = vi.fn();

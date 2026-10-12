@@ -1,0 +1,85 @@
+.panel {
+  background: #1c1824;
+  border: 1px solid #2a2433;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 320px;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #8c849c;
+  min-height: 320px;
+}
+
+.mode {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.preview {
+  background: #2a2433;
+  color: #b3a9c4;
+}
+
+.pinned {
+  background: #e6b432;
+  color: #15131a;
+}
+
+.name {
+  margin: 10px 0 2px;
+  font-weight: 700;
+}
+
+.tags {
+  color: #8c849c;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #5e5870;
+  margin: 14px 0 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 10px;
+  font-size: 13px;
+}
+
+.grid dt {
+  color: #8c849c;
+}
+
+.grid dd {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.actions button {
+  background: #2a2433;
+  color: #eceaf0;
+  border: 1px solid #38324a;
+  border-radius: 6px;
+  padding: 5px 14px;
+  cursor: pointer;
+  font-size: 13px;
+}

@@ -1,5 +1,8 @@
-import { ATTRIBUTE_LEVELS, CATEGORIES, HOLY_TRINITY_FIELDS, type StaffMember } from "../types";
-import { starString } from "./starString";
+import { Fragment } from "react";
+import { CATEGORIES, HOLY_TRINITY_FIELDS, type StaffMember } from "../types";
+import { GradeChip } from "./GradeChip";
+import { rawAttributeToStars } from "./starRating";
+import styles from "./DetailPanel.module.css";
 
 interface DetailPanelProps {
   staff: StaffMember | null;
@@ -8,38 +11,45 @@ interface DetailPanelProps {
   onDelete?: (id: number) => void;
 }
 
-function levelLabel(value: number): string {
-  return ATTRIBUTE_LEVELS.find((level) => level.value === value)?.label ?? String(value);
-}
-
 export function DetailPanel({ staff, mode, onEdit, onDelete }: DetailPanelProps) {
   if (!staff || mode === "empty") {
-    return <div>Hover a row to preview — click to pin</div>;
+    return <div className={styles.placeholder}>Hover a row to preview — click to pin</div>;
   }
 
   return (
-    <div>
-      <span>{mode === "pinned" ? "Pinned" : "Preview"}</span>
-      <h3>{staff.name}</h3>
-      <div>{staff.tags.join(", ") || "No tags"}</div>
-      <dl>
+    <div className={styles.panel}>
+      <span className={`${styles.mode} ${mode === "pinned" ? styles.pinned : styles.preview}`}>
+        {mode === "pinned" ? "Pinned" : "Preview"}
+      </span>
+      <h3 className={styles.name}>{staff.name}</h3>
+      <div className={styles.tags}>{staff.tags.join(", ") || "No tags"}</div>
+
+      <div className={styles.sectionLabel}>Holy trinity</div>
+      <dl className={styles.grid}>
         {HOLY_TRINITY_FIELDS.map((field) => (
-          <div key={field}>
+          <Fragment key={field}>
             <dt>{field}</dt>
-            <dd>{levelLabel(staff.attributes[field])}</dd>
-          </div>
+            <dd>
+              <GradeChip stars={rawAttributeToStars(staff.attributes[field])} />
+            </dd>
+          </Fragment>
         ))}
       </dl>
-      <dl>
+
+      <div className={styles.sectionLabel}>Categories</div>
+      <dl className={styles.grid}>
         {CATEGORIES.map((category) => (
-          <div key={category}>
+          <Fragment key={category}>
             <dt>{category}</dt>
-            <dd>{starString(staff.categories[category])}</dd>
-          </div>
+            <dd>
+              <GradeChip stars={staff.categories[category]} />
+            </dd>
+          </Fragment>
         ))}
       </dl>
+
       {mode === "pinned" && (
-        <div>
+        <div className={styles.actions}>
           <button onClick={() => onEdit?.(staff)}>Edit</button>
           <button
             onClick={() => {
