@@ -47,6 +47,14 @@ test("listStaff fetches the staff list", async () => {
   expect(fetch).toHaveBeenCalledWith(expect.stringContaining("/staff"));
 });
 
+test("listStaff requests a relative path by default, so the Vite dev proxy (not cross-origin fetch) reaches the backend", async () => {
+  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => [sampleStaff] }) as unknown as typeof fetch;
+
+  await listStaff();
+
+  expect(fetch).toHaveBeenCalledWith("/staff");
+});
+
 test("listStaff throws when the response is not ok", async () => {
   global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 }) as unknown as typeof fetch;
 

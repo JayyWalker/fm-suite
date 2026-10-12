@@ -19,7 +19,7 @@ function toResponse(record: StaffRecord) {
 }
 
 export function buildServer(db: Database): FastifyInstance {
-  const app = Fastify();
+  const app = Fastify({ ajv: { customOptions: { coerceTypes: false } } });
   const repo = new StaffRepository(db);
 
   app.get("/staff", async () => {

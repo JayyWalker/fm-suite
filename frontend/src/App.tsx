@@ -4,13 +4,23 @@ import { StaffForm } from "./components/StaffForm";
 import { createStaff, deleteStaff, listStaff, updateStaff } from "./api/staffApi";
 import type { StaffInput, StaffMember } from "./types";
 
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
 export function App() {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<StaffMember | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    setStaff(await listStaff());
+    try {
+      setStaff(await listStaff());
+      setError(null);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }, []);
 
   useEffect(() => {
@@ -18,19 +28,29 @@ export function App() {
   }, [refresh]);
 
   async function handleSubmit(input: StaffInput) {
-    if (editing) {
-      await updateStaff(editing.id, input);
-    } else {
-      await createStaff(input);
+    try {
+      if (editing) {
+        await updateStaff(editing.id, input);
+      } else {
+        await createStaff(input);
+      }
+      setShowForm(false);
+      setEditing(null);
+      setError(null);
+      await refresh();
+    } catch (err) {
+      setError(errorMessage(err));
     }
-    setShowForm(false);
-    setEditing(null);
-    await refresh();
   }
 
   async function handleDelete(id: number) {
-    await deleteStaff(id);
-    await refresh();
+    try {
+      await deleteStaff(id);
+      setError(null);
+      await refresh();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   function handleEdit(member: StaffMember) {
@@ -51,8 +71,10 @@ export function App() {
   return (
     <div>
       <button onClick={handleAddClick}>Add staff</button>
+      {error && <div role="alert">{error}</div>}
       {showForm && (
         <StaffForm
+          key={editing?.id ?? "new"}
           initialValue={editing ? { name: editing.name, tags: editing.tags, attributes: editing.attributes } : undefined}
           onSubmit={handleSubmit}
           onCancel={handleCancel}

@@ -44,8 +44,8 @@ test("renders a row per staff member with name, tags, and best fit", () => {
   render(<StaffTable staff={staff} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
 
   expect(screen.getByText("Carlo Rossi")).toBeInTheDocument();
-  expect(screen.getByText("Shortlist")).toBeInTheDocument();
   const row = screen.getByText("Carlo Rossi").closest("tr")!;
+  expect(row.textContent).toContain("Shortlist");
   expect(row.textContent).toContain("Fitness");
 });
 
@@ -61,6 +61,49 @@ test("calls onRowHover with the staff id on mouse over and null on mouse out", (
 
   fireEvent.mouseOut(row);
   expect(onRowHover).toHaveBeenCalledWith(null);
+});
+
+test("moving the cursor between cells in the same row does not clear the hover preview", () => {
+  const staff = [member({ id: 7, name: "Hover Target" })];
+  const onRowHover = vi.fn();
+
+  render(<StaffTable staff={staff} pinnedId={null} onRowHover={onRowHover} onRowClick={vi.fn()} />);
+
+  const row = screen.getByText("Hover Target").closest("tr")!;
+  const [nameCell, tagsCell] = row.querySelectorAll("td");
+
+  fireEvent.mouseOver(nameCell);
+  expect(onRowHover).toHaveBeenCalledWith(7);
+  onRowHover.mockClear();
+
+  fireEvent.mouseOut(nameCell, { relatedTarget: tagsCell });
+  fireEvent.mouseOver(tagsCell, { relatedTarget: nameCell });
+
+  expect(onRowHover).not.toHaveBeenCalledWith(null);
+});
+
+test("renders a toggleable chip for each distinct tag and filters the table by the active ones", () => {
+  const staff = [
+    member({ id: 1, name: "Shortlisted Coach", tags: ["Shortlist"] }),
+    member({ id: 2, name: "U18 Coach", tags: ["U18"] }),
+    member({ id: 3, name: "Untagged Coach", tags: [] }),
+  ];
+
+  render(<StaffTable staff={staff} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  expect(screen.getByText("Shortlisted Coach")).toBeInTheDocument();
+  expect(screen.getByText("U18 Coach")).toBeInTheDocument();
+  expect(screen.getByText("Untagged Coach")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Shortlist" }));
+
+  expect(screen.getByText("Shortlisted Coach")).toBeInTheDocument();
+  expect(screen.queryByText("U18 Coach")).not.toBeInTheDocument();
+  expect(screen.queryByText("Untagged Coach")).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Shortlist" }));
+
+  expect(screen.getByText("U18 Coach")).toBeInTheDocument();
 });
 
 test("calls onRowClick with the staff id when a row is clicked", () => {

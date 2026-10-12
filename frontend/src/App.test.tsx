@@ -1,10 +1,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { expect, test, vi } from "vitest";
+import { beforeEach, expect, test, vi } from "vitest";
 import { App } from "./App";
 import * as staffApi from "./api/staffApi";
 import type { StaffMember } from "./types";
 
 vi.mock("./api/staffApi");
+
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 function member(overrides: Partial<StaffMember>): StaffMember {
   return {
@@ -41,6 +45,28 @@ function member(overrides: Partial<StaffMember>): StaffMember {
   };
 }
 
+test("shows an error message instead of a silent blank roster when loading fails", async () => {
+  vi.mocked(staffApi.listStaff).mockRejectedValue(new Error("Failed to list staff: 500"));
+
+  render(<App />);
+
+  expect(await screen.findByRole("alert")).toHaveTextContent(/failed to list staff/i);
+});
+
+test("shows an error and keeps the form open when saving fails", async () => {
+  vi.mocked(staffApi.listStaff).mockResolvedValue([]);
+  vi.mocked(staffApi.createStaff).mockRejectedValue(new Error("Failed to create staff: 400"));
+
+  render(<App />);
+
+  fireEvent.click(await screen.findByText("Add staff"));
+  fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Coach" } });
+  fireEvent.click(screen.getByText("Save"));
+
+  expect(await screen.findByRole("alert")).toHaveTextContent(/failed to create staff/i);
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+});
+
 test("loads and displays staff on mount", async () => {
   vi.mocked(staffApi.listStaff).mockResolvedValue([member({ id: 1, name: "Carlo Rossi" })]);
 
@@ -63,4 +89,51 @@ test("submitting the add-staff form creates a staff member and refreshes the lis
 
   await waitFor(() => expect(staffApi.createStaff).toHaveBeenCalledTimes(1));
   expect(await screen.findByText("New Coach")).toBeInTheDocument();
+});
+
+function rowFor(name: string): HTMLElement {
+  const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
+  if (!match) throw new Error(`No table row found for "${name}"`);
+  return match;
+}
+
+test("editing a second coach without closing the form shows that coach's own data, not the previous one", async () => {
+  const coachA = member({ id: 1, name: "Coach A" });
+  const coachB = member({ id: 2, name: "Coach B" });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([coachA, coachB]);
+
+  render(<App />);
+  await screen.findByText("Coach A");
+
+  fireEvent.click(rowFor("Coach A"));
+  fireEvent.click(screen.getByText("Edit"));
+  expect(screen.getByLabelText("Name")).toHaveValue("Coach A");
+
+  fireEvent.click(rowFor("Coach B"));
+  fireEvent.click(screen.getByText("Edit"));
+
+  expect(screen.getByLabelText("Name")).toHaveValue("Coach B");
+});
+
+test("saving after switching the edit target updates the newly selected coach, not the previous one", async () => {
+  const coachA = member({ id: 1, name: "Coach A" });
+  const coachB = member({ id: 2, name: "Coach B" });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([coachA, coachB]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(coachB);
+
+  render(<App />);
+  await screen.findByText("Coach A");
+
+  fireEvent.click(rowFor("Coach A"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(rowFor("Coach B"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(coachB.id, {
+    name: coachB.name,
+    tags: coachB.tags,
+    attributes: coachB.attributes,
+  });
 });

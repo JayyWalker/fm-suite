@@ -52,6 +52,7 @@ test("shows a Preview label and the full breakdown in preview mode", () => {
 test("shows a Pinned label and Edit/Delete buttons in pinned mode", () => {
   const onEdit = vi.fn();
   const onDelete = vi.fn();
+  vi.spyOn(window, "confirm").mockReturnValue(true);
 
   render(<DetailPanel staff={sample} mode="pinned" onEdit={onEdit} onDelete={onDelete} />);
 
@@ -62,4 +63,27 @@ test("shows a Pinned label and Edit/Delete buttons in pinned mode", () => {
 
   fireEvent.click(screen.getByText("Delete"));
   expect(onDelete).toHaveBeenCalledWith(sample.id);
+});
+
+test("asks for confirmation naming the coach before deleting", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={sample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Carlo Rossi"));
+  expect(onDelete).toHaveBeenCalledWith(sample.id);
+});
+
+test("does not delete when the confirmation is declined", () => {
+  const onDelete = vi.fn();
+  vi.spyOn(window, "confirm").mockReturnValue(false);
+
+  render(<DetailPanel staff={sample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(onDelete).not.toHaveBeenCalled();
 });

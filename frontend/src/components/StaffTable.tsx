@@ -13,6 +13,7 @@ interface StaffTableProps {
 export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [direction, setDirection] = useState<"asc" | "desc">("asc");
+  const [activeTags, setActiveTags] = useState<string[]>([]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
@@ -28,10 +29,29 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
     setDirection("desc");
   }
 
-  const sorted = sortStaff(staff, sortKey, direction);
+  function toggleTag(tag: string) {
+    setActiveTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+  }
+
+  const allTags = Array.from(new Set(staff.flatMap((member) => member.tags))).sort();
+  const filtered =
+    activeTags.length === 0 ? staff : staff.filter((member) => member.tags.some((tag) => activeTags.includes(tag)));
+  const sorted = sortStaff(filtered, sortKey, direction);
 
   return (
     <div>
+      <div role="group" aria-label="Filter by tag">
+        {allTags.map((tag) => (
+          <button
+            key={tag}
+            type="button"
+            aria-pressed={activeTags.includes(tag)}
+            onClick={() => toggleTag(tag)}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
       <label>
         Sort by category
         <select aria-label="Sort by category" value="" onChange={(e) => handleCategorySort(e.target.value)}>
@@ -57,8 +77,8 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
           {sorted.map((member) => (
             <tr
               key={member.id}
-              onMouseOver={() => onRowHover(member.id)}
-              onMouseOut={() => onRowHover(null)}
+              onMouseEnter={() => onRowHover(member.id)}
+              onMouseLeave={() => onRowHover(null)}
               onClick={() => onRowClick(member.id)}
               style={pinnedId === member.id ? { fontWeight: "bold" } : undefined}
             >

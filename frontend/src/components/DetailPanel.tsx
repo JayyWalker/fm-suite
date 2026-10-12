@@ -41,7 +41,15 @@ export function DetailPanel({ staff, mode, onEdit, onDelete }: DetailPanelProps)
       {mode === "pinned" && (
         <div>
           <button onClick={() => onEdit?.(staff)}>Edit</button>
-          <button onClick={() => onDelete?.(staff.id)}>Delete</button>
+          <button
+            onClick={() => {
+              if (window.confirm(`Delete ${staff.name}? This cannot be undone.`)) {
+                onDelete?.(staff.id);
+              }
+            }}
+          >
+            Delete
+          </button>
         </div>
       )}
     </div>
