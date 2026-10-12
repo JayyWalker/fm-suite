@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ATTRIBUTE_FIELDS, ATTRIBUTE_LEVELS, type StaffAttributes, type StaffInput } from "../types";
+import { useEffect, useState } from "react";
+import { ATTRIBUTE_GROUPS, ATTRIBUTE_LEVELS, type StaffAttributes, type StaffInput } from "../types";
 import styles from "./StaffForm.module.css";
 
 interface StaffFormProps {
@@ -31,6 +31,14 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   const [attributes, setAttributes] = useState<StaffAttributes>(initialValue?.attributes ?? defaultAttributes());
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onCancel?.();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onCancel]);
+
   function handleAttributeChange(key: keyof StaffAttributes, value: string) {
     setAttributes((prev) => ({ ...prev, [key]: Number(value) }));
   }
@@ -53,44 +61,74 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <label className={styles.field}>
-        Name
-        <input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-      <label className={styles.field}>
-        Tags
-        <input aria-label="Tags" value={tagsText} onChange={(e) => setTagsText(e.target.value)} />
-      </label>
-      {ATTRIBUTE_FIELDS.map((field) => (
-        <label key={field.key} className={styles.field}>
-          {field.label}
-          <select
-            aria-label={field.label}
-            value={attributes[field.key]}
-            onChange={(e) => handleAttributeChange(field.key, e.target.value)}
-          >
-            {ATTRIBUTE_LEVELS.map((level) => (
-              <option key={level.value} value={level.value}>
-                {level.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      ))}
-      {error && (
-        <div role="alert" className={styles.error}>
-          {error}
-        </div>
-      )}
-      <div className={styles.actions}>
-        <button type="submit">Save</button>
-        {onCancel && (
-          <button type="button" onClick={onCancel}>
-            Cancel
+    <div className={styles.backdrop} onClick={() => onCancel?.()}>
+      <div
+        className={styles.dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-label={initialValue ? "Edit staff" : "Add staff"}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.header}>
+          <h3>{initialValue ? "Edit staff" : "Add staff"}</h3>
+          <button type="button" aria-label="Close" className={styles.closeButton} onClick={() => onCancel?.()}>
+            ✕
           </button>
-        )}
+        </div>
+        <form onSubmit={handleSubmit} className={styles.body}>
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>Identity</div>
+            <div className={styles.fieldRow}>
+              <label className={styles.field}>
+                Name
+                <input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
+              </label>
+              <label className={styles.field}>
+                Tags
+                <input aria-label="Tags" value={tagsText} onChange={(e) => setTagsText(e.target.value)} />
+              </label>
+            </div>
+          </div>
+
+          {ATTRIBUTE_GROUPS.map((group) => (
+            <div key={group.title} className={styles.section}>
+              <div className={styles.sectionTitle}>{group.title}</div>
+              <div className={styles.fieldRow}>
+                {group.fields.map((field) => (
+                  <label key={field.key} className={styles.field}>
+                    {field.label}
+                    <select
+                      aria-label={field.label}
+                      value={attributes[field.key]}
+                      onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                    >
+                      {ATTRIBUTE_LEVELS.map((level) => (
+                        <option key={level.value} value={level.value}>
+                          {level.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {error && (
+            <div role="alert" className={styles.error}>
+              {error}
+            </div>
+          )}
+          <div className={styles.actions}>
+            <button type="submit">Save</button>
+            {onCancel && (
+              <button type="button" onClick={onCancel}>
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 }

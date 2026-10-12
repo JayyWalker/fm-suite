@@ -68,3 +68,85 @@ test("pre-fills fields from initialValue when editing", () => {
   expect(screen.getByLabelText("Name")).toHaveValue("Existing Coach");
   expect(screen.getByLabelText("Tags")).toHaveValue("Shortlist");
 });
+
+test("renders as a modal dialog titled 'Add staff' when creating", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  const dialog = screen.getByRole("dialog");
+  expect(dialog).toHaveAttribute("aria-modal", "true");
+  expect(screen.getByText("Add staff")).toBeInTheDocument();
+});
+
+test("titles the dialog 'Edit staff' when editing", () => {
+  render(
+    <StaffForm
+      initialValue={{
+        name: "Existing Coach",
+        tags: [],
+        attributes: {
+          authority: 4,
+          determination: 4,
+          motivating: 4,
+          attacking: 4,
+          defending: 4,
+          fitness: 4,
+          goalkeeping: 4,
+          possession: 4,
+          setPieces: 4,
+          tactical: 4,
+          technical: 4,
+          tacticalKnowledge: 4,
+        },
+      }}
+      onSubmit={vi.fn()}
+    />
+  );
+
+  expect(screen.getByText("Edit staff")).toBeInTheDocument();
+});
+
+test("pressing Escape calls onCancel", () => {
+  const onCancel = vi.fn();
+  render(<StaffForm onSubmit={vi.fn()} onCancel={onCancel} />);
+
+  fireEvent.keyDown(document, { key: "Escape" });
+
+  expect(onCancel).toHaveBeenCalledTimes(1);
+});
+
+test("clicking the backdrop calls onCancel", () => {
+  const onCancel = vi.fn();
+  render(<StaffForm onSubmit={vi.fn()} onCancel={onCancel} />);
+
+  const backdrop = screen.getByRole("dialog").parentElement!;
+  fireEvent.click(backdrop);
+
+  expect(onCancel).toHaveBeenCalledTimes(1);
+});
+
+test("clicking inside the dialog does not call onCancel", () => {
+  const onCancel = vi.fn();
+  render(<StaffForm onSubmit={vi.fn()} onCancel={onCancel} />);
+
+  fireEvent.click(screen.getByLabelText("Name"));
+
+  expect(onCancel).not.toHaveBeenCalled();
+});
+
+test("clicking the close button calls onCancel", () => {
+  const onCancel = vi.fn();
+  render(<StaffForm onSubmit={vi.fn()} onCancel={onCancel} />);
+
+  fireEvent.click(screen.getByLabelText("Close"));
+
+  expect(onCancel).toHaveBeenCalledTimes(1);
+});
+
+test("fields are grouped into Identity, Mental attributes, Coaching attributes, and Knowledge sections", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+  expect(screen.getByText("Coaching attributes")).toBeInTheDocument();
+  expect(screen.getByText("Knowledge")).toBeInTheDocument();
+});
