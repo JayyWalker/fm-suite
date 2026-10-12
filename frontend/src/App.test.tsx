@@ -14,6 +14,7 @@ function member(overrides: Partial<StaffMember>): StaffMember {
   return {
     id: 1,
     name: "Z",
+    role: "coach",
     tags: [],
     attributes: {
       authority: 4,
@@ -42,7 +43,7 @@ function member(overrides: Partial<StaffMember>): StaffMember {
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
-  };
+  } as StaffMember;
 }
 
 test("shows an error message instead of a silent blank roster when loading fails", async () => {
@@ -60,6 +61,7 @@ test("shows an error and keeps the form open when saving fails", async () => {
   render(<App />);
 
   fireEvent.click(await screen.findByText("Add staff"));
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Coach" } });
   fireEvent.click(screen.getByText("Save"));
 
@@ -75,7 +77,7 @@ test("loads and displays staff on mount", async () => {
   expect(await screen.findByText("Carlo Rossi")).toBeInTheDocument();
 });
 
-test("submitting the add-staff form creates a staff member and refreshes the list", async () => {
+test("submitting the add-staff form for a coach creates it and refreshes the list", async () => {
   vi.mocked(staffApi.listStaff)
     .mockResolvedValueOnce([])
     .mockResolvedValueOnce([member({ id: 2, name: "New Coach" })]);
@@ -84,11 +86,37 @@ test("submitting the add-staff form creates a staff member and refreshes the lis
   render(<App />);
 
   fireEvent.click(await screen.findByText("Add staff"));
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Coach" } });
   fireEvent.click(screen.getByText("Save"));
 
   await waitFor(() => expect(staffApi.createStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.createStaff).toHaveBeenCalledWith(expect.objectContaining({ role: "coach", name: "New Coach" }));
   expect(await screen.findByText("New Coach")).toBeInTheDocument();
+});
+
+test("submitting the add-staff form for a scout creates it with the scout role", async () => {
+  const newScout = member({
+    id: 3,
+    name: "New Scout",
+    role: "scout",
+    attributes: { jpa: 4, jpp: 4, determination: 4, adaptability: 4 } as never,
+    categories: { "Current Ability Judging": 3, "Potential Judging": 3 },
+    bestFit: "Current Ability Judging",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValueOnce([]).mockResolvedValueOnce([newScout]);
+  vi.mocked(staffApi.createStaff).mockResolvedValue(newScout);
+
+  render(<App />);
+
+  fireEvent.click(await screen.findByText("Add staff"));
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+  fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Scout" } });
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.createStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.createStaff).toHaveBeenCalledWith(expect.objectContaining({ role: "scout", name: "New Scout" }));
+  expect(await screen.findByText("New Scout")).toBeInTheDocument();
 });
 
 function rowFor(name: string): HTMLElement {

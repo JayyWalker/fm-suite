@@ -9,6 +9,13 @@ function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
+function toStaffInput(member: StaffMember): StaffInput {
+  if (member.role === "coach") {
+    return { role: "coach", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "scout", name: member.name, tags: member.tags, attributes: member.attributes };
+}
+
 export function App() {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -31,7 +38,8 @@ export function App() {
   async function handleSubmit(input: StaffInput) {
     try {
       if (editing) {
-        await updateStaff(editing.id, input);
+        const { role: _role, ...patch } = input;
+        await updateStaff(editing.id, patch);
       } else {
         await createStaff(input);
       }
@@ -85,7 +93,7 @@ export function App() {
       {showForm && (
         <StaffForm
           key={editing?.id ?? "new"}
-          initialValue={editing ? { name: editing.name, tags: editing.tags, attributes: editing.attributes } : undefined}
+          initialValue={editing ? toStaffInput(editing) : undefined}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
         />

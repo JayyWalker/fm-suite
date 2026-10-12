@@ -6,6 +6,7 @@ import type { StaffMember } from "../types";
 const sample: StaffMember = {
   id: 1,
   name: "Carlo Rossi",
+  role: "coach",
   tags: ["Shortlist"],
   attributes: {
     authority: 5,
@@ -34,6 +35,42 @@ const sample: StaffMember = {
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
+
+const scoutSample: StaffMember = {
+  id: 2,
+  name: "Ana Dimitriou",
+  role: "scout",
+  tags: [],
+  attributes: {
+    jpa: 5,
+    jpp: 2,
+    determination: 6,
+    adaptability: 1,
+    westernEurope: 1,
+    centralEurope: 1,
+    ukAndIreland: 1,
+    southernEurope: 1,
+    southEasternEurope: 1,
+    northEasternEurope: 1,
+    northernEurope: 1,
+    easternEurope: 1,
+    southAmericaNorth: 1,
+    southAmericaSouth: 1,
+    northAmerica: 1,
+    westernAfrica: 1,
+    centralAfrica: 1,
+    southernAfrica: 1,
+    northAfrica: 1,
+    middleEast: 1,
+    eastAsia: 1,
+    southEastAsia: 1,
+    oceania: 1,
+  } as never,
+  categories: { "Current Ability Judging": 5, "Potential Judging": 2 },
+  bestFit: "Current Ability Judging",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
 
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
@@ -100,4 +137,21 @@ test("does not delete when the confirmation is declined", () => {
   fireEvent.click(screen.getByText("Delete"));
 
   expect(onDelete).not.toHaveBeenCalled();
+});
+
+test("shows a scout's own mental attributes, categories, and a Regional Knowledge section", () => {
+  render(<DetailPanel staff={scoutSample} mode="preview" />);
+
+  expect(screen.getByText("Ana Dimitriou")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("Current Ability Judging")).toBeInTheDocument();
+  expect(screen.getByText("Potential Judging")).toBeInTheDocument();
+  expect(screen.getByText("Regional Knowledge")).toBeInTheDocument();
+  expect(screen.getByText("Western Europe")).toBeInTheDocument();
+  expect(screen.getByText("Oceania")).toBeInTheDocument();
+
+  // determination 6 -> 4 stars; scoped to its own row since other chips can share the same text
+  const determinationChip = screen.getByText("determination").nextElementSibling;
+  expect(determinationChip?.textContent).toBe("4★ Strong");
 });

@@ -1,108 +1,152 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 import { StaffForm } from "./StaffForm";
-import { ATTRIBUTE_FIELDS } from "../types";
+import type { StaffInput } from "../types";
 
-test("renders a name field, a tags field, and all 12 attribute dropdowns", () => {
+const coachInitialValue: StaffInput = {
+  role: "coach",
+  name: "Existing Coach",
+  tags: ["Shortlist"],
+  attributes: {
+    authority: 4,
+    determination: 4,
+    motivating: 4,
+    attacking: 4,
+    defending: 4,
+    fitness: 4,
+    goalkeeping: 4,
+    possession: 4,
+    setPieces: 4,
+    tactical: 4,
+    technical: 4,
+    tacticalKnowledge: 4,
+  },
+} as StaffInput;
+
+const scoutInitialValue: StaffInput = {
+  role: "scout",
+  name: "Existing Scout",
+  tags: [],
+  attributes: {
+    jpa: 4,
+    jpp: 4,
+    determination: 4,
+    adaptability: 4,
+    westernEurope: 4,
+    centralEurope: 4,
+    ukAndIreland: 4,
+    southernEurope: 4,
+    southEasternEurope: 4,
+    northEasternEurope: 4,
+    northernEurope: 4,
+    easternEurope: 4,
+    southAmericaNorth: 4,
+    southAmericaSouth: 4,
+    northAmerica: 4,
+    westernAfrica: 4,
+    centralAfrica: 4,
+    southernAfrica: 4,
+    northAfrica: 4,
+    middleEast: 4,
+    eastAsia: 4,
+    southEastAsia: 4,
+    oceania: 4,
+  },
+} as StaffInput;
+
+test("shows a role picker with no attribute fields until a role is chosen", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
 
+  expect(screen.getByRole("button", { name: "Coach" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Scout" })).toBeInTheDocument();
+  expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
+});
+
+test("picking Coach shows its fields grouped into Identity, Mental attributes, Coaching attributes, and Knowledge", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
+
   expect(screen.getByLabelText("Name")).toBeInTheDocument();
-  expect(screen.getByLabelText("Tags")).toBeInTheDocument();
-  for (const field of ATTRIBUTE_FIELDS) {
-    expect(screen.getByLabelText(field.label)).toBeInTheDocument();
-  }
+  expect(screen.getByLabelText("Authority")).toBeInTheDocument();
+  expect(screen.getByLabelText("Tactical Knowledge")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+  expect(screen.getByText("Coaching attributes")).toBeInTheDocument();
+  expect(screen.getByText("Knowledge")).toBeInTheDocument();
+});
+
+test("picking Scout shows its fields grouped into Identity, Judging ability, Mental attributes, and Regional knowledge", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.getByLabelText("Western Europe")).toBeInTheDocument();
+  expect(screen.getByText("Judging ability")).toBeInTheDocument();
+  expect(screen.getByText("Regional knowledge")).toBeInTheDocument();
+});
+
+test("editing a coach skips the picker and pre-fills its fields", () => {
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} />);
+
+  expect(screen.queryByRole("button", { name: "Coach" })).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Name")).toHaveValue("Existing Coach");
+  expect(screen.getByLabelText("Tags")).toHaveValue("Shortlist");
+});
+
+test("editing a scout skips the picker and pre-fills its fields", () => {
+  render(<StaffForm initialValue={scoutInitialValue} onSubmit={vi.fn()} />);
+
+  expect(screen.queryByRole("button", { name: "Scout" })).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Name")).toHaveValue("Existing Scout");
+  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
 });
 
 test("does not call onSubmit when the name is empty", () => {
   const onSubmit = vi.fn();
   render(<StaffForm onSubmit={onSubmit} />);
 
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
   fireEvent.click(screen.getByText("Save"));
 
   expect(onSubmit).not.toHaveBeenCalled();
   expect(screen.getByText(/name is required/i)).toBeInTheDocument();
 });
 
-test("submits the entered name, tags, and attributes", () => {
+test("submits the entered name, tags, role, and attributes", () => {
   const onSubmit = vi.fn();
   render(<StaffForm onSubmit={onSubmit} />);
 
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Carlo Rossi" } });
   fireEvent.change(screen.getByLabelText("Tags"), { target: { value: "Shortlist, U18" } });
   fireEvent.change(screen.getByLabelText("Attacking"), { target: { value: "8" } });
-
   fireEvent.click(screen.getByText("Save"));
 
   expect(onSubmit).toHaveBeenCalledTimes(1);
   const submitted = onSubmit.mock.calls[0][0];
+  expect(submitted.role).toBe("coach");
   expect(submitted.name).toBe("Carlo Rossi");
   expect(submitted.tags).toEqual(["Shortlist", "U18"]);
   expect(submitted.attributes.attacking).toBe(8);
 });
 
-test("pre-fills fields from initialValue when editing", () => {
-  render(
-    <StaffForm
-      initialValue={{
-        name: "Existing Coach",
-        tags: ["Shortlist"],
-        attributes: {
-          authority: 4,
-          determination: 4,
-          motivating: 4,
-          attacking: 4,
-          defending: 4,
-          fitness: 4,
-          goalkeeping: 4,
-          possession: 4,
-          setPieces: 4,
-          tactical: 4,
-          technical: 4,
-          tacticalKnowledge: 4,
-        },
-      }}
-      onSubmit={vi.fn()}
-    />
-  );
-
-  expect(screen.getByLabelText("Name")).toHaveValue("Existing Coach");
-  expect(screen.getByLabelText("Tags")).toHaveValue("Shortlist");
-});
-
-test("renders as a modal dialog titled 'Add staff' when creating", () => {
+test("titles the dialog 'Add staff' before a role is chosen, then 'Add coach' after", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
 
-  const dialog = screen.getByRole("dialog");
-  expect(dialog).toHaveAttribute("aria-modal", "true");
   expect(screen.getByText("Add staff")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
+
+  expect(screen.getByText("Add coach")).toBeInTheDocument();
 });
 
-test("titles the dialog 'Edit staff' when editing", () => {
-  render(
-    <StaffForm
-      initialValue={{
-        name: "Existing Coach",
-        tags: [],
-        attributes: {
-          authority: 4,
-          determination: 4,
-          motivating: 4,
-          attacking: 4,
-          defending: 4,
-          fitness: 4,
-          goalkeeping: 4,
-          possession: 4,
-          setPieces: 4,
-          tactical: 4,
-          technical: 4,
-          tacticalKnowledge: 4,
-        },
-      }}
-      onSubmit={vi.fn()}
-    />
-  );
+test("titles the dialog 'Edit coach' when editing a coach", () => {
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} />);
 
-  expect(screen.getByText("Edit staff")).toBeInTheDocument();
+  expect(screen.getByText("Edit coach")).toBeInTheDocument();
 });
 
 test("pressing Escape calls onCancel", () => {
@@ -126,7 +170,7 @@ test("clicking the backdrop calls onCancel", () => {
 
 test("clicking inside the dialog does not call onCancel", () => {
   const onCancel = vi.fn();
-  render(<StaffForm onSubmit={vi.fn()} onCancel={onCancel} />);
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} onCancel={onCancel} />);
 
   fireEvent.click(screen.getByLabelText("Name"));
 
@@ -140,13 +184,4 @@ test("clicking the close button calls onCancel", () => {
   fireEvent.click(screen.getByLabelText("Close"));
 
   expect(onCancel).toHaveBeenCalledTimes(1);
-});
-
-test("fields are grouped into Identity, Mental attributes, Coaching attributes, and Knowledge sections", () => {
-  render(<StaffForm onSubmit={vi.fn()} />);
-
-  expect(screen.getByText("Identity")).toBeInTheDocument();
-  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
-  expect(screen.getByText("Coaching attributes")).toBeInTheDocument();
-  expect(screen.getByText("Knowledge")).toBeInTheDocument();
 });

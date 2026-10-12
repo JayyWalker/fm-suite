@@ -6,6 +6,7 @@ import type { StaffMember } from "../types";
 const sample: StaffMember = {
   id: 1,
   name: "Ana Dimitriou",
+  role: "coach",
   tags: [],
   attributes: {
     authority: 8,
@@ -35,6 +36,42 @@ const sample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
 
+const scoutSample: StaffMember = {
+  id: 2,
+  name: "Marcus Webb",
+  role: "scout",
+  tags: [],
+  attributes: {
+    jpa: 6,
+    jpp: 2,
+    determination: 8,
+    adaptability: 1,
+    westernEurope: 1,
+    centralEurope: 1,
+    ukAndIreland: 1,
+    southernEurope: 1,
+    southEasternEurope: 1,
+    northEasternEurope: 1,
+    northernEurope: 1,
+    easternEurope: 1,
+    southAmericaNorth: 1,
+    southAmericaSouth: 1,
+    northAmerica: 1,
+    westernAfrica: 1,
+    centralAfrica: 1,
+    southernAfrica: 1,
+    northAfrica: 1,
+    middleEast: 1,
+    eastAsia: 1,
+    southEastAsia: 1,
+    oceania: 1,
+  } as never,
+  categories: { "Current Ability Judging": 4, "Potential Judging": 1 },
+  bestFit: "Current Ability Judging",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("renders nothing when there is no staff member", () => {
   const { container } = render(<HoverTooltip staff={null} position={{ x: 10, y: 10 }} />);
   expect(container).toBeEmptyDOMElement();
@@ -63,4 +100,15 @@ test("shows the holy trinity and best fit as grade chips, not raw numbers", () =
   expect(screen.getAllByText("5★ Elite").length).toBeGreaterThanOrEqual(2);
   expect(screen.getByText("4★ Strong")).toBeInTheDocument();
   expect(screen.queryByText("8")).not.toBeInTheDocument();
+});
+
+test("shows a scout's own mental fields (determination, adaptability), not the coach's holy trinity", () => {
+  render(<HoverTooltip staff={scoutSample} position={{ x: 0, y: 0 }} />);
+
+  expect(screen.getByText("Marcus Webb")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.queryByText("authority")).not.toBeInTheDocument();
+  expect(screen.queryByText("motivating")).not.toBeInTheDocument();
+  expect(screen.getByText(/Current Ability Judging/)).toBeInTheDocument();
 });

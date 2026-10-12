@@ -5,6 +5,7 @@ import type { StaffInput, StaffMember } from "../types";
 const sampleStaff: StaffMember = {
   id: 1,
   name: "Test Coach",
+  role: "coach",
   tags: [],
   attributes: {
     authority: 5,
@@ -62,7 +63,7 @@ test("listStaff throws when the response is not ok", async () => {
 });
 
 test("createStaff posts the input and returns the created staff member", async () => {
-  const input: StaffInput = { name: sampleStaff.name, tags: [], attributes: sampleStaff.attributes };
+  const input: StaffInput = { role: "coach", name: sampleStaff.name, tags: [], attributes: sampleStaff.attributes };
   global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => sampleStaff }) as unknown as typeof fetch;
 
   const result = await createStaff(input);

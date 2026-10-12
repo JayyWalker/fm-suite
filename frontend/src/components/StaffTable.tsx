@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CATEGORIES, type StaffMember } from "../types";
+import type { StaffMember } from "../types";
+import { ROLES } from "../roles/index";
 import { sortStaff, type SortKey } from "./sortStaff";
 import { GradeChip } from "./GradeChip";
 import styles from "./StaffTable.module.css";
@@ -15,6 +16,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [direction, setDirection] = useState<"asc" | "desc">("asc");
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [activeRoles, setActiveRoles] = useState<string[]>([]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
@@ -26,7 +28,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
   }
 
   function handleCategorySort(category: string) {
-    setSortKey(category as SortKey);
+    setSortKey(category);
     setDirection("desc");
   }
 
@@ -34,13 +36,36 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
     setActiveTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   }
 
+  function toggleRole(role: string) {
+    setActiveRoles((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]));
+  }
+
   const allTags = Array.from(new Set(staff.flatMap((member) => member.tags))).sort();
-  const filtered =
-    activeTags.length === 0 ? staff : staff.filter((member) => member.tags.some((tag) => activeTags.includes(tag)));
+  const allRoles = Array.from(new Set(staff.map((member) => member.role))).sort();
+  const allCategories = Array.from(new Set(staff.flatMap((member) => Object.keys(member.categories)))).sort();
+
+  const filtered = staff.filter((member) => {
+    const matchesTag = activeTags.length === 0 || member.tags.some((tag) => activeTags.includes(tag));
+    const matchesRole = activeRoles.length === 0 || activeRoles.includes(member.role);
+    return matchesTag && matchesRole;
+  });
   const sorted = sortStaff(filtered, sortKey, direction);
 
   return (
     <div className={styles.wrap}>
+      <div role="group" aria-label="Filter by type" className={styles.tagFilter}>
+        {allRoles.map((role) => (
+          <button
+            key={role}
+            type="button"
+            className={styles.tagButton}
+            aria-pressed={activeRoles.includes(role)}
+            onClick={() => toggleRole(role)}
+          >
+            {ROLES[role].label}
+          </button>
+        ))}
+      </div>
       <div role="group" aria-label="Filter by tag" className={styles.tagFilter}>
         {allTags.map((tag) => (
           <button
@@ -60,7 +85,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
           <option value="" disabled>
             Choose a category
           </option>
-          {CATEGORIES.map((category) => (
+          {allCategories.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
@@ -71,6 +96,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
         <thead>
           <tr>
             <th onClick={() => toggleSort("name")}>Name</th>
+            <th onClick={() => toggleSort("type")}>Type</th>
             <th>Tags</th>
             <th onClick={() => toggleSort("bestFit")}>Best fit</th>
           </tr>
@@ -85,6 +111,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
               className={pinnedId === member.id ? styles.pinnedRow : undefined}
             >
               <td>{member.name}</td>
+              <td>{ROLES[member.role].label}</td>
               <td>
                 {member.tags.length === 0
                   ? "—"

@@ -7,6 +7,7 @@ function member(overrides: Partial<StaffMember>): StaffMember {
   return {
     id: 1,
     name: "Z",
+    role: "coach",
     tags: [],
     attributes: {
       authority: 1,
@@ -35,7 +36,17 @@ function member(overrides: Partial<StaffMember>): StaffMember {
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
-  };
+  } as StaffMember;
+}
+
+function scoutMember(overrides: Partial<StaffMember>): StaffMember {
+  return member({
+    role: "scout",
+    attributes: { jpa: 5, jpp: 5, determination: 5, adaptability: 5 } as never,
+    categories: { "Current Ability Judging": 3, "Potential Judging": 4 },
+    bestFit: "Potential Judging",
+    ...overrides,
+  } as Partial<StaffMember>);
 }
 
 test("renders a row per staff member with name, tags, and best fit", () => {
@@ -140,4 +151,44 @@ test("sorting by category star rating reorders the rows, highest first", () => {
   const names = screen.getAllByRole("row").slice(1).map((row) => row.textContent);
   expect(names[0]).toContain("HighFitness");
   expect(names[1]).toContain("LowFitness");
+});
+
+test("a Type filter chip narrows the roster to just that role", () => {
+  const coach = member({ id: 1, name: "Carlo Rossi" });
+  const scout = scoutMember({ id: 2, name: "Ana Dimitriou" });
+
+  render(<StaffTable staff={[coach, scout]} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  expect(screen.getByText("Carlo Rossi")).toBeInTheDocument();
+  expect(screen.getByText("Ana Dimitriou")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+
+  expect(screen.queryByText("Carlo Rossi")).not.toBeInTheDocument();
+  expect(screen.getByText("Ana Dimitriou")).toBeInTheDocument();
+});
+
+test("clicking the Type column header sorts the roster by role", () => {
+  const scout = scoutMember({ id: 1, name: "Scout Member" });
+  const coach = member({ id: 2, name: "Coach Member" });
+
+  render(<StaffTable staff={[scout, coach]} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  fireEvent.click(screen.getByText("Type"));
+
+  const names = screen.getAllByRole("row").slice(1).map((row) => row.textContent);
+  expect(names[0]).toContain("Coach Member");
+  expect(names[1]).toContain("Scout Member");
+});
+
+test("the category sort dropdown lists categories from every role present, not just one", () => {
+  const coach = member({ id: 1 });
+  const scout = scoutMember({ id: 2 });
+
+  render(<StaffTable staff={[coach, scout]} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  const select = screen.getByLabelText("Sort by category") as HTMLSelectElement;
+  const optionValues = Array.from(select.options).map((option) => option.value);
+  expect(optionValues).toContain("Fitness");
+  expect(optionValues).toContain("Potential Judging");
 });

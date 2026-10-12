@@ -7,6 +7,7 @@ function member(overrides: Partial<StaffMember>): StaffMember {
   return {
     id: 1,
     name: "Z",
+    role: "coach",
     tags: [],
     attributes: {
       authority: 1,
@@ -35,7 +36,7 @@ function member(overrides: Partial<StaffMember>): StaffMember {
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
-  };
+  } as StaffMember;
 }
 
 const staffA = member({ id: 1, name: "Coach A" });
