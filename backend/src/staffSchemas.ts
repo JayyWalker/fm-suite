@@ -1,46 +1,12 @@
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const staffAttributesSchema = {
-  type: "object",
-  required: [
-    "authority",
-    "determination",
-    "motivating",
-    "attacking",
-    "defending",
-    "fitness",
-    "goalkeeping",
-    "possession",
-    "setPieces",
-    "tactical",
-    "technical",
-    "tacticalKnowledge",
-  ],
-  properties: {
-    authority: attributeSchema,
-    determination: attributeSchema,
-    motivating: attributeSchema,
-    attacking: attributeSchema,
-    defending: attributeSchema,
-    fitness: attributeSchema,
-    goalkeeping: attributeSchema,
-    possession: attributeSchema,
-    setPieces: attributeSchema,
-    tactical: attributeSchema,
-    technical: attributeSchema,
-    tacticalKnowledge: attributeSchema,
-  },
-  additionalProperties: false,
-};
-
 export const createStaffSchema = {
   body: {
     type: "object",
-    required: ["name", "attributes"],
+    required: ["name", "role", "attributes"],
     properties: {
       name: { type: "string", minLength: 1 },
+      role: { type: "string", enum: ["coach", "scout"] },
       tags: { type: "array", items: { type: "string" }, default: [] },
-      attributes: staffAttributesSchema,
+      attributes: { type: "object" },
     },
     additionalProperties: false,
   },
@@ -57,7 +23,7 @@ export const updateStaffSchema = {
     properties: {
       name: { type: "string", minLength: 1 },
       tags: { type: "array", items: { type: "string" } },
-      attributes: staffAttributesSchema,
+      attributes: { type: "object" },
     },
     additionalProperties: false,
   },
@@ -70,3 +36,18 @@ export const idParamSchema = {
     properties: { id: { type: "string", pattern: "^[0-9]+$" } },
   },
 };
+
+interface AttributesSchema {
+  required: string[];
+}
+
+export function validateAttributes(schema: object, value: unknown): boolean {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const { required } = schema as AttributesSchema;
+  const obj = value as Record<string, unknown>;
+  if (Object.keys(obj).length !== required.length) return false;
+  return required.every((key) => {
+    const v = obj[key];
+    return typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= 8;
+  });
+}

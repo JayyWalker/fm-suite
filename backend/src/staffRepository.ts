@@ -1,37 +1,29 @@
 import type { Database } from "better-sqlite3";
-import type { StaffAttributes } from "./scoring";
+import type { StaffRole } from "./roles/index";
 
 export interface StaffRecord {
   id: number;
   name: string;
+  role: StaffRole;
   tags: string[];
-  attributes: StaffAttributes;
+  attributes: Record<string, number>;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface StaffInput {
   name: string;
+  role: StaffRole;
   tags: string[];
-  attributes: StaffAttributes;
+  attributes: Record<string, number>;
 }
 
 interface StaffRow {
   id: number;
   name: string;
+  role: string;
   tags: string;
-  authority: number;
-  determination: number;
-  motivating: number;
-  attacking: number;
-  defending: number;
-  fitness: number;
-  goalkeeping: number;
-  possession: number;
-  set_pieces: number;
-  tactical: number;
-  technical: number;
-  tactical_knowledge: number;
+  attributes: string;
   created_at: string;
   updated_at: string;
 }
@@ -40,21 +32,9 @@ function rowToRecord(row: StaffRow): StaffRecord {
   return {
     id: row.id,
     name: row.name,
+    role: row.role as StaffRole,
     tags: JSON.parse(row.tags),
-    attributes: {
-      authority: row.authority,
-      determination: row.determination,
-      motivating: row.motivating,
-      attacking: row.attacking,
-      defending: row.defending,
-      fitness: row.fitness,
-      goalkeeping: row.goalkeeping,
-      possession: row.possession,
-      setPieces: row.set_pieces,
-      tactical: row.tactical,
-      technical: row.technical,
-      tacticalKnowledge: row.tactical_knowledge,
-    },
+    attributes: JSON.parse(row.attributes),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -65,32 +45,16 @@ export class StaffRepository {
 
   create(input: StaffInput): StaffRecord {
     const now = new Date().toISOString();
-    const a = input.attributes;
     const result = this.db
       .prepare(
-        `INSERT INTO staff (
-          name, tags, authority, determination, motivating, attacking,
-          defending, fitness, goalkeeping, possession, set_pieces,
-          tactical, technical, tactical_knowledge, created_at, updated_at
-        ) VALUES (@name, @tags, @authority, @determination, @motivating, @attacking,
-          @defending, @fitness, @goalkeeping, @possession, @setPieces,
-          @tactical, @technical, @tacticalKnowledge, @createdAt, @updatedAt)`
+        `INSERT INTO staff (name, role, tags, attributes, created_at, updated_at)
+         VALUES (@name, @role, @tags, @attributes, @createdAt, @updatedAt)`
       )
       .run({
         name: input.name,
+        role: input.role,
         tags: JSON.stringify(input.tags),
-        authority: a.authority,
-        determination: a.determination,
-        motivating: a.motivating,
-        attacking: a.attacking,
-        defending: a.defending,
-        fitness: a.fitness,
-        goalkeeping: a.goalkeeping,
-        possession: a.possession,
-        setPieces: a.setPieces,
-        tactical: a.tactical,
-        technical: a.technical,
-        tacticalKnowledge: a.tacticalKnowledge,
+        attributes: JSON.stringify(input.attributes),
         createdAt: now,
         updatedAt: now,
       });
@@ -108,45 +72,27 @@ export class StaffRepository {
     return rows.map(rowToRecord);
   }
 
-  update(id: number, patch: Partial<StaffInput>): StaffRecord | undefined {
+  update(id: number, patch: Partial<Pick<StaffInput, "name" | "tags" | "attributes">>): StaffRecord | undefined {
     const existing = this.getById(id);
     if (!existing) return undefined;
 
-    const merged: StaffInput = {
+    const merged = {
       name: patch.name ?? existing.name,
       tags: patch.tags ?? existing.tags,
       attributes: { ...existing.attributes, ...patch.attributes },
     };
     const now = new Date().toISOString();
-    const a = merged.attributes;
 
     this.db
       .prepare(
-        `UPDATE staff SET
-          name = @name, tags = @tags, authority = @authority,
-          determination = @determination, motivating = @motivating,
-          attacking = @attacking, defending = @defending, fitness = @fitness,
-          goalkeeping = @goalkeeping, possession = @possession,
-          set_pieces = @setPieces, tactical = @tactical, technical = @technical,
-          tactical_knowledge = @tacticalKnowledge, updated_at = @updatedAt
-        WHERE id = @id`
+        `UPDATE staff SET name = @name, tags = @tags, attributes = @attributes, updated_at = @updatedAt
+         WHERE id = @id`
       )
       .run({
         id,
         name: merged.name,
         tags: JSON.stringify(merged.tags),
-        authority: a.authority,
-        determination: a.determination,
-        motivating: a.motivating,
-        attacking: a.attacking,
-        defending: a.defending,
-        fitness: a.fitness,
-        goalkeeping: a.goalkeeping,
-        possession: a.possession,
-        setPieces: a.setPieces,
-        tactical: a.tactical,
-        technical: a.technical,
-        tacticalKnowledge: a.tacticalKnowledge,
+        attributes: JSON.stringify(merged.attributes),
         updatedAt: now,
       });
 
