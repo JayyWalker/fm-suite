@@ -1,0 +1,36 @@
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.s1 {
+  background: rgba(224, 70, 70, 0.18);
+  color: #e86f6f;
+}
+
+.s2 {
+  background: rgba(224, 120, 50, 0.18);
+  color: #e89a5e;
+}
+
+.s3 {
+  background: rgba(224, 180, 40, 0.18);
+  color: #e6c04a;
+}
+
+.s4 {
+  background: rgba(140, 200, 80, 0.18);
+  color: #a3dd6f;
+}
+
+.s5 {
+  background: rgba(70, 200, 120, 0.18);
+  color: #6fdb94;
+}
