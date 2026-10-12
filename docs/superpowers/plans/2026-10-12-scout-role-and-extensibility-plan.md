@@ -722,7 +722,9 @@ test("the coach role definition rates coach attributes", () => {
 
   const result = ROLES.coach.rate(attrs);
 
-  expect(result.categories.Attacking).toBe(4);
+  // mental average (determination/authority/motivating) = 8, primary (attacking) = 8
+  // combinedScore(8, 8) = 8 -> scoreToStars(8) = 5
+  expect(result.categories.Attacking).toBe(5);
   expect(ROLES.coach.categories).toContain("Attacking");
 });
 
