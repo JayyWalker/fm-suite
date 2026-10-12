@@ -1,2 +1,6 @@
-.worktrees/
+node_modules/
+dist/
+backend/data/
+*.sqlite
 .superpowers/
+.worktrees/
