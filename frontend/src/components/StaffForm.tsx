@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ATTRIBUTE_FIELDS, ATTRIBUTE_LEVELS, type StaffAttributes, type StaffInput } from "../types";
+import styles from "./StaffForm.module.css";
 
 interface StaffFormProps {
   initialValue?: StaffInput;
@@ -52,17 +53,17 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <label className={styles.field}>
         Name
         <input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
       </label>
-      <label>
+      <label className={styles.field}>
         Tags
         <input aria-label="Tags" value={tagsText} onChange={(e) => setTagsText(e.target.value)} />
       </label>
       {ATTRIBUTE_FIELDS.map((field) => (
-        <label key={field.key}>
+        <label key={field.key} className={styles.field}>
           {field.label}
           <select
             aria-label={field.label}
@@ -77,13 +78,19 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
           </select>
         </label>
       ))}
-      {error && <div role="alert">{error}</div>}
-      <button type="submit">Save</button>
-      {onCancel && (
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
       )}
+      <div className={styles.actions}>
+        <button type="submit">Save</button>
+        {onCancel && (
+          <button type="button" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

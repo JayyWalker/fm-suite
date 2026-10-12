@@ -3,6 +3,7 @@ import type { StaffMember } from "../types";
 import { StaffTable } from "./StaffTable";
 import { DetailPanel } from "./DetailPanel";
 import { HoverTooltip } from "./HoverTooltip";
+import styles from "./RosterView.module.css";
 
 interface RosterViewProps {
   staff: StaffMember[];
@@ -39,11 +40,11 @@ export function RosterView({ staff, onEdit, onDelete }: RosterViewProps) {
   const tooltipStaff = pinnedStaff && hoveredStaff && hoveredId !== pinnedId ? hoveredStaff : null;
 
   return (
-    <div style={{ display: "flex", gap: "20px" }} onMouseMove={handleMouseMove}>
-      <div style={{ flex: 1 }}>
+    <div className={styles.wrap} onMouseMove={handleMouseMove}>
+      <div className={styles.pane}>
         <StaffTable staff={staff} pinnedId={pinnedId} onRowHover={handleRowHover} onRowClick={handleRowClick} />
       </div>
-      <div style={{ flex: 1 }}>
+      <div className={styles.pane}>
         <DetailPanel staff={detailStaff} mode={detailMode} onEdit={onEdit} onDelete={onDelete} />
       </div>
       <HoverTooltip staff={tooltipStaff} position={tooltipStaff ? mousePos : null} />

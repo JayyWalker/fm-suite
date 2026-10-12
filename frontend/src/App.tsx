@@ -3,6 +3,7 @@ import { RosterView } from "./components/RosterView";
 import { StaffForm } from "./components/StaffForm";
 import { createStaff, deleteStaff, listStaff, updateStaff } from "./api/staffApi";
 import type { StaffInput, StaffMember } from "./types";
+import styles from "./App.module.css";
 
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
@@ -69,9 +70,18 @@ export function App() {
   }
 
   return (
-    <div>
-      <button onClick={handleAddClick}>Add staff</button>
-      {error && <div role="alert">{error}</div>}
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>FM26 Coach Rating Tool</h1>
+        <button className={styles.addButton} onClick={handleAddClick}>
+          Add staff
+        </button>
+      </div>
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
+      )}
       {showForm && (
         <StaffForm
           key={editing?.id ?? "new"}

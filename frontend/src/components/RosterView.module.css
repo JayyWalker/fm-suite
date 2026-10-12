@@ -1,0 +1,8 @@
+.wrap {
+  display: flex;
+  gap: 20px;
+}
+
+.pane {
+  flex: 1;
+}
