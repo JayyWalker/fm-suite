@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { CATEGORIES, type StaffMember } from "../types";
 import { sortStaff, type SortKey } from "./sortStaff";
-import { starString } from "./starString";
+import { GradeChip } from "./GradeChip";
+import styles from "./StaffTable.module.css";
 
 interface StaffTableProps {
   staff: StaffMember[];
@@ -39,12 +40,13 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
   const sorted = sortStaff(filtered, sortKey, direction);
 
   return (
-    <div>
-      <div role="group" aria-label="Filter by tag">
+    <div className={styles.wrap}>
+      <div role="group" aria-label="Filter by tag" className={styles.tagFilter}>
         {allTags.map((tag) => (
           <button
             key={tag}
             type="button"
+            className={styles.tagButton}
             aria-pressed={activeTags.includes(tag)}
             onClick={() => toggleTag(tag)}
           >
@@ -52,7 +54,7 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
           </button>
         ))}
       </div>
-      <label>
+      <label className={styles.sortControl}>
         Sort by category
         <select aria-label="Sort by category" value="" onChange={(e) => handleCategorySort(e.target.value)}>
           <option value="" disabled>
@@ -80,12 +82,20 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
               onMouseEnter={() => onRowHover(member.id)}
               onMouseLeave={() => onRowHover(null)}
               onClick={() => onRowClick(member.id)}
-              style={pinnedId === member.id ? { fontWeight: "bold" } : undefined}
+              className={pinnedId === member.id ? styles.pinnedRow : undefined}
             >
               <td>{member.name}</td>
-              <td>{member.tags.join(", ") || "—"}</td>
               <td>
-                {member.bestFit} {starString(member.categories[member.bestFit])}
+                {member.tags.length === 0
+                  ? "—"
+                  : member.tags.map((tag) => (
+                      <span key={tag} className={styles.tag}>
+                        {tag}
+                      </span>
+                    ))}
+              </td>
+              <td>
+                {member.bestFit} <GradeChip stars={member.categories[member.bestFit]} />
               </td>
             </tr>
           ))}

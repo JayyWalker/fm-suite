@@ -1,0 +1,84 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tagFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tagButton {
+  background: #2a2433;
+  color: #b3a9c4;
+  border: 1px solid #38324a;
+  border-radius: 12px;
+  padding: 3px 11px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tagButton[aria-pressed="true"] {
+  background: rgba(230, 180, 50, 0.18);
+  color: #e6b432;
+  border-color: #e6b432;
+}
+
+.sortControl {
+  font-size: 13px;
+  color: #8c849c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortControl select {
+  background: #221f2a;
+  color: #eceaf0;
+  border: 1px solid #38324a;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #8c849c;
+  border-bottom: 1px solid #2a2433;
+  cursor: pointer;
+}
+
+td {
+  padding: 9px 8px;
+  border-bottom: 1px solid #221f2a;
+}
+
+tr {
+  cursor: pointer;
+}
+
+.pinnedRow td {
+  background: rgba(230, 180, 50, 0.07);
+  box-shadow: inset 3px 0 0 #e6b432;
+}
+
+.tag {
+  display: inline-block;
+  background: #2a2433;
+  color: #b3a9c4;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  margin-right: 4px;
+}

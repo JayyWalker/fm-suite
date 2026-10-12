@@ -49,6 +49,17 @@ test("renders a row per staff member with name, tags, and best fit", () => {
   expect(row.textContent).toContain("Fitness");
 });
 
+test("shows the best-fit category as a grade chip", () => {
+  const staff = [
+    member({ id: 1, name: "Chip Target", bestFit: "Fitness", categories: { ...member({}).categories, Fitness: 4 } }),
+  ];
+
+  render(<StaffTable staff={staff} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  const row = screen.getByText("Chip Target").closest("tr")!;
+  expect(row.textContent).toContain("4★ Strong");
+});
+
 test("calls onRowHover with the staff id on mouse over and null on mouse out", () => {
   const staff = [member({ id: 7, name: "Hover Target" })];
   const onRowHover = vi.fn();
