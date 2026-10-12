@@ -127,6 +127,26 @@ describe("POST /staff", () => {
     expect(res.statusCode).toBe(400);
   });
 
+  test("rejects an attribute value of 0 with a 400", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Bad Attrs", role: "coach", attributes: coachAttributes({ attacking: 0 }) },
+    });
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test("rejects a non-integer attribute value with a 400", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Bad Attrs", role: "coach", attributes: coachAttributes({ attacking: 6.5 }) },
+    });
+
+    expect(res.statusCode).toBe(400);
+  });
+
   test("rejects a boolean attribute value with a 400 instead of coercing it to 1", async () => {
     const res = await app.inject({
       method: "POST",
