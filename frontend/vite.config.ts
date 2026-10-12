@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/staff": "http://localhost:3001",
+      "/staff": "http://localhost:3002",
     },
   },
   test: {

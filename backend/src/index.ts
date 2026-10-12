@@ -5,7 +5,7 @@ const db = createDb(process.env.DB_PATH ?? "./data/staff.sqlite");
 const app = buildServer(db);
 
 app
-  .listen({ port: Number(process.env.PORT ?? 3001) })
+  .listen({ port: Number(process.env.PORT ?? 3002) })
   .then((address) => {
     console.log(`fm-suite backend listening on ${address}`);
   })
