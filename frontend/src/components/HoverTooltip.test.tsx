@@ -55,3 +55,12 @@ test("renders the staff member's holy trinity and best fit at the given position
   expect(tooltip.style.left).toBe("42px");
   expect(tooltip.style.top).toBe("24px");
 });
+
+test("shows the holy trinity and best fit as grade chips, not raw numbers", () => {
+  render(<HoverTooltip staff={sample} position={{ x: 0, y: 0 }} />);
+
+  // determination 8 -> 5 stars, motivating 6 -> 4 stars, best fit Tactical (5) -> 5 stars
+  expect(screen.getAllByText("5★ Elite").length).toBeGreaterThanOrEqual(2);
+  expect(screen.getByText("4★ Strong")).toBeInTheDocument();
+  expect(screen.queryByText("8")).not.toBeInTheDocument();
+});

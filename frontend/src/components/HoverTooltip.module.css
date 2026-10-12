@@ -1,0 +1,34 @@
+.tooltip {
+  background: #221f2a;
+  border: 1px solid #e6b432;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  width: 210px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.name {
+  font-weight: 700;
+  color: #e6b432;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.bestFit {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #2a2433;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
