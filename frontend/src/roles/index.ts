@@ -33,10 +33,17 @@ import {
   formGroups as dofFormGroups,
   mentalFields as dofMentalFields,
 } from "./dof";
+import {
+  DATA_ANALYST_CATEGORIES,
+  defaultAttributes as dataAnalystDefaultAttributes,
+  extraDisplayGroups as dataAnalystExtraDisplayGroups,
+  formGroups as dataAnalystFormGroups,
+  mentalFields as dataAnalystMentalFields,
+} from "./dataAnalyst";
 
-export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof";
+export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof" | "dataAnalyst";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof"];
+export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"];
 
 export interface AttributeGroup {
   title: string;
@@ -98,5 +105,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: dofMentalFields,
     extraDisplayGroups: dofExtraDisplayGroups,
     defaultAttributes: dofDefaultAttributes as unknown as Record<string, number>,
+  },
+  dataAnalyst: {
+    key: "dataAnalyst",
+    label: "Data Analyst",
+    categories: DATA_ANALYST_CATEGORIES,
+    formGroups: dataAnalystFormGroups,
+    mentalFields: dataAnalystMentalFields,
+    extraDisplayGroups: dataAnalystExtraDisplayGroups,
+    defaultAttributes: dataAnalystDefaultAttributes as unknown as Record<string, number>,
   },
 };
