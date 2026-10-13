@@ -217,6 +217,24 @@ const performanceAnalystSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const recruitmentAnalystSample: StaffMember = {
+  id: 11,
+  name: "Recruitment Analyst One",
+  role: "recruitmentAnalyst",
+  tags: [],
+  attributes: {
+    analysingData: 6,
+    jpa: 3,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { "Analysing Data": 4, "Judging Player Ability": 2 },
+  bestFit: "Analysing Data",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -515,4 +533,28 @@ test("asks for confirmation naming the Performance Analyst before deleting, iden
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Performance Analyst One"));
   expect(onDelete).toHaveBeenCalledWith(performanceAnalystSample.id);
+});
+
+test("shows a Recruitment Analyst's two categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={recruitmentAnalystSample} mode="preview" />);
+
+  expect(screen.getByText("Recruitment Analyst One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Recruitment Analyst before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={recruitmentAnalystSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Recruitment Analyst One"));
+  expect(onDelete).toHaveBeenCalledWith(recruitmentAnalystSample.id);
 });

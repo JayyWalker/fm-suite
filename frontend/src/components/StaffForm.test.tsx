@@ -69,6 +69,7 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
   expect(screen.getByRole("button", { name: "Set Piece Coach" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Performance Analyst" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Head Performance Analyst" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Recruitment Analyst" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
 });
 
@@ -199,6 +200,19 @@ test("picking Head Performance Analyst shows the same fields as Performance Anal
 
   expect(screen.getByLabelText("Name")).toBeInTheDocument();
   expect(screen.getByLabelText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Analysis ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Recruitment Analyst shows its fields grouped into Identity, Analysis ability, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Recruitment Analyst" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
   expect(screen.getByText("Identity")).toBeInTheDocument();
   expect(screen.getByText("Analysis ability")).toBeInTheDocument();
   expect(screen.getByText("Mental attributes")).toBeInTheDocument();
