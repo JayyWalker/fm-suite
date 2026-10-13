@@ -32,7 +32,9 @@ export const SCOUT_CATEGORIES: ScoutCategory[] = ["Current Ability Judging", "Po
 
 export const mentalFields: (keyof ScoutAttributes)[] = ["determination", "adaptability"];
 
-const regionFields: { key: keyof ScoutAttributes; label: string }[] = [
+type ScoutRegionKey = Exclude<keyof ScoutAttributes, "jpa" | "jpp" | "determination" | "adaptability">;
+
+const regionFields: { key: ScoutRegionKey; label: string }[] = [
   { key: "westernEurope", label: "Western Europe" },
   { key: "centralEurope", label: "Central Europe" },
   { key: "ukAndIreland", label: "UK and Ireland" },
@@ -70,7 +72,7 @@ export const formGroups: AttributeGroup[] = [
     ],
   },
   {
-    title: "Regional knowledge",
+    title: "Regional Knowledge",
     fields: regionFields,
   },
 ];
@@ -82,23 +84,5 @@ export const defaultAttributes: ScoutAttributes = {
   jpp: 4,
   determination: 4,
   adaptability: 4,
-  westernEurope: 4,
-  centralEurope: 4,
-  ukAndIreland: 4,
-  southernEurope: 4,
-  southEasternEurope: 4,
-  northEasternEurope: 4,
-  northernEurope: 4,
-  easternEurope: 4,
-  southAmericaNorth: 4,
-  southAmericaSouth: 4,
-  northAmerica: 4,
-  westernAfrica: 4,
-  centralAfrica: 4,
-  southernAfrica: 4,
-  northAfrica: 4,
-  middleEast: 4,
-  eastAsia: 4,
-  southEastAsia: 4,
-  oceania: 4,
+  ...(Object.fromEntries(regionFields.map((field) => [field.key, 4])) as Record<ScoutRegionKey, number>),
 };

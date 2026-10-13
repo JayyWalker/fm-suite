@@ -261,7 +261,7 @@ test("picking Coach shows its fields grouped into Identity, Mental attributes, C
   expect(screen.getByText("Knowledge")).toBeInTheDocument();
 });
 
-test("picking Scout shows its fields grouped into Identity, Judging ability, Mental attributes, and Regional knowledge", () => {
+test("picking Scout shows its fields grouped into Identity, Judging ability, Mental attributes, and Regional Knowledge", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
 
   fireEvent.click(screen.getByRole("button", { name: "Scout" }));
@@ -270,7 +270,7 @@ test("picking Scout shows its fields grouped into Identity, Judging ability, Men
   expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
   expect(screen.getByLabelText("Western Europe")).toBeInTheDocument();
   expect(screen.getByText("Judging ability")).toBeInTheDocument();
-  expect(screen.getByText("Regional knowledge")).toBeInTheDocument();
+  expect(screen.getByText("Regional Knowledge")).toBeInTheDocument();
 });
 
 test("editing a coach skips the picker and pre-fills its fields", () => {

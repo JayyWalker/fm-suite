@@ -119,7 +119,7 @@ export function App() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>FM26 Coach Rating Tool</h1>
+        <h1 className={styles.title}>FM26 Staff Rating Tool</h1>
         <button className={styles.addButton} onClick={handleAddClick}>
           Add staff
         </button>
