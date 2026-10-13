@@ -6,6 +6,7 @@ import type { DofAttributes } from "./roles/dof";
 import type { DataAnalystAttributes } from "./roles/dataAnalyst";
 import type { SportsScienceAttributes } from "./roles/sportsScience";
 import type { HeadPhysioAttributes } from "./roles/headPhysio";
+import type { SetPieceCoachAttributes } from "./roles/setPieceCoach";
 
 export const ATTRIBUTE_LEVELS: { value: number; label: string }[] = [
   { value: 1, label: "Unsuited" },
@@ -37,7 +38,8 @@ export type StaffMember =
   | (StaffCore & { role: "dataAnalyst"; attributes: DataAnalystAttributes })
   | (StaffCore & { role: "sportsScientist"; attributes: SportsScienceAttributes })
   | (StaffCore & { role: "headOfSportsScience"; attributes: SportsScienceAttributes })
-  | (StaffCore & { role: "headPhysio"; attributes: HeadPhysioAttributes });
+  | (StaffCore & { role: "headPhysio"; attributes: HeadPhysioAttributes })
+  | (StaffCore & { role: "setPieceCoach"; attributes: SetPieceCoachAttributes });
 
 export type StaffInput =
   | { role: "coach"; name: string; tags: string[]; attributes: CoachAttributes }
@@ -48,4 +50,5 @@ export type StaffInput =
   | { role: "dataAnalyst"; name: string; tags: string[]; attributes: DataAnalystAttributes }
   | { role: "sportsScientist"; name: string; tags: string[]; attributes: SportsScienceAttributes }
   | { role: "headOfSportsScience"; name: string; tags: string[]; attributes: SportsScienceAttributes }
-  | { role: "headPhysio"; name: string; tags: string[]; attributes: HeadPhysioAttributes };
+  | { role: "headPhysio"; name: string; tags: string[]; attributes: HeadPhysioAttributes }
+  | { role: "setPieceCoach"; name: string; tags: string[]; attributes: SetPieceCoachAttributes };

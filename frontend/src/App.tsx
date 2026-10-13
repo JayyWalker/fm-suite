@@ -34,7 +34,10 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "headOfSportsScience") {
     return { role: "headOfSportsScience", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "headPhysio", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "headPhysio") {
+    return { role: "headPhysio", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "setPieceCoach", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {

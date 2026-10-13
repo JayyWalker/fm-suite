@@ -181,6 +181,23 @@ const headPhysioSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const setPieceCoachSample: StaffMember = {
+  id: 9,
+  name: "Set Piece Coach One",
+  role: "setPieceCoach",
+  tags: [],
+  attributes: {
+    setPieces: 6,
+    determination: 6,
+    authority: 2,
+    motivating: 2,
+  } as never,
+  categories: { "Set Pieces": 4 },
+  bestFit: "Set Pieces",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -431,4 +448,27 @@ test("asks for confirmation naming the Head Physio before deleting, identical to
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Head Physio One"));
   expect(onDelete).toHaveBeenCalledWith(headPhysioSample.id);
+});
+
+test("shows a Set Piece Coach's single category and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={setPieceCoachSample} mode="preview" />);
+
+  expect(screen.getByText("Set Piece Coach One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("authority")).toBeInTheDocument();
+  expect(screen.getByText("motivating")).toBeInTheDocument();
+  expect(screen.getByText("Set Pieces")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Set Piece Coach before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={setPieceCoachSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Set Piece Coach One"));
+  expect(onDelete).toHaveBeenCalledWith(setPieceCoachSample.id);
 });

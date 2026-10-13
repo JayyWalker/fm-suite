@@ -54,6 +54,13 @@ import {
   formGroups as headPhysioFormGroups,
   mentalFields as headPhysioMentalFields,
 } from "./headPhysio";
+import {
+  SET_PIECE_COACH_CATEGORIES,
+  defaultAttributes as setPieceCoachDefaultAttributes,
+  extraDisplayGroups as setPieceCoachExtraDisplayGroups,
+  formGroups as setPieceCoachFormGroups,
+  mentalFields as setPieceCoachMentalFields,
+} from "./setPieceCoach";
 
 export type StaffRole =
   | "coach"
@@ -64,7 +71,8 @@ export type StaffRole =
   | "dataAnalyst"
   | "sportsScientist"
   | "headOfSportsScience"
-  | "headPhysio";
+  | "headPhysio"
+  | "setPieceCoach";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -76,6 +84,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "sportsScientist",
   "headOfSportsScience",
   "headPhysio",
+  "setPieceCoach",
 ];
 
 export interface AttributeGroup {
@@ -174,5 +183,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: headPhysioMentalFields,
     extraDisplayGroups: headPhysioExtraDisplayGroups,
     defaultAttributes: headPhysioDefaultAttributes as unknown as Record<string, number>,
+  },
+  setPieceCoach: {
+    key: "setPieceCoach",
+    label: "Set Piece Coach",
+    categories: SET_PIECE_COACH_CATEGORIES,
+    formGroups: setPieceCoachFormGroups,
+    mentalFields: setPieceCoachMentalFields,
+    extraDisplayGroups: setPieceCoachExtraDisplayGroups,
+    defaultAttributes: setPieceCoachDefaultAttributes as unknown as Record<string, number>,
   },
 };
