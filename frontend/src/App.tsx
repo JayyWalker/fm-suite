@@ -16,7 +16,10 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "scout") {
     return { role: "scout", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "physio", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "physio") {
+    return { role: "physio", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "hoyd", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {

@@ -19,10 +19,17 @@ import {
   formGroups as physioFormGroups,
   mentalFields as physioMentalFields,
 } from "./physio";
+import {
+  HOYD_CATEGORIES,
+  defaultAttributes as hoydDefaultAttributes,
+  extraDisplayGroups as hoydExtraDisplayGroups,
+  formGroups as hoydFormGroups,
+  mentalFields as hoydMentalFields,
+} from "./hoyd";
 
-export type StaffRole = "coach" | "scout" | "physio";
+export type StaffRole = "coach" | "scout" | "physio" | "hoyd";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio"];
+export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd"];
 
 export interface AttributeGroup {
   title: string;
@@ -66,5 +73,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: physioMentalFields,
     extraDisplayGroups: physioExtraDisplayGroups,
     defaultAttributes: physioDefaultAttributes as unknown as Record<string, number>,
+  },
+  hoyd: {
+    key: "hoyd",
+    label: "Head of Youth Development",
+    categories: HOYD_CATEGORIES,
+    formGroups: hoydFormGroups,
+    mentalFields: hoydMentalFields,
+    extraDisplayGroups: hoydExtraDisplayGroups,
+    defaultAttributes: hoydDefaultAttributes as unknown as Record<string, number>,
   },
 };

@@ -89,6 +89,25 @@ const physioSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const hoydSample: StaffMember = {
+  id: 4,
+  name: "Robbo Taylor",
+  role: "hoyd",
+  tags: [],
+  attributes: {
+    workingWithYoungsters: 6,
+    jpa: 3,
+    jpp: 5,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { "Working with Youngsters": 4, "Current Ability Judging": 2, "Potential Judging": 3 },
+  bestFit: "Working with Youngsters",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -217,4 +236,29 @@ test("asks for confirmation naming the physio before deleting, identical to a co
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Jamie Carragher Jr."));
   expect(onDelete).toHaveBeenCalledWith(physioSample.id);
+});
+
+test("shows a HoYD's three categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={hoydSample} mode="preview" />);
+
+  expect(screen.getByText("Robbo Taylor")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Working with Youngsters")).toBeInTheDocument();
+  expect(screen.getByText("Current Ability Judging")).toBeInTheDocument();
+  expect(screen.getByText("Potential Judging")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the HoYD before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={hoydSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Robbo Taylor"));
+  expect(onDelete).toHaveBeenCalledWith(hoydSample.id);
 });

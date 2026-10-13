@@ -60,6 +60,7 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
   expect(screen.getByRole("button", { name: "Coach" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Scout" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Physio" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Head of Youth Development" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
 });
 
@@ -73,6 +74,20 @@ test("picking Physio shows its fields grouped into Identity, Medical ability, an
   expect(screen.getByLabelText("Man Management")).toBeInTheDocument();
   expect(screen.getByText("Identity")).toBeInTheDocument();
   expect(screen.getByText("Medical ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Head of Youth Development shows its fields grouped into Identity, Youth development ability, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Head of Youth Development" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Working with Youngsters")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Player Potential")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Youth development ability")).toBeInTheDocument();
   expect(screen.getByText("Mental attributes")).toBeInTheDocument();
 });
 
