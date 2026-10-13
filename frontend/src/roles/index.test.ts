@@ -1,8 +1,17 @@
 import { expect, test } from "vitest";
 import { STAFF_ROLES, ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, dof, and dataAnalyst are registered as staff roles", () => {
-  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"]);
+test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, and headOfSportsScience are registered as staff roles", () => {
+  expect(STAFF_ROLES).toEqual([
+    "coach",
+    "scout",
+    "physio",
+    "hoyd",
+    "dof",
+    "dataAnalyst",
+    "sportsScientist",
+    "headOfSportsScience",
+  ]);
 });
 
 test("each role definition exposes its label, categories, and form groups", () => {
@@ -24,4 +33,9 @@ test("each role definition exposes its label, categories, and form groups", () =
   expect(ROLES.dataAnalyst.label).toBe("Data Analyst");
   expect(ROLES.dataAnalyst.categories).toEqual(["Judging Player Data", "Judging Team Data", "Presenting Data"]);
   expect(ROLES.dataAnalyst.extraDisplayGroups).toHaveLength(0);
+  expect(ROLES.sportsScientist.label).toBe("Sports Scientist");
+  expect(ROLES.sportsScientist.categories).toEqual(["Fitness"]);
+  expect(ROLES.headOfSportsScience.label).toBe("Head of Sports Science");
+  expect(ROLES.headOfSportsScience.categories).toEqual(["Fitness"]);
+  expect(ROLES.sportsScientist.formGroups).toBe(ROLES.headOfSportsScience.formGroups);
 });

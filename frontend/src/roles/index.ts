@@ -40,10 +40,34 @@ import {
   formGroups as dataAnalystFormGroups,
   mentalFields as dataAnalystMentalFields,
 } from "./dataAnalyst";
+import {
+  SPORTS_SCIENCE_CATEGORIES,
+  defaultAttributes as sportsScienceDefaultAttributes,
+  extraDisplayGroups as sportsScienceExtraDisplayGroups,
+  formGroups as sportsScienceFormGroups,
+  mentalFields as sportsScienceMentalFields,
+} from "./sportsScience";
 
-export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof" | "dataAnalyst";
+export type StaffRole =
+  | "coach"
+  | "scout"
+  | "physio"
+  | "hoyd"
+  | "dof"
+  | "dataAnalyst"
+  | "sportsScientist"
+  | "headOfSportsScience";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"];
+export const STAFF_ROLES: StaffRole[] = [
+  "coach",
+  "scout",
+  "physio",
+  "hoyd",
+  "dof",
+  "dataAnalyst",
+  "sportsScientist",
+  "headOfSportsScience",
+];
 
 export interface AttributeGroup {
   title: string;
@@ -114,5 +138,23 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: dataAnalystMentalFields,
     extraDisplayGroups: dataAnalystExtraDisplayGroups,
     defaultAttributes: dataAnalystDefaultAttributes as unknown as Record<string, number>,
+  },
+  sportsScientist: {
+    key: "sportsScientist",
+    label: "Sports Scientist",
+    categories: SPORTS_SCIENCE_CATEGORIES,
+    formGroups: sportsScienceFormGroups,
+    mentalFields: sportsScienceMentalFields,
+    extraDisplayGroups: sportsScienceExtraDisplayGroups,
+    defaultAttributes: sportsScienceDefaultAttributes as unknown as Record<string, number>,
+  },
+  headOfSportsScience: {
+    key: "headOfSportsScience",
+    label: "Head of Sports Science",
+    categories: SPORTS_SCIENCE_CATEGORIES,
+    formGroups: sportsScienceFormGroups,
+    mentalFields: sportsScienceMentalFields,
+    extraDisplayGroups: sportsScienceExtraDisplayGroups,
+    defaultAttributes: sportsScienceDefaultAttributes as unknown as Record<string, number>,
   },
 };

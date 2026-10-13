@@ -63,6 +63,8 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
   expect(screen.getByRole("button", { name: "Head of Youth Development" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Director of Football" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Data Analyst" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Sports Scientist" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Head of Sports Science" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
 });
 
@@ -118,6 +120,30 @@ test("picking Data Analyst shows its fields grouped into Identity, Data analysis
   expect(screen.getByLabelText("Presenting Data")).toBeInTheDocument();
   expect(screen.getByText("Identity")).toBeInTheDocument();
   expect(screen.getByText("Data analysis")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Sports Scientist shows its fields grouped into Identity, Fitness ability, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Sports Scientist" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Fitness")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Fitness ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Head of Sports Science shows the same fields as Sports Scientist", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Head of Sports Science" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Fitness")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Fitness ability")).toBeInTheDocument();
   expect(screen.getByText("Mental attributes")).toBeInTheDocument();
 });
 

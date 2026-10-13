@@ -234,6 +234,60 @@ test("editing a Data Analyst and saving sends its own attributes without a role 
   });
 });
 
+test("editing a Sports Scientist and saving sends its own attributes without a role key", async () => {
+  const sportsScientist = member({
+    id: 8,
+    name: "Sports Scientist One",
+    role: "sportsScientist",
+    attributes: { fitness: 5, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Fitness: 4 },
+    bestFit: "Fitness",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([sportsScientist]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(sportsScientist);
+
+  render(<App />);
+  await screen.findByText("Sports Scientist One");
+
+  fireEvent.click(rowFor("Sports Scientist One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(sportsScientist.id, {
+    name: sportsScientist.name,
+    tags: sportsScientist.tags,
+    attributes: sportsScientist.attributes,
+  });
+});
+
+test("editing a Head of Sports Science and saving sends its own attributes without a role key", async () => {
+  const headOfSportsScience = member({
+    id: 9,
+    name: "Head Scientist One",
+    role: "headOfSportsScience",
+    attributes: { fitness: 5, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Fitness: 4 },
+    bestFit: "Fitness",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([headOfSportsScience]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(headOfSportsScience);
+
+  render(<App />);
+  await screen.findByText("Head Scientist One");
+
+  fireEvent.click(rowFor("Head Scientist One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(headOfSportsScience.id, {
+    name: headOfSportsScience.name,
+    tags: headOfSportsScience.tags,
+    attributes: headOfSportsScience.attributes,
+  });
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

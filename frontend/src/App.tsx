@@ -25,7 +25,13 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "dof") {
     return { role: "dof", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "dataAnalyst", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "dataAnalyst") {
+    return { role: "dataAnalyst", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  if (member.role === "sportsScientist") {
+    return { role: "sportsScientist", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "headOfSportsScience", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {

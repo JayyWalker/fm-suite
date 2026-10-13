@@ -4,6 +4,7 @@ import type { PhysioAttributes } from "./roles/physio";
 import type { HoydAttributes } from "./roles/hoyd";
 import type { DofAttributes } from "./roles/dof";
 import type { DataAnalystAttributes } from "./roles/dataAnalyst";
+import type { SportsScienceAttributes } from "./roles/sportsScience";
 
 export const ATTRIBUTE_LEVELS: { value: number; label: string }[] = [
   { value: 1, label: "Unsuited" },
@@ -32,7 +33,9 @@ export type StaffMember =
   | (StaffCore & { role: "physio"; attributes: PhysioAttributes })
   | (StaffCore & { role: "hoyd"; attributes: HoydAttributes })
   | (StaffCore & { role: "dof"; attributes: DofAttributes })
-  | (StaffCore & { role: "dataAnalyst"; attributes: DataAnalystAttributes });
+  | (StaffCore & { role: "dataAnalyst"; attributes: DataAnalystAttributes })
+  | (StaffCore & { role: "sportsScientist"; attributes: SportsScienceAttributes })
+  | (StaffCore & { role: "headOfSportsScience"; attributes: SportsScienceAttributes });
 
 export type StaffInput =
   | { role: "coach"; name: string; tags: string[]; attributes: CoachAttributes }
@@ -40,4 +43,6 @@ export type StaffInput =
   | { role: "physio"; name: string; tags: string[]; attributes: PhysioAttributes }
   | { role: "hoyd"; name: string; tags: string[]; attributes: HoydAttributes }
   | { role: "dof"; name: string; tags: string[]; attributes: DofAttributes }
-  | { role: "dataAnalyst"; name: string; tags: string[]; attributes: DataAnalystAttributes };
+  | { role: "dataAnalyst"; name: string; tags: string[]; attributes: DataAnalystAttributes }
+  | { role: "sportsScientist"; name: string; tags: string[]; attributes: SportsScienceAttributes }
+  | { role: "headOfSportsScience"; name: string; tags: string[]; attributes: SportsScienceAttributes };

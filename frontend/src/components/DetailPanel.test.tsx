@@ -146,6 +146,23 @@ const dataAnalystSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const sportsScientistSample: StaffMember = {
+  id: 7,
+  name: "Walter Gfrerer Jr.",
+  role: "sportsScientist",
+  tags: [],
+  attributes: {
+    fitness: 6,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { Fitness: 4 },
+  bestFit: "Fitness",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -349,4 +366,27 @@ test("asks for confirmation naming the Data Analyst before deleting, identical t
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Priya Nkemdirim"));
   expect(onDelete).toHaveBeenCalledWith(dataAnalystSample.id);
+});
+
+test("shows a Sports Scientist's single category and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={sportsScientistSample} mode="preview" />);
+
+  expect(screen.getByText("Walter Gfrerer Jr.")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Fitness")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Sports Scientist before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={sportsScientistSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Walter Gfrerer Jr."));
+  expect(onDelete).toHaveBeenCalledWith(sportsScientistSample.id);
 });
