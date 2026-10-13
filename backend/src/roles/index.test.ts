@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, and dof are registered as staff roles", () => {
-  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio", "hoyd", "dof"]);
+test("exactly coach, scout, physio, hoyd, dof, and dataAnalyst are registered as staff roles", () => {
+  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"]);
 });
 
 test("the coach role definition rates coach attributes", () => {
@@ -68,6 +68,7 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.physio.attributesSchema).toHaveProperty("required");
   expect(ROLES.hoyd.attributesSchema).toHaveProperty("required");
   expect(ROLES.dof.attributesSchema).toHaveProperty("required");
+  expect(ROLES.dataAnalyst.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -121,4 +122,22 @@ test("the dof role definition rates dof attributes", () => {
   // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
   expect(result.categories["Negotiating"]).toBe(4);
   expect(ROLES.dof.categories).toEqual(["Negotiating", "Current Ability Judging", "Potential Judging"]);
+});
+
+test("the dataAnalyst role definition rates data analyst attributes", () => {
+  const attrs = {
+    judgingPlayerData: 8,
+    judgingTeamData: 1,
+    presentingData: 1,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const result = ROLES.dataAnalyst.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (judgingPlayerData) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories["Judging Player Data"]).toBe(4);
+  expect(ROLES.dataAnalyst.categories).toEqual(["Judging Player Data", "Judging Team Data", "Presenting Data"]);
 });

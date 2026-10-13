@@ -84,6 +84,18 @@ function dofAttributes(overrides: Partial<Record<string, number>> = {}): Record<
   };
 }
 
+function dataAnalystAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    judgingPlayerData: 5,
+    judgingTeamData: 4,
+    presentingData: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -173,6 +185,21 @@ describe("POST /staff", () => {
     expect(body.categories["Negotiating"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Current Ability Judging"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Potential Judging"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a data analyst and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Priya Nkemdirim", role: "dataAnalyst", attributes: dataAnalystAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("dataAnalyst");
+    expect(body.categories["Judging Player Data"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Judging Team Data"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Presenting Data"]).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {
