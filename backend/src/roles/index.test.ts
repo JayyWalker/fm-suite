@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, headOfSportsScience, headPhysio, and setPieceCoach are registered as staff roles", () => {
+test("exactly all 12 expected staff roles are registered", () => {
   expect(STAFF_ROLES).toEqual([
     "coach",
     "scout",
@@ -13,6 +13,8 @@ test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, hea
     "headOfSportsScience",
     "headPhysio",
     "setPieceCoach",
+    "performanceAnalyst",
+    "headPerformanceAnalyst",
   ]);
 });
 
@@ -84,6 +86,8 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.headOfSportsScience.attributesSchema).toHaveProperty("required");
   expect(ROLES.headPhysio.attributesSchema).toHaveProperty("required");
   expect(ROLES.setPieceCoach.attributesSchema).toHaveProperty("required");
+  expect(ROLES.performanceAnalyst.attributesSchema).toHaveProperty("required");
+  expect(ROLES.headPerformanceAnalyst.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -208,4 +212,29 @@ test("the setPieceCoach role definition rates set piece coach attributes", () =>
   // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
   expect(result.categories["Set Pieces"]).toBe(4);
   expect(ROLES.setPieceCoach.categories).toEqual(["Set Pieces"]);
+});
+
+test("performanceAnalyst and headPerformanceAnalyst both rate via the shared performance analyst formula", () => {
+  const attrs = {
+    analysingData: 8,
+    jpa: 1,
+    tacticalKnowledge: 1,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const analystResult = ROLES.performanceAnalyst.rate(attrs);
+  const headResult = ROLES.headPerformanceAnalyst.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (analysingData) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(analystResult.categories["Analysing Data"]).toBe(4);
+  expect(headResult.categories["Analysing Data"]).toBe(4);
+  expect(ROLES.performanceAnalyst.categories).toEqual([
+    "Analysing Data",
+    "Judging Player Ability",
+    "Tactical Knowledge",
+  ]);
+  expect(ROLES.performanceAnalyst.attributesSchema).toBe(ROLES.headPerformanceAnalyst.attributesSchema);
 });
