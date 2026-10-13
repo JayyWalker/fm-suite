@@ -288,6 +288,33 @@ test("editing a Head of Sports Science and saving sends its own attributes witho
   });
 });
 
+test("editing a Head Physio and saving sends its own attributes without a role key", async () => {
+  const headPhysio = member({
+    id: 10,
+    name: "Head Physio One",
+    role: "headPhysio",
+    attributes: { physiotherapy: 5, judgingPlayerCondition: 4, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Physiotherapy: 4, "Judging Player Condition": 3 },
+    bestFit: "Physiotherapy",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([headPhysio]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(headPhysio);
+
+  render(<App />);
+  await screen.findByText("Head Physio One");
+
+  fireEvent.click(rowFor("Head Physio One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(headPhysio.id, {
+    name: headPhysio.name,
+    tags: headPhysio.tags,
+    attributes: headPhysio.attributes,
+  });
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

@@ -163,6 +163,24 @@ const sportsScientistSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const headPhysioSample: StaffMember = {
+  id: 8,
+  name: "Head Physio One",
+  role: "headPhysio",
+  tags: [],
+  attributes: {
+    physiotherapy: 6,
+    judgingPlayerCondition: 3,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { Physiotherapy: 4, "Judging Player Condition": 2 },
+  bestFit: "Physiotherapy",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -389,4 +407,28 @@ test("asks for confirmation naming the Sports Scientist before deleting, identic
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Walter Gfrerer Jr."));
   expect(onDelete).toHaveBeenCalledWith(sportsScientistSample.id);
+});
+
+test("shows a Head Physio's two categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={headPhysioSample} mode="preview" />);
+
+  expect(screen.getByText("Head Physio One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
+  expect(screen.getByText("Judging Player Condition")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Head Physio before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={headPhysioSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Head Physio One"));
+  expect(onDelete).toHaveBeenCalledWith(headPhysioSample.id);
 });

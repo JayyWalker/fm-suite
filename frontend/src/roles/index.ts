@@ -47,6 +47,13 @@ import {
   formGroups as sportsScienceFormGroups,
   mentalFields as sportsScienceMentalFields,
 } from "./sportsScience";
+import {
+  HEAD_PHYSIO_CATEGORIES,
+  defaultAttributes as headPhysioDefaultAttributes,
+  extraDisplayGroups as headPhysioExtraDisplayGroups,
+  formGroups as headPhysioFormGroups,
+  mentalFields as headPhysioMentalFields,
+} from "./headPhysio";
 
 export type StaffRole =
   | "coach"
@@ -56,7 +63,8 @@ export type StaffRole =
   | "dof"
   | "dataAnalyst"
   | "sportsScientist"
-  | "headOfSportsScience";
+  | "headOfSportsScience"
+  | "headPhysio";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -67,6 +75,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "dataAnalyst",
   "sportsScientist",
   "headOfSportsScience",
+  "headPhysio",
 ];
 
 export interface AttributeGroup {
@@ -156,5 +165,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: sportsScienceMentalFields,
     extraDisplayGroups: sportsScienceExtraDisplayGroups,
     defaultAttributes: sportsScienceDefaultAttributes as unknown as Record<string, number>,
+  },
+  headPhysio: {
+    key: "headPhysio",
+    label: "Head Physio",
+    categories: HEAD_PHYSIO_CATEGORIES,
+    formGroups: headPhysioFormGroups,
+    mentalFields: headPhysioMentalFields,
+    extraDisplayGroups: headPhysioExtraDisplayGroups,
+    defaultAttributes: headPhysioDefaultAttributes as unknown as Record<string, number>,
   },
 };
