@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, and physio are registered as staff roles", () => {
-  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio"]);
+test("exactly coach, scout, physio, and hoyd are registered as staff roles", () => {
+  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio", "hoyd"]);
 });
 
 test("the coach role definition rates coach attributes", () => {
@@ -66,6 +66,7 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.coach.attributesSchema).toHaveProperty("required");
   expect(ROLES.scout.attributesSchema).toHaveProperty("required");
   expect(ROLES.physio.attributesSchema).toHaveProperty("required");
+  expect(ROLES.hoyd.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -83,4 +84,22 @@ test("the physio role definition rates physio attributes", () => {
   // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
   expect(result.categories.Physiotherapy).toBe(4);
   expect(ROLES.physio.categories).toEqual(["Physiotherapy"]);
+});
+
+test("the hoyd role definition rates hoyd attributes", () => {
+  const attrs = {
+    workingWithYoungsters: 8,
+    jpa: 1,
+    jpp: 1,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const result = ROLES.hoyd.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (workingWithYoungsters) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories["Working with Youngsters"]).toBe(4);
+  expect(ROLES.hoyd.categories).toEqual(["Working with Youngsters", "Current Ability Judging", "Potential Judging"]);
 });

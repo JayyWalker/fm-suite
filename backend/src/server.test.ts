@@ -60,6 +60,18 @@ function physioAttributes(overrides: Partial<Record<string, number>> = {}): Reco
   };
 }
 
+function hoydAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    workingWithYoungsters: 5,
+    jpa: 4,
+    jpp: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -119,6 +131,21 @@ describe("POST /staff", () => {
     expect(body.role).toBe("physio");
     expect(body.categories.Physiotherapy).toBeGreaterThanOrEqual(1);
     expect(body.bestFit).toBe("Physiotherapy");
+  });
+
+  test("creates a head of youth development and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Robbo Taylor", role: "hoyd", attributes: hoydAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("hoyd");
+    expect(body.categories["Working with Youngsters"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Current Ability Judging"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Potential Judging"]).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {
