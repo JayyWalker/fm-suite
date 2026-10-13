@@ -1,10 +1,12 @@
+import { STAFF_ROLES } from "./roles/index";
+
 export const createStaffSchema = {
   body: {
     type: "object",
     required: ["name", "role", "attributes"],
     properties: {
       name: { type: "string", minLength: 1 },
-      role: { type: "string", enum: ["coach", "scout"] },
+      role: { type: "string", enum: STAFF_ROLES },
       tags: { type: "array", items: { type: "string" }, default: [] },
       attributes: { type: "object" },
     },
