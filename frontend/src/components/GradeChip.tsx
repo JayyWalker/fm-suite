@@ -21,6 +21,10 @@ interface GradeChipProps {
 }
 
 export function GradeChip({ stars }: GradeChipProps) {
+  if (!Number.isInteger(stars) || stars < 1 || stars > 5) {
+    return <span className={`${styles.chip} ${styles.unknown}`}>—</span>;
+  }
+
   return (
     <span className={`${styles.chip} ${TIER_CLASSES[stars]}`}>
       {stars}★ {LABELS[stars]}

@@ -34,3 +34,8 @@
   background: rgba(70, 200, 120, 0.18);
   color: #6fdb94;
 }
+
+.unknown {
+  background: rgba(150, 150, 150, 0.18);
+  color: #a0a0a0;
+}

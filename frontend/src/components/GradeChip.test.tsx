@@ -13,6 +13,12 @@ test.each([
   expect(screen.getByText(`${stars}★ ${label}`)).toBeInTheDocument();
 });
 
+test.each([0, 6, NaN, -1, 2.5])("renders an out-of-range or non-integer value (%s) as a neutral placeholder, not 'undefined'", (stars) => {
+  render(<GradeChip stars={stars} />);
+  expect(screen.getByText("—")).toBeInTheDocument();
+  expect(screen.queryByText(/undefined/)).not.toBeInTheDocument();
+});
+
 test("applies a distinct class per star rating so each tier can be colored differently", () => {
   render(<GradeChip stars={5} />);
   const chip = screen.getByText("5★ Elite");
