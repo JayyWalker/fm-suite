@@ -50,6 +50,16 @@ function scoutAttributes(overrides: Partial<Record<string, number>> = {}): Recor
   };
 }
 
+function physioAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    physiotherapy: 5,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -97,11 +107,25 @@ describe("POST /staff", () => {
     expect(res.json().tags).toEqual([]);
   });
 
+  test("creates a physio and returns it with its own category", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Jamie Carragher Jr.", role: "physio", attributes: physioAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("physio");
+    expect(body.categories.Physiotherapy).toBeGreaterThanOrEqual(1);
+    expect(body.bestFit).toBe("Physiotherapy");
+  });
+
   test("rejects an unrecognized role with a 400", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/staff",
-      payload: { name: "Bad Role", role: "physio", attributes: coachAttributes() },
+      payload: { name: "Bad Role", role: "not-a-real-role", attributes: coachAttributes() },
     });
 
     expect(res.statusCode).toBe(400);

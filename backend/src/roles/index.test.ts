@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach and scout are registered as staff roles", () => {
-  expect(STAFF_ROLES).toEqual(["coach", "scout"]);
+test("exactly coach, scout, and physio are registered as staff roles", () => {
+  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio"]);
 });
 
 test("the coach role definition rates coach attributes", () => {
@@ -65,5 +65,22 @@ test("the scout role definition rates scout attributes", () => {
 test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.coach.attributesSchema).toHaveProperty("required");
   expect(ROLES.scout.attributesSchema).toHaveProperty("required");
+  expect(ROLES.physio.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
+});
+
+test("the physio role definition rates physio attributes", () => {
+  const attrs = {
+    physiotherapy: 8,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const result = ROLES.physio.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (physiotherapy) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories.Physiotherapy).toBe(4);
+  expect(ROLES.physio.categories).toEqual(["Physiotherapy"]);
 });
