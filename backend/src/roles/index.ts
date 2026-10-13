@@ -9,10 +9,33 @@ import {
   dataAnalystAttributesSchema,
   type DataAnalystAttributes,
 } from "./dataAnalyst";
+import {
+  SPORTS_SCIENCE_CATEGORIES,
+  rateSportsScience,
+  sportsScienceAttributesSchema,
+  type SportsScienceAttributes,
+} from "./sportsScience";
 
-export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof" | "dataAnalyst";
+export type StaffRole =
+  | "coach"
+  | "scout"
+  | "physio"
+  | "hoyd"
+  | "dof"
+  | "dataAnalyst"
+  | "sportsScientist"
+  | "headOfSportsScience";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"];
+export const STAFF_ROLES: StaffRole[] = [
+  "coach",
+  "scout",
+  "physio",
+  "hoyd",
+  "dof",
+  "dataAnalyst",
+  "sportsScientist",
+  "headOfSportsScience",
+];
 
 export interface StaffRatings {
   categories: Record<string, number>;
@@ -62,5 +85,17 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: DATA_ANALYST_CATEGORIES,
     rate: (attributes) => rateDataAnalyst(attributes as unknown as DataAnalystAttributes),
     attributesSchema: dataAnalystAttributesSchema,
+  },
+  sportsScientist: {
+    key: "sportsScientist",
+    categories: SPORTS_SCIENCE_CATEGORIES,
+    rate: (attributes) => rateSportsScience(attributes as unknown as SportsScienceAttributes),
+    attributesSchema: sportsScienceAttributesSchema,
+  },
+  headOfSportsScience: {
+    key: "headOfSportsScience",
+    categories: SPORTS_SCIENCE_CATEGORIES,
+    rate: (attributes) => rateSportsScience(attributes as unknown as SportsScienceAttributes),
+    attributesSchema: sportsScienceAttributesSchema,
   },
 };

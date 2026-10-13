@@ -1,8 +1,17 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, dof, and dataAnalyst are registered as staff roles", () => {
-  expect(STAFF_ROLES).toEqual(["coach", "scout", "physio", "hoyd", "dof", "dataAnalyst"]);
+test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, and headOfSportsScience are registered as staff roles", () => {
+  expect(STAFF_ROLES).toEqual([
+    "coach",
+    "scout",
+    "physio",
+    "hoyd",
+    "dof",
+    "dataAnalyst",
+    "sportsScientist",
+    "headOfSportsScience",
+  ]);
 });
 
 test("the coach role definition rates coach attributes", () => {
@@ -69,6 +78,8 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.hoyd.attributesSchema).toHaveProperty("required");
   expect(ROLES.dof.attributesSchema).toHaveProperty("required");
   expect(ROLES.dataAnalyst.attributesSchema).toHaveProperty("required");
+  expect(ROLES.sportsScientist.attributesSchema).toHaveProperty("required");
+  expect(ROLES.headOfSportsScience.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -140,4 +151,24 @@ test("the dataAnalyst role definition rates data analyst attributes", () => {
   // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
   expect(result.categories["Judging Player Data"]).toBe(4);
   expect(ROLES.dataAnalyst.categories).toEqual(["Judging Player Data", "Judging Team Data", "Presenting Data"]);
+});
+
+test("sportsScientist and headOfSportsScience both rate via the shared sports science formula", () => {
+  const attrs = {
+    fitness: 8,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const scientistResult = ROLES.sportsScientist.rate(attrs);
+  const headResult = ROLES.headOfSportsScience.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (fitness) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(scientistResult.categories.Fitness).toBe(4);
+  expect(headResult.categories.Fitness).toBe(4);
+  expect(ROLES.sportsScientist.categories).toEqual(["Fitness"]);
+  expect(ROLES.headOfSportsScience.categories).toEqual(["Fitness"]);
+  expect(ROLES.sportsScientist.attributesSchema).toBe(ROLES.headOfSportsScience.attributesSchema);
 });

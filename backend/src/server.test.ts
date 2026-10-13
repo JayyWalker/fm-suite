@@ -96,6 +96,16 @@ function dataAnalystAttributes(overrides: Partial<Record<string, number>> = {}):
   };
 }
 
+function sportsScienceAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    fitness: 5,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -200,6 +210,26 @@ describe("POST /staff", () => {
     expect(body.categories["Judging Player Data"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Judging Team Data"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Presenting Data"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a sports scientist and a head of sports science, each rated via the shared formula", async () => {
+    const scientistRes = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Walter Gfrerer Jr.", role: "sportsScientist", attributes: sportsScienceAttributes() },
+    });
+    const headRes = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Head Scientist", role: "headOfSportsScience", attributes: sportsScienceAttributes() },
+    });
+
+    expect(scientistRes.statusCode).toBe(201);
+    expect(headRes.statusCode).toBe(201);
+    expect(scientistRes.json().role).toBe("sportsScientist");
+    expect(headRes.json().role).toBe("headOfSportsScience");
+    expect(scientistRes.json().categories.Fitness).toBeGreaterThanOrEqual(1);
+    expect(headRes.json().categories.Fitness).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {
