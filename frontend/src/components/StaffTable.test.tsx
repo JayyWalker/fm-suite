@@ -109,6 +109,7 @@ test("renders a toggleable chip for each distinct tag and filters the table by t
     member({ id: 1, name: "Shortlisted Coach", tags: ["Shortlist"] }),
     member({ id: 2, name: "U18 Coach", tags: ["U18"] }),
     member({ id: 3, name: "Untagged Coach", tags: [] }),
+    scoutMember({ id: 4, name: "Shortlisted Scout", tags: ["Shortlist"] }),
   ];
 
   render(<StaffTable staff={staff} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
@@ -116,10 +117,12 @@ test("renders a toggleable chip for each distinct tag and filters the table by t
   expect(screen.getByText("Shortlisted Coach")).toBeInTheDocument();
   expect(screen.getByText("U18 Coach")).toBeInTheDocument();
   expect(screen.getByText("Untagged Coach")).toBeInTheDocument();
+  expect(screen.getByText("Shortlisted Scout")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "Shortlist" }));
 
   expect(screen.getByText("Shortlisted Coach")).toBeInTheDocument();
+  expect(screen.getByText("Shortlisted Scout")).toBeInTheDocument();
   expect(screen.queryByText("U18 Coach")).not.toBeInTheDocument();
   expect(screen.queryByText("Untagged Coach")).not.toBeInTheDocument();
 

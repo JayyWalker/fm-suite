@@ -39,8 +39,19 @@ function member(overrides: Partial<StaffMember>): StaffMember {
   } as StaffMember;
 }
 
+function scoutMember(overrides: Partial<StaffMember>): StaffMember {
+  return member({
+    role: "scout",
+    attributes: { jpa: 5, jpp: 5, determination: 5, adaptability: 5 } as never,
+    categories: { "Current Ability Judging": 3, "Potential Judging": 4 },
+    bestFit: "Potential Judging",
+    ...overrides,
+  } as Partial<StaffMember>);
+}
+
 const staffA = member({ id: 1, name: "Coach A" });
 const staffB = member({ id: 2, name: "Coach B" });
+const staffScout = scoutMember({ id: 3, name: "Scout A" });
 
 function rowFor(name: string) {
   return screen.getByText(name).closest("tr")!;
@@ -101,4 +112,24 @@ test("clicking a different row while one is pinned moves the pin to the new row"
 
   const pinnedLabel = screen.getByText("Pinned");
   expect(pinnedLabel.closest("div")?.textContent).toContain("Coach B");
+});
+
+test("hovering previews a scout row and pinning keeps it pinned when hovering elsewhere", () => {
+  render(<RosterView staff={[staffA, staffScout]} onEdit={vi.fn()} onDelete={vi.fn()} />);
+
+  const scoutRow = rowFor("Scout A");
+  fireEvent.mouseOver(scoutRow);
+
+  expect(screen.getByText("Preview")).toBeInTheDocument();
+  expect(screen.getAllByText("Scout A").length).toBeGreaterThan(1);
+
+  fireEvent.mouseOut(scoutRow);
+  expect(screen.queryByText("Preview")).not.toBeInTheDocument();
+
+  fireEvent.click(scoutRow);
+  fireEvent.mouseOut(scoutRow);
+  fireEvent.mouseOver(rowFor("Coach A"));
+
+  const pinnedLabel = screen.getByText("Pinned");
+  expect(pinnedLabel.closest("div")?.textContent).toContain("Scout A");
 });

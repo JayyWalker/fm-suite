@@ -139,6 +139,29 @@ test("does not delete when the confirmation is declined", () => {
   expect(onDelete).not.toHaveBeenCalled();
 });
 
+test("asks for confirmation naming the scout before deleting, identical to a coach", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={scoutSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Ana Dimitriou"));
+  expect(onDelete).toHaveBeenCalledWith(scoutSample.id);
+});
+
+test("does not delete a scout when the confirmation is declined", () => {
+  const onDelete = vi.fn();
+  vi.spyOn(window, "confirm").mockReturnValue(false);
+
+  render(<DetailPanel staff={scoutSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(onDelete).not.toHaveBeenCalled();
+});
+
 test("shows a scout's own mental attributes, categories, and a Regional Knowledge section", () => {
   render(<DetailPanel staff={scoutSample} mode="preview" />);
 
