@@ -1,5 +1,6 @@
 import type { CoachAttributes } from "./roles/coach";
 import type { ScoutAttributes } from "./roles/scout";
+import type { PhysioAttributes } from "./roles/physio";
 
 export const ATTRIBUTE_LEVELS: { value: number; label: string }[] = [
   { value: 1, label: "Unsuited" },
@@ -24,8 +25,10 @@ interface StaffCore {
 
 export type StaffMember =
   | (StaffCore & { role: "coach"; attributes: CoachAttributes })
-  | (StaffCore & { role: "scout"; attributes: ScoutAttributes });
+  | (StaffCore & { role: "scout"; attributes: ScoutAttributes })
+  | (StaffCore & { role: "physio"; attributes: PhysioAttributes });
 
 export type StaffInput =
   | { role: "coach"; name: string; tags: string[]; attributes: CoachAttributes }
-  | { role: "scout"; name: string; tags: string[]; attributes: ScoutAttributes };
+  | { role: "scout"; name: string; tags: string[]; attributes: ScoutAttributes }
+  | { role: "physio"; name: string; tags: string[]; attributes: PhysioAttributes };

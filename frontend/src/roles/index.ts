@@ -12,10 +12,17 @@ import {
   formGroups as scoutFormGroups,
   mentalFields as scoutMentalFields,
 } from "./scout";
+import {
+  PHYSIO_CATEGORIES,
+  defaultAttributes as physioDefaultAttributes,
+  extraDisplayGroups as physioExtraDisplayGroups,
+  formGroups as physioFormGroups,
+  mentalFields as physioMentalFields,
+} from "./physio";
 
-export type StaffRole = "coach" | "scout";
+export type StaffRole = "coach" | "scout" | "physio";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout"];
+export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio"];
 
 export interface AttributeGroup {
   title: string;
@@ -50,5 +57,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: scoutMentalFields,
     extraDisplayGroups: scoutExtraDisplayGroups,
     defaultAttributes: scoutDefaultAttributes as unknown as Record<string, number>,
+  },
+  physio: {
+    key: "physio",
+    label: "Physio",
+    categories: PHYSIO_CATEGORIES,
+    formGroups: physioFormGroups,
+    mentalFields: physioMentalFields,
+    extraDisplayGroups: physioExtraDisplayGroups,
+    defaultAttributes: physioDefaultAttributes as unknown as Record<string, number>,
   },
 };

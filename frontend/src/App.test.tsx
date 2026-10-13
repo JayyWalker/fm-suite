@@ -119,6 +119,33 @@ test("submitting the add-staff form for a scout creates it with the scout role",
   expect(await screen.findByText("New Scout")).toBeInTheDocument();
 });
 
+test("editing a physio and saving sends its own attributes without a role key", async () => {
+  const physio = member({
+    id: 4,
+    name: "Physio One",
+    role: "physio",
+    attributes: { physiotherapy: 5, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Physiotherapy: 4 },
+    bestFit: "Physiotherapy",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([physio]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(physio);
+
+  render(<App />);
+  await screen.findByText("Physio One");
+
+  fireEvent.click(rowFor("Physio One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(physio.id, {
+    name: physio.name,
+    tags: physio.tags,
+    attributes: physio.attributes,
+  });
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

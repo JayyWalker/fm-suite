@@ -59,7 +59,21 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
 
   expect(screen.getByRole("button", { name: "Coach" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Scout" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Physio" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
+});
+
+test("picking Physio shows its fields grouped into Identity, Medical ability, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Physiotherapy")).toBeInTheDocument();
+  expect(screen.getByLabelText("Man Management")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Medical ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
 });
 
 test("picking Coach shows its fields grouped into Identity, Mental attributes, Coaching attributes, and Knowledge", () => {

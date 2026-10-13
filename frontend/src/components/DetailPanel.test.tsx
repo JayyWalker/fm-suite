@@ -72,6 +72,23 @@ const scoutSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const physioSample: StaffMember = {
+  id: 3,
+  name: "Jamie Carragher Jr.",
+  role: "physio",
+  tags: [],
+  attributes: {
+    physiotherapy: 6,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { Physiotherapy: 4 },
+  bestFit: "Physiotherapy",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -177,4 +194,27 @@ test("shows a scout's own mental attributes, categories, and a Regional Knowledg
   // determination 6 -> 4 stars; scoped to its own row since other chips can share the same text
   const determinationChip = screen.getByText("determination").nextElementSibling;
   expect(determinationChip?.textContent).toBe("4★ Strong");
+});
+
+test("shows a physio's single category and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={physioSample} mode="preview" />);
+
+  expect(screen.getByText("Jamie Carragher Jr.")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the physio before deleting, identical to a coach or scout", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={physioSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Jamie Carragher Jr."));
+  expect(onDelete).toHaveBeenCalledWith(physioSample.id);
 });
