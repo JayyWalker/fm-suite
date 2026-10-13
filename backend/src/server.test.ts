@@ -161,6 +161,18 @@ function technicalDirectorAttributes(overrides: Partial<Record<string, number>> 
   };
 }
 
+function loanManagerAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    analysingData: 5,
+    jpa: 4,
+    jpp: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -361,6 +373,21 @@ describe("POST /staff", () => {
     expect(body.role).toBe("technicalDirector");
     expect(body.categories["Negotiating"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Judging Staff Ability"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a loan manager and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Loan Manager One", role: "loanManager", attributes: loanManagerAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("loanManager");
+    expect(body.categories["Analysing Data"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Judging Player Ability"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Judging Player Potential"]).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {

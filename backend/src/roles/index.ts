@@ -45,6 +45,12 @@ import {
   technicalDirectorAttributesSchema,
   type TechnicalDirectorAttributes,
 } from "./technicalDirector";
+import {
+  LOAN_MANAGER_CATEGORIES,
+  rateLoanManager,
+  loanManagerAttributesSchema,
+  type LoanManagerAttributes,
+} from "./loanManager";
 
 export type StaffRole =
   | "coach"
@@ -60,7 +66,8 @@ export type StaffRole =
   | "performanceAnalyst"
   | "headPerformanceAnalyst"
   | "recruitmentAnalyst"
-  | "technicalDirector";
+  | "technicalDirector"
+  | "loanManager";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -77,6 +84,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "headPerformanceAnalyst",
   "recruitmentAnalyst",
   "technicalDirector",
+  "loanManager",
 ];
 
 export interface StaffRatings {
@@ -175,5 +183,11 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: TECHNICAL_DIRECTOR_CATEGORIES,
     rate: (attributes) => rateTechnicalDirector(attributes as unknown as TechnicalDirectorAttributes),
     attributesSchema: technicalDirectorAttributesSchema,
+  },
+  loanManager: {
+    key: "loanManager",
+    categories: LOAN_MANAGER_CATEGORIES,
+    rate: (attributes) => rateLoanManager(attributes as unknown as LoanManagerAttributes),
+    attributesSchema: loanManagerAttributesSchema,
   },
 };
