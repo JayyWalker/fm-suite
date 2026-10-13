@@ -67,6 +67,8 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
   expect(screen.getByRole("button", { name: "Head of Sports Science" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Head Physio" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Set Piece Coach" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Performance Analyst" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Head Performance Analyst" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
 });
 
@@ -173,6 +175,32 @@ test("picking Set Piece Coach shows its fields grouped into Identity, Coaching a
   expect(screen.getByLabelText("Motivating")).toBeInTheDocument();
   expect(screen.getByText("Identity")).toBeInTheDocument();
   expect(screen.getByText("Coaching attributes")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Performance Analyst shows its fields grouped into Identity, Analysis ability, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Performance Analyst" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.getByLabelText("Tactical Knowledge")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Analysis ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Head Performance Analyst shows the same fields as Performance Analyst", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Head Performance Analyst" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Analysis ability")).toBeInTheDocument();
   expect(screen.getByText("Mental attributes")).toBeInTheDocument();
 });
 

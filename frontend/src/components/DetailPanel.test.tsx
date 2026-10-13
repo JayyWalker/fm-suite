@@ -198,6 +198,25 @@ const setPieceCoachSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const performanceAnalystSample: StaffMember = {
+  id: 10,
+  name: "Performance Analyst One",
+  role: "performanceAnalyst",
+  tags: [],
+  attributes: {
+    analysingData: 6,
+    jpa: 3,
+    tacticalKnowledge: 5,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { "Analysing Data": 4, "Judging Player Ability": 2, "Tactical Knowledge": 3 },
+  bestFit: "Analysing Data",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -471,4 +490,29 @@ test("asks for confirmation naming the Set Piece Coach before deleting, identica
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Set Piece Coach One"));
   expect(onDelete).toHaveBeenCalledWith(setPieceCoachSample.id);
+});
+
+test("shows a Performance Analyst's three categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={performanceAnalystSample} mode="preview" />);
+
+  expect(screen.getByText("Performance Analyst One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.getByText("Tactical Knowledge")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Performance Analyst before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={performanceAnalystSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Performance Analyst One"));
+  expect(onDelete).toHaveBeenCalledWith(performanceAnalystSample.id);
 });

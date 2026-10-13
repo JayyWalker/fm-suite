@@ -61,6 +61,13 @@ import {
   formGroups as setPieceCoachFormGroups,
   mentalFields as setPieceCoachMentalFields,
 } from "./setPieceCoach";
+import {
+  PERFORMANCE_ANALYST_CATEGORIES,
+  defaultAttributes as performanceAnalystDefaultAttributes,
+  extraDisplayGroups as performanceAnalystExtraDisplayGroups,
+  formGroups as performanceAnalystFormGroups,
+  mentalFields as performanceAnalystMentalFields,
+} from "./performanceAnalyst";
 
 export type StaffRole =
   | "coach"
@@ -72,7 +79,9 @@ export type StaffRole =
   | "sportsScientist"
   | "headOfSportsScience"
   | "headPhysio"
-  | "setPieceCoach";
+  | "setPieceCoach"
+  | "performanceAnalyst"
+  | "headPerformanceAnalyst";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -85,6 +94,8 @@ export const STAFF_ROLES: StaffRole[] = [
   "headOfSportsScience",
   "headPhysio",
   "setPieceCoach",
+  "performanceAnalyst",
+  "headPerformanceAnalyst",
 ];
 
 export interface AttributeGroup {
@@ -192,5 +203,23 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: setPieceCoachMentalFields,
     extraDisplayGroups: setPieceCoachExtraDisplayGroups,
     defaultAttributes: setPieceCoachDefaultAttributes as unknown as Record<string, number>,
+  },
+  performanceAnalyst: {
+    key: "performanceAnalyst",
+    label: "Performance Analyst",
+    categories: PERFORMANCE_ANALYST_CATEGORIES,
+    formGroups: performanceAnalystFormGroups,
+    mentalFields: performanceAnalystMentalFields,
+    extraDisplayGroups: performanceAnalystExtraDisplayGroups,
+    defaultAttributes: performanceAnalystDefaultAttributes as unknown as Record<string, number>,
+  },
+  headPerformanceAnalyst: {
+    key: "headPerformanceAnalyst",
+    label: "Head Performance Analyst",
+    categories: PERFORMANCE_ANALYST_CATEGORIES,
+    formGroups: performanceAnalystFormGroups,
+    mentalFields: performanceAnalystMentalFields,
+    extraDisplayGroups: performanceAnalystExtraDisplayGroups,
+    defaultAttributes: performanceAnalystDefaultAttributes as unknown as Record<string, number>,
   },
 };

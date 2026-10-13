@@ -342,6 +342,60 @@ test("editing a Set Piece Coach and saving sends its own attributes without a ro
   });
 });
 
+test("editing a Performance Analyst and saving sends its own attributes without a role key", async () => {
+  const performanceAnalyst = member({
+    id: 12,
+    name: "Performance Analyst One",
+    role: "performanceAnalyst",
+    attributes: { analysingData: 5, jpa: 4, tacticalKnowledge: 4, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { "Analysing Data": 4, "Judging Player Ability": 3, "Tactical Knowledge": 3 },
+    bestFit: "Analysing Data",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([performanceAnalyst]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(performanceAnalyst);
+
+  render(<App />);
+  await screen.findByText("Performance Analyst One");
+
+  fireEvent.click(rowFor("Performance Analyst One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(performanceAnalyst.id, {
+    name: performanceAnalyst.name,
+    tags: performanceAnalyst.tags,
+    attributes: performanceAnalyst.attributes,
+  });
+});
+
+test("editing a Head Performance Analyst and saving sends its own attributes without a role key", async () => {
+  const headPerformanceAnalyst = member({
+    id: 13,
+    name: "Head Performance Analyst One",
+    role: "headPerformanceAnalyst",
+    attributes: { analysingData: 5, jpa: 4, tacticalKnowledge: 4, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { "Analysing Data": 4, "Judging Player Ability": 3, "Tactical Knowledge": 3 },
+    bestFit: "Analysing Data",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([headPerformanceAnalyst]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(headPerformanceAnalyst);
+
+  render(<App />);
+  await screen.findByText("Head Performance Analyst One");
+
+  fireEvent.click(rowFor("Head Performance Analyst One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(headPerformanceAnalyst.id, {
+    name: headPerformanceAnalyst.name,
+    tags: headPerformanceAnalyst.tags,
+    attributes: headPerformanceAnalyst.attributes,
+  });
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

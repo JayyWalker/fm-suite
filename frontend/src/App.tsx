@@ -37,7 +37,13 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "headPhysio") {
     return { role: "headPhysio", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "setPieceCoach", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "setPieceCoach") {
+    return { role: "setPieceCoach", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  if (member.role === "performanceAnalyst") {
+    return { role: "performanceAnalyst", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "headPerformanceAnalyst", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {
