@@ -173,6 +173,33 @@ test("editing a HoYD and saving sends its own attributes without a role key", as
   });
 });
 
+test("editing a DoF and saving sends its own attributes without a role key", async () => {
+  const dof = member({
+    id: 6,
+    name: "DoF One",
+    role: "dof",
+    attributes: { negotiating: 5, jpa: 4, jpp: 4, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Negotiating: 4, "Current Ability Judging": 3, "Potential Judging": 3 },
+    bestFit: "Negotiating",
+  });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([dof]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(dof);
+
+  render(<App />);
+  await screen.findByText("DoF One");
+
+  fireEvent.click(rowFor("DoF One"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  expect(staffApi.updateStaff).toHaveBeenCalledWith(dof.id, {
+    name: dof.name,
+    tags: dof.tags,
+    attributes: dof.attributes,
+  });
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

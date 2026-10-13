@@ -26,10 +26,17 @@ import {
   formGroups as hoydFormGroups,
   mentalFields as hoydMentalFields,
 } from "./hoyd";
+import {
+  DOF_CATEGORIES,
+  defaultAttributes as dofDefaultAttributes,
+  extraDisplayGroups as dofExtraDisplayGroups,
+  formGroups as dofFormGroups,
+  mentalFields as dofMentalFields,
+} from "./dof";
 
-export type StaffRole = "coach" | "scout" | "physio" | "hoyd";
+export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd"];
+export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof"];
 
 export interface AttributeGroup {
   title: string;
@@ -82,5 +89,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: hoydMentalFields,
     extraDisplayGroups: hoydExtraDisplayGroups,
     defaultAttributes: hoydDefaultAttributes as unknown as Record<string, number>,
+  },
+  dof: {
+    key: "dof",
+    label: "Director of Football",
+    categories: DOF_CATEGORIES,
+    formGroups: dofFormGroups,
+    mentalFields: dofMentalFields,
+    extraDisplayGroups: dofExtraDisplayGroups,
+    defaultAttributes: dofDefaultAttributes as unknown as Record<string, number>,
   },
 };

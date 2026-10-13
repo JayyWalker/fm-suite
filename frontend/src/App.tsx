@@ -19,7 +19,10 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "physio") {
     return { role: "physio", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "hoyd", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "hoyd") {
+    return { role: "hoyd", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "dof", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {

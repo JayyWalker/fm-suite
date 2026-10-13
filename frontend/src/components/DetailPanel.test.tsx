@@ -108,6 +108,25 @@ const hoydSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const dofSample: StaffMember = {
+  id: 5,
+  name: "Dan Ashworth Jr.",
+  role: "dof",
+  tags: [],
+  attributes: {
+    negotiating: 6,
+    jpa: 3,
+    jpp: 5,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { Negotiating: 4, "Current Ability Judging": 2, "Potential Judging": 3 },
+  bestFit: "Negotiating",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -261,4 +280,29 @@ test("asks for confirmation naming the HoYD before deleting, identical to every 
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Robbo Taylor"));
   expect(onDelete).toHaveBeenCalledWith(hoydSample.id);
+});
+
+test("shows a DoF's three categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={dofSample} mode="preview" />);
+
+  expect(screen.getByText("Dan Ashworth Jr.")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Negotiating")).toBeInTheDocument();
+  expect(screen.getByText("Current Ability Judging")).toBeInTheDocument();
+  expect(screen.getByText("Potential Judging")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the DoF before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={dofSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Dan Ashworth Jr."));
+  expect(onDelete).toHaveBeenCalledWith(dofSample.id);
 });
