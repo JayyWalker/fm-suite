@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type DataAnalystCategory = "Judging Player Data" | "Judging Team Data" | "Presenting Data";
@@ -55,18 +56,11 @@ export function rateDataAnalyst(attrs: DataAnalystAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const dataAnalystAttributesSchema = {
-  type: "object",
-  required: ["judgingPlayerData", "judgingTeamData", "presentingData", "determination", "adaptability", "manManagement"],
-  properties: {
-    judgingPlayerData: attributeSchema,
-    judgingTeamData: attributeSchema,
-    presentingData: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const dataAnalystAttributesSchema = buildAttributesSchema([
+  "judgingPlayerData",
+  "judgingTeamData",
+  "presentingData",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

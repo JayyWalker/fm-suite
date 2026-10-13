@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type DofCategory = "Negotiating" | "Current Ability Judging" | "Potential Judging";
@@ -51,18 +52,11 @@ export function rateDof(attrs: DofAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const dofAttributesSchema = {
-  type: "object",
-  required: ["negotiating", "jpa", "jpp", "determination", "adaptability", "manManagement"],
-  properties: {
-    negotiating: attributeSchema,
-    jpa: attributeSchema,
-    jpp: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const dofAttributesSchema = buildAttributesSchema([
+  "negotiating",
+  "jpa",
+  "jpp",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

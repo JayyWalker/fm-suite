@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type CoachCategory =
@@ -80,37 +81,17 @@ export function rateCoach(attrs: CoachAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const coachAttributesSchema = {
-  type: "object",
-  required: [
-    "authority",
-    "determination",
-    "motivating",
-    "attacking",
-    "defending",
-    "fitness",
-    "goalkeeping",
-    "possession",
-    "setPieces",
-    "tactical",
-    "technical",
-    "tacticalKnowledge",
-  ],
-  properties: {
-    authority: attributeSchema,
-    determination: attributeSchema,
-    motivating: attributeSchema,
-    attacking: attributeSchema,
-    defending: attributeSchema,
-    fitness: attributeSchema,
-    goalkeeping: attributeSchema,
-    possession: attributeSchema,
-    setPieces: attributeSchema,
-    tactical: attributeSchema,
-    technical: attributeSchema,
-    tacticalKnowledge: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const coachAttributesSchema = buildAttributesSchema([
+  "authority",
+  "determination",
+  "motivating",
+  "attacking",
+  "defending",
+  "fitness",
+  "goalkeeping",
+  "possession",
+  "setPieces",
+  "tactical",
+  "technical",
+  "tacticalKnowledge",
+]);

@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type RecruitmentAnalystCategory = "Analysing Data" | "Judging Player Ability";
@@ -51,17 +52,10 @@ export function rateRecruitmentAnalyst(attrs: RecruitmentAnalystAttributes): Sta
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const recruitmentAnalystAttributesSchema = {
-  type: "object",
-  required: ["analysingData", "jpa", "determination", "adaptability", "manManagement"],
-  properties: {
-    analysingData: attributeSchema,
-    jpa: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const recruitmentAnalystAttributesSchema = buildAttributesSchema([
+  "analysingData",
+  "jpa",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

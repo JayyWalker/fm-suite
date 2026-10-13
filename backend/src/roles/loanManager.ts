@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type LoanManagerCategory = "Analysing Data" | "Judging Player Ability" | "Judging Player Potential";
@@ -55,18 +56,11 @@ export function rateLoanManager(attrs: LoanManagerAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const loanManagerAttributesSchema = {
-  type: "object",
-  required: ["analysingData", "jpa", "jpp", "determination", "adaptability", "manManagement"],
-  properties: {
-    analysingData: attributeSchema,
-    jpa: attributeSchema,
-    jpp: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const loanManagerAttributesSchema = buildAttributesSchema([
+  "analysingData",
+  "jpa",
+  "jpp",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

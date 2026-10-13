@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type PhysioCategory = "Physiotherapy";
@@ -25,16 +26,9 @@ export function ratePhysio(attrs: PhysioAttributes): StaffRatings {
   };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const physioAttributesSchema = {
-  type: "object",
-  required: ["physiotherapy", "determination", "adaptability", "manManagement"],
-  properties: {
-    physiotherapy: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const physioAttributesSchema = buildAttributesSchema([
+  "physiotherapy",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type SportsScienceCategory = "Fitness";
@@ -25,16 +26,9 @@ export function rateSportsScience(attrs: SportsScienceAttributes): StaffRatings 
   };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const sportsScienceAttributesSchema = {
-  type: "object",
-  required: ["fitness", "determination", "adaptability", "manManagement"],
-  properties: {
-    fitness: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const sportsScienceAttributesSchema = buildAttributesSchema([
+  "fitness",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

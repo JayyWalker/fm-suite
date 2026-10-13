@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type TechnicalDirectorCategory = "Negotiating" | "Judging Staff Ability";
@@ -48,17 +49,10 @@ export function rateTechnicalDirector(attrs: TechnicalDirectorAttributes): Staff
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const technicalDirectorAttributesSchema = {
-  type: "object",
-  required: ["negotiating", "judgingStaffAbility", "determination", "adaptability", "manManagement"],
-  properties: {
-    negotiating: attributeSchema,
-    judgingStaffAbility: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const technicalDirectorAttributesSchema = buildAttributesSchema([
+  "negotiating",
+  "judgingStaffAbility",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);

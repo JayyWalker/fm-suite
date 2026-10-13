@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type SetPieceCoachCategory = "Set Pieces";
@@ -25,16 +26,9 @@ export function rateSetPieceCoach(attrs: SetPieceCoachAttributes): StaffRatings 
   };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const setPieceCoachAttributesSchema = {
-  type: "object",
-  required: ["setPieces", "determination", "authority", "motivating"],
-  properties: {
-    setPieces: attributeSchema,
-    determination: attributeSchema,
-    authority: attributeSchema,
-    motivating: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const setPieceCoachAttributesSchema = buildAttributesSchema([
+  "setPieces",
+  "determination",
+  "authority",
+  "motivating",
+]);

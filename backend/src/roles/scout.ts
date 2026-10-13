@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type ScoutCategory = "Current Ability Judging" | "Potential Judging";
@@ -66,59 +67,28 @@ export function rateScout(attrs: ScoutAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const scoutAttributesSchema = {
-  type: "object",
-  required: [
-    "jpa",
-    "jpp",
-    "determination",
-    "adaptability",
-    "westernEurope",
-    "centralEurope",
-    "ukAndIreland",
-    "southernEurope",
-    "southEasternEurope",
-    "northEasternEurope",
-    "northernEurope",
-    "easternEurope",
-    "southAmericaNorth",
-    "southAmericaSouth",
-    "northAmerica",
-    "westernAfrica",
-    "centralAfrica",
-    "southernAfrica",
-    "northAfrica",
-    "middleEast",
-    "eastAsia",
-    "southEastAsia",
-    "oceania",
-  ],
-  properties: {
-    jpa: attributeSchema,
-    jpp: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    westernEurope: attributeSchema,
-    centralEurope: attributeSchema,
-    ukAndIreland: attributeSchema,
-    southernEurope: attributeSchema,
-    southEasternEurope: attributeSchema,
-    northEasternEurope: attributeSchema,
-    northernEurope: attributeSchema,
-    easternEurope: attributeSchema,
-    southAmericaNorth: attributeSchema,
-    southAmericaSouth: attributeSchema,
-    northAmerica: attributeSchema,
-    westernAfrica: attributeSchema,
-    centralAfrica: attributeSchema,
-    southernAfrica: attributeSchema,
-    northAfrica: attributeSchema,
-    middleEast: attributeSchema,
-    eastAsia: attributeSchema,
-    southEastAsia: attributeSchema,
-    oceania: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const scoutAttributesSchema = buildAttributesSchema([
+  "jpa",
+  "jpp",
+  "determination",
+  "adaptability",
+  "westernEurope",
+  "centralEurope",
+  "ukAndIreland",
+  "southernEurope",
+  "southEasternEurope",
+  "northEasternEurope",
+  "northernEurope",
+  "easternEurope",
+  "southAmericaNorth",
+  "southAmericaSouth",
+  "northAmerica",
+  "westernAfrica",
+  "centralAfrica",
+  "southernAfrica",
+  "northAfrica",
+  "middleEast",
+  "eastAsia",
+  "southEastAsia",
+  "oceania",
+]);

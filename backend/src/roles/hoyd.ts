@@ -1,4 +1,5 @@
 import { combinedScore, scoreToStars } from "../scoring";
+import { buildAttributesSchema } from "./buildAttributesSchema";
 import type { StaffRatings } from "./index";
 
 export type HoydCategory = "Working with Youngsters" | "Current Ability Judging" | "Potential Judging";
@@ -55,18 +56,11 @@ export function rateHoyd(attrs: HoydAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-const attributeSchema = { type: "integer", minimum: 1, maximum: 8 };
-
-export const hoydAttributesSchema = {
-  type: "object",
-  required: ["workingWithYoungsters", "jpa", "jpp", "determination", "adaptability", "manManagement"],
-  properties: {
-    workingWithYoungsters: attributeSchema,
-    jpa: attributeSchema,
-    jpp: attributeSchema,
-    determination: attributeSchema,
-    adaptability: attributeSchema,
-    manManagement: attributeSchema,
-  },
-  additionalProperties: false,
-};
+export const hoydAttributesSchema = buildAttributesSchema([
+  "workingWithYoungsters",
+  "jpa",
+  "jpp",
+  "determination",
+  "adaptability",
+  "manManagement",
+]);
