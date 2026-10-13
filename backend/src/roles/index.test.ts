@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, headOfSportsScience, and headPhysio are registered as staff roles", () => {
+test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, headOfSportsScience, headPhysio, and setPieceCoach are registered as staff roles", () => {
   expect(STAFF_ROLES).toEqual([
     "coach",
     "scout",
@@ -12,6 +12,7 @@ test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, hea
     "sportsScientist",
     "headOfSportsScience",
     "headPhysio",
+    "setPieceCoach",
   ]);
 });
 
@@ -82,6 +83,7 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.sportsScientist.attributesSchema).toHaveProperty("required");
   expect(ROLES.headOfSportsScience.attributesSchema).toHaveProperty("required");
   expect(ROLES.headPhysio.attributesSchema).toHaveProperty("required");
+  expect(ROLES.setPieceCoach.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -190,4 +192,20 @@ test("the headPhysio role definition rates head physio attributes", () => {
   // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
   expect(result.categories.Physiotherapy).toBe(4);
   expect(ROLES.headPhysio.categories).toEqual(["Physiotherapy", "Judging Player Condition"]);
+});
+
+test("the setPieceCoach role definition rates set piece coach attributes", () => {
+  const attrs = {
+    setPieces: 8,
+    determination: 1,
+    authority: 1,
+    motivating: 1,
+  };
+
+  const result = ROLES.setPieceCoach.rate(attrs);
+
+  // mental average (determination/authority/motivating) = 1, primary (setPieces) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories["Set Pieces"]).toBe(4);
+  expect(ROLES.setPieceCoach.categories).toEqual(["Set Pieces"]);
 });

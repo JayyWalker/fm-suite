@@ -21,6 +21,12 @@ import {
   headPhysioAttributesSchema,
   type HeadPhysioAttributes,
 } from "./headPhysio";
+import {
+  SET_PIECE_COACH_CATEGORIES,
+  rateSetPieceCoach,
+  setPieceCoachAttributesSchema,
+  type SetPieceCoachAttributes,
+} from "./setPieceCoach";
 
 export type StaffRole =
   | "coach"
@@ -31,7 +37,8 @@ export type StaffRole =
   | "dataAnalyst"
   | "sportsScientist"
   | "headOfSportsScience"
-  | "headPhysio";
+  | "headPhysio"
+  | "setPieceCoach";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -43,6 +50,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "sportsScientist",
   "headOfSportsScience",
   "headPhysio",
+  "setPieceCoach",
 ];
 
 export interface StaffRatings {
@@ -111,5 +119,11 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: HEAD_PHYSIO_CATEGORIES,
     rate: (attributes) => rateHeadPhysio(attributes as unknown as HeadPhysioAttributes),
     attributesSchema: headPhysioAttributesSchema,
+  },
+  setPieceCoach: {
+    key: "setPieceCoach",
+    categories: SET_PIECE_COACH_CATEGORIES,
+    rate: (attributes) => rateSetPieceCoach(attributes as unknown as SetPieceCoachAttributes),
+    attributesSchema: setPieceCoachAttributesSchema,
   },
 };

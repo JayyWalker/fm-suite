@@ -117,6 +117,16 @@ function headPhysioAttributes(overrides: Partial<Record<string, number>> = {}): 
   };
 }
 
+function setPieceCoachAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    setPieces: 5,
+    determination: 4,
+    authority: 3,
+    motivating: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -255,6 +265,20 @@ describe("POST /staff", () => {
     expect(body.role).toBe("headPhysio");
     expect(body.categories.Physiotherapy).toBeGreaterThanOrEqual(1);
     expect(body.categories["Judging Player Condition"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a set piece coach and returns it with its own category", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Set Piece Coach One", role: "setPieceCoach", attributes: setPieceCoachAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("setPieceCoach");
+    expect(body.categories["Set Pieces"]).toBeGreaterThanOrEqual(1);
+    expect(body.bestFit).toBe("Set Pieces");
   });
 
   test("rejects an unrecognized role with a 400", async () => {
