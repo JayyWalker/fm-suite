@@ -2,10 +2,11 @@ import { COACH_CATEGORIES, rateCoach, coachAttributesSchema, type CoachAttribute
 import { SCOUT_CATEGORIES, rateScout, scoutAttributesSchema, type ScoutAttributes } from "./scout";
 import { PHYSIO_CATEGORIES, ratePhysio, physioAttributesSchema, type PhysioAttributes } from "./physio";
 import { HOYD_CATEGORIES, rateHoyd, hoydAttributesSchema, type HoydAttributes } from "./hoyd";
+import { DOF_CATEGORIES, rateDof, dofAttributesSchema, type DofAttributes } from "./dof";
 
-export type StaffRole = "coach" | "scout" | "physio" | "hoyd";
+export type StaffRole = "coach" | "scout" | "physio" | "hoyd" | "dof";
 
-export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd"];
+export const STAFF_ROLES: StaffRole[] = ["coach", "scout", "physio", "hoyd", "dof"];
 
 export interface StaffRatings {
   categories: Record<string, number>;
@@ -43,5 +44,11 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: HOYD_CATEGORIES,
     rate: (attributes) => rateHoyd(attributes as unknown as HoydAttributes),
     attributesSchema: hoydAttributesSchema,
+  },
+  dof: {
+    key: "dof",
+    categories: DOF_CATEGORIES,
+    rate: (attributes) => rateDof(attributes as unknown as DofAttributes),
+    attributesSchema: dofAttributesSchema,
   },
 };

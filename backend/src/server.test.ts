@@ -72,6 +72,18 @@ function hoydAttributes(overrides: Partial<Record<string, number>> = {}): Record
   };
 }
 
+function dofAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    negotiating: 5,
+    jpa: 4,
+    jpp: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -144,6 +156,21 @@ describe("POST /staff", () => {
     const body = res.json();
     expect(body.role).toBe("hoyd");
     expect(body.categories["Working with Youngsters"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Current Ability Judging"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Potential Judging"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a director of football and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Dan Ashworth Jr.", role: "dof", attributes: dofAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("dof");
+    expect(body.categories["Negotiating"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Current Ability Judging"]).toBeGreaterThanOrEqual(1);
     expect(body.categories["Potential Judging"]).toBeGreaterThanOrEqual(1);
   });
