@@ -39,6 +39,12 @@ import {
   recruitmentAnalystAttributesSchema,
   type RecruitmentAnalystAttributes,
 } from "./recruitmentAnalyst";
+import {
+  TECHNICAL_DIRECTOR_CATEGORIES,
+  rateTechnicalDirector,
+  technicalDirectorAttributesSchema,
+  type TechnicalDirectorAttributes,
+} from "./technicalDirector";
 
 export type StaffRole =
   | "coach"
@@ -53,7 +59,8 @@ export type StaffRole =
   | "setPieceCoach"
   | "performanceAnalyst"
   | "headPerformanceAnalyst"
-  | "recruitmentAnalyst";
+  | "recruitmentAnalyst"
+  | "technicalDirector";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -69,6 +76,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "performanceAnalyst",
   "headPerformanceAnalyst",
   "recruitmentAnalyst",
+  "technicalDirector",
 ];
 
 export interface StaffRatings {
@@ -161,5 +169,11 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: RECRUITMENT_ANALYST_CATEGORIES,
     rate: (attributes) => rateRecruitmentAnalyst(attributes as unknown as RecruitmentAnalystAttributes),
     attributesSchema: recruitmentAnalystAttributesSchema,
+  },
+  technicalDirector: {
+    key: "technicalDirector",
+    categories: TECHNICAL_DIRECTOR_CATEGORIES,
+    rate: (attributes) => rateTechnicalDirector(attributes as unknown as TechnicalDirectorAttributes),
+    attributesSchema: technicalDirectorAttributesSchema,
   },
 };
