@@ -15,6 +15,12 @@ import {
   sportsScienceAttributesSchema,
   type SportsScienceAttributes,
 } from "./sportsScience";
+import {
+  HEAD_PHYSIO_CATEGORIES,
+  rateHeadPhysio,
+  headPhysioAttributesSchema,
+  type HeadPhysioAttributes,
+} from "./headPhysio";
 
 export type StaffRole =
   | "coach"
@@ -24,7 +30,8 @@ export type StaffRole =
   | "dof"
   | "dataAnalyst"
   | "sportsScientist"
-  | "headOfSportsScience";
+  | "headOfSportsScience"
+  | "headPhysio";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -35,6 +42,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "dataAnalyst",
   "sportsScientist",
   "headOfSportsScience",
+  "headPhysio",
 ];
 
 export interface StaffRatings {
@@ -97,5 +105,11 @@ export const ROLES: Record<StaffRole, RoleDefinition> = {
     categories: SPORTS_SCIENCE_CATEGORIES,
     rate: (attributes) => rateSportsScience(attributes as unknown as SportsScienceAttributes),
     attributesSchema: sportsScienceAttributesSchema,
+  },
+  headPhysio: {
+    key: "headPhysio",
+    categories: HEAD_PHYSIO_CATEGORIES,
+    rate: (attributes) => rateHeadPhysio(attributes as unknown as HeadPhysioAttributes),
+    attributesSchema: headPhysioAttributesSchema,
   },
 };

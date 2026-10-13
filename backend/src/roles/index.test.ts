@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, and headOfSportsScience are registered as staff roles", () => {
+test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, headOfSportsScience, and headPhysio are registered as staff roles", () => {
   expect(STAFF_ROLES).toEqual([
     "coach",
     "scout",
@@ -11,6 +11,7 @@ test("exactly coach, scout, physio, hoyd, dof, dataAnalyst, sportsScientist, and
     "dataAnalyst",
     "sportsScientist",
     "headOfSportsScience",
+    "headPhysio",
   ]);
 });
 
@@ -80,6 +81,7 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.dataAnalyst.attributesSchema).toHaveProperty("required");
   expect(ROLES.sportsScientist.attributesSchema).toHaveProperty("required");
   expect(ROLES.headOfSportsScience.attributesSchema).toHaveProperty("required");
+  expect(ROLES.headPhysio.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -171,4 +173,21 @@ test("sportsScientist and headOfSportsScience both rate via the shared sports sc
   expect(ROLES.sportsScientist.categories).toEqual(["Fitness"]);
   expect(ROLES.headOfSportsScience.categories).toEqual(["Fitness"]);
   expect(ROLES.sportsScientist.attributesSchema).toBe(ROLES.headOfSportsScience.attributesSchema);
+});
+
+test("the headPhysio role definition rates head physio attributes", () => {
+  const attrs = {
+    physiotherapy: 8,
+    judgingPlayerCondition: 1,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const result = ROLES.headPhysio.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (physiotherapy) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories.Physiotherapy).toBe(4);
+  expect(ROLES.headPhysio.categories).toEqual(["Physiotherapy", "Judging Player Condition"]);
 });

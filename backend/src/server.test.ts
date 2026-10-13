@@ -106,6 +106,17 @@ function sportsScienceAttributes(overrides: Partial<Record<string, number>> = {}
   };
 }
 
+function headPhysioAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    physiotherapy: 5,
+    judgingPlayerCondition: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -230,6 +241,20 @@ describe("POST /staff", () => {
     expect(headRes.json().role).toBe("headOfSportsScience");
     expect(scientistRes.json().categories.Fitness).toBeGreaterThanOrEqual(1);
     expect(headRes.json().categories.Fitness).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a head physio and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Head Physio One", role: "headPhysio", attributes: headPhysioAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("headPhysio");
+    expect(body.categories.Physiotherapy).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Judging Player Condition"]).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {
