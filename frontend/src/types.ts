@@ -9,6 +9,7 @@ import type { HeadPhysioAttributes } from "./roles/headPhysio";
 import type { SetPieceCoachAttributes } from "./roles/setPieceCoach";
 import type { PerformanceAnalystAttributes } from "./roles/performanceAnalyst";
 import type { RecruitmentAnalystAttributes } from "./roles/recruitmentAnalyst";
+import type { TechnicalDirectorAttributes } from "./roles/technicalDirector";
 
 export const ATTRIBUTE_LEVELS: { value: number; label: string }[] = [
   { value: 1, label: "Unsuited" },
@@ -44,7 +45,8 @@ export type StaffMember =
   | (StaffCore & { role: "setPieceCoach"; attributes: SetPieceCoachAttributes })
   | (StaffCore & { role: "performanceAnalyst"; attributes: PerformanceAnalystAttributes })
   | (StaffCore & { role: "headPerformanceAnalyst"; attributes: PerformanceAnalystAttributes })
-  | (StaffCore & { role: "recruitmentAnalyst"; attributes: RecruitmentAnalystAttributes });
+  | (StaffCore & { role: "recruitmentAnalyst"; attributes: RecruitmentAnalystAttributes })
+  | (StaffCore & { role: "technicalDirector"; attributes: TechnicalDirectorAttributes });
 
 export type StaffInput =
   | { role: "coach"; name: string; tags: string[]; attributes: CoachAttributes }
@@ -59,4 +61,5 @@ export type StaffInput =
   | { role: "setPieceCoach"; name: string; tags: string[]; attributes: SetPieceCoachAttributes }
   | { role: "performanceAnalyst"; name: string; tags: string[]; attributes: PerformanceAnalystAttributes }
   | { role: "headPerformanceAnalyst"; name: string; tags: string[]; attributes: PerformanceAnalystAttributes }
-  | { role: "recruitmentAnalyst"; name: string; tags: string[]; attributes: RecruitmentAnalystAttributes };
+  | { role: "recruitmentAnalyst"; name: string; tags: string[]; attributes: RecruitmentAnalystAttributes }
+  | { role: "technicalDirector"; name: string; tags: string[]; attributes: TechnicalDirectorAttributes };

@@ -75,6 +75,13 @@ import {
   formGroups as recruitmentAnalystFormGroups,
   mentalFields as recruitmentAnalystMentalFields,
 } from "./recruitmentAnalyst";
+import {
+  TECHNICAL_DIRECTOR_CATEGORIES,
+  defaultAttributes as technicalDirectorDefaultAttributes,
+  extraDisplayGroups as technicalDirectorExtraDisplayGroups,
+  formGroups as technicalDirectorFormGroups,
+  mentalFields as technicalDirectorMentalFields,
+} from "./technicalDirector";
 
 export type StaffRole =
   | "coach"
@@ -89,7 +96,8 @@ export type StaffRole =
   | "setPieceCoach"
   | "performanceAnalyst"
   | "headPerformanceAnalyst"
-  | "recruitmentAnalyst";
+  | "recruitmentAnalyst"
+  | "technicalDirector";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -105,6 +113,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "performanceAnalyst",
   "headPerformanceAnalyst",
   "recruitmentAnalyst",
+  "technicalDirector",
 ];
 
 export interface AttributeGroup {
@@ -239,5 +248,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: recruitmentAnalystMentalFields,
     extraDisplayGroups: recruitmentAnalystExtraDisplayGroups,
     defaultAttributes: recruitmentAnalystDefaultAttributes as unknown as Record<string, number>,
+  },
+  technicalDirector: {
+    key: "technicalDirector",
+    label: "Technical Director",
+    categories: TECHNICAL_DIRECTOR_CATEGORIES,
+    formGroups: technicalDirectorFormGroups,
+    mentalFields: technicalDirectorMentalFields,
+    extraDisplayGroups: technicalDirectorExtraDisplayGroups,
+    defaultAttributes: technicalDirectorDefaultAttributes as unknown as Record<string, number>,
   },
 };

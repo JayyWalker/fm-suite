@@ -70,6 +70,7 @@ test("shows a role picker with no attribute fields until a role is chosen", () =
   expect(screen.getByRole("button", { name: "Performance Analyst" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Head Performance Analyst" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Recruitment Analyst" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Technical Director" })).toBeInTheDocument();
   expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
 });
 
@@ -215,6 +216,19 @@ test("picking Recruitment Analyst shows its fields grouped into Identity, Analys
   expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
   expect(screen.getByText("Identity")).toBeInTheDocument();
   expect(screen.getByText("Analysis ability")).toBeInTheDocument();
+  expect(screen.getByText("Mental attributes")).toBeInTheDocument();
+});
+
+test("picking Technical Director shows its fields grouped into Identity, Staff management, and Mental attributes", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Technical Director" }));
+
+  expect(screen.getByLabelText("Name")).toBeInTheDocument();
+  expect(screen.getByLabelText("Negotiating")).toBeInTheDocument();
+  expect(screen.getByLabelText("Judging Staff Ability")).toBeInTheDocument();
+  expect(screen.getByText("Identity")).toBeInTheDocument();
+  expect(screen.getByText("Staff management")).toBeInTheDocument();
   expect(screen.getByText("Mental attributes")).toBeInTheDocument();
 });
 

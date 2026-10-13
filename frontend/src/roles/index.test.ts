@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { STAFF_ROLES, ROLES } from "./index";
 
-test("exactly all 13 expected staff roles are registered", () => {
+test("exactly all 14 expected staff roles are registered", () => {
   expect(STAFF_ROLES).toEqual([
     "coach",
     "scout",
@@ -16,6 +16,7 @@ test("exactly all 13 expected staff roles are registered", () => {
     "performanceAnalyst",
     "headPerformanceAnalyst",
     "recruitmentAnalyst",
+    "technicalDirector",
   ]);
 });
 
@@ -65,4 +66,7 @@ test("each role definition exposes its label, categories, and form groups", () =
   expect(ROLES.recruitmentAnalyst.label).toBe("Recruitment Analyst");
   expect(ROLES.recruitmentAnalyst.categories).toEqual(["Analysing Data", "Judging Player Ability"]);
   expect(ROLES.recruitmentAnalyst.extraDisplayGroups).toHaveLength(0);
+  expect(ROLES.technicalDirector.label).toBe("Technical Director");
+  expect(ROLES.technicalDirector.categories).toEqual(["Negotiating", "Judging Staff Ability"]);
+  expect(ROLES.technicalDirector.extraDisplayGroups).toHaveLength(0);
 });

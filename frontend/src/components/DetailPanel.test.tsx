@@ -235,6 +235,24 @@ const recruitmentAnalystSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const technicalDirectorSample: StaffMember = {
+  id: 12,
+  name: "Technical Director One",
+  role: "technicalDirector",
+  tags: [],
+  attributes: {
+    negotiating: 6,
+    judgingStaffAbility: 3,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { Negotiating: 4, "Judging Staff Ability": 2 },
+  bestFit: "Negotiating",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -557,4 +575,28 @@ test("asks for confirmation naming the Recruitment Analyst before deleting, iden
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Recruitment Analyst One"));
   expect(onDelete).toHaveBeenCalledWith(recruitmentAnalystSample.id);
+});
+
+test("shows a Technical Director's two categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={technicalDirectorSample} mode="preview" />);
+
+  expect(screen.getByText("Technical Director One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Negotiating")).toBeInTheDocument();
+  expect(screen.getByText("Judging Staff Ability")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Technical Director before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={technicalDirectorSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Technical Director One"));
+  expect(onDelete).toHaveBeenCalledWith(technicalDirectorSample.id);
 });
