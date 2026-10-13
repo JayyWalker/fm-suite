@@ -139,6 +139,17 @@ function performanceAnalystAttributes(overrides: Partial<Record<string, number>>
   };
 }
 
+function recruitmentAnalystAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+  return {
+    analysingData: 5,
+    jpa: 4,
+    determination: 4,
+    adaptability: 3,
+    manManagement: 4,
+    ...overrides,
+  };
+}
+
 let app: FastifyInstance;
 
 beforeEach(() => {
@@ -311,6 +322,20 @@ describe("POST /staff", () => {
     expect(headRes.json().role).toBe("headPerformanceAnalyst");
     expect(analystRes.json().categories["Analysing Data"]).toBeGreaterThanOrEqual(1);
     expect(headRes.json().categories["Analysing Data"]).toBeGreaterThanOrEqual(1);
+  });
+
+  test("creates a recruitment analyst and returns it with its own categories", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Recruitment Analyst One", role: "recruitmentAnalyst", attributes: recruitmentAnalystAttributes() },
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = res.json();
+    expect(body.role).toBe("recruitmentAnalyst");
+    expect(body.categories["Analysing Data"]).toBeGreaterThanOrEqual(1);
+    expect(body.categories["Judging Player Ability"]).toBeGreaterThanOrEqual(1);
   });
 
   test("rejects an unrecognized role with a 400", async () => {

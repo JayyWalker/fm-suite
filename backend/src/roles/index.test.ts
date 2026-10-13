@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { ROLES, STAFF_ROLES } from "./index";
 
-test("exactly all 12 expected staff roles are registered", () => {
+test("exactly all 13 expected staff roles are registered", () => {
   expect(STAFF_ROLES).toEqual([
     "coach",
     "scout",
@@ -15,6 +15,7 @@ test("exactly all 12 expected staff roles are registered", () => {
     "setPieceCoach",
     "performanceAnalyst",
     "headPerformanceAnalyst",
+    "recruitmentAnalyst",
   ]);
 });
 
@@ -88,6 +89,7 @@ test("each role exposes its own attributes JSON schema", () => {
   expect(ROLES.setPieceCoach.attributesSchema).toHaveProperty("required");
   expect(ROLES.performanceAnalyst.attributesSchema).toHaveProperty("required");
   expect(ROLES.headPerformanceAnalyst.attributesSchema).toHaveProperty("required");
+  expect(ROLES.recruitmentAnalyst.attributesSchema).toHaveProperty("required");
   expect(ROLES.coach.attributesSchema).not.toBe(ROLES.scout.attributesSchema);
 });
 
@@ -237,4 +239,21 @@ test("performanceAnalyst and headPerformanceAnalyst both rate via the shared per
     "Tactical Knowledge",
   ]);
   expect(ROLES.performanceAnalyst.attributesSchema).toBe(ROLES.headPerformanceAnalyst.attributesSchema);
+});
+
+test("the recruitmentAnalyst role definition rates recruitment analyst attributes", () => {
+  const attrs = {
+    analysingData: 8,
+    jpa: 1,
+    determination: 1,
+    adaptability: 1,
+    manManagement: 1,
+  };
+
+  const result = ROLES.recruitmentAnalyst.rate(attrs);
+
+  // mental average (determination/adaptability/manManagement) = 1, primary (analysingData) = 8
+  // combinedScore(8, 1) = 5.9 -> scoreToStars(5.9) = 4
+  expect(result.categories["Analysing Data"]).toBe(4);
+  expect(ROLES.recruitmentAnalyst.categories).toEqual(["Analysing Data", "Judging Player Ability"]);
 });
