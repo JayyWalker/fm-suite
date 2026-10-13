@@ -82,6 +82,13 @@ import {
   formGroups as technicalDirectorFormGroups,
   mentalFields as technicalDirectorMentalFields,
 } from "./technicalDirector";
+import {
+  LOAN_MANAGER_CATEGORIES,
+  defaultAttributes as loanManagerDefaultAttributes,
+  extraDisplayGroups as loanManagerExtraDisplayGroups,
+  formGroups as loanManagerFormGroups,
+  mentalFields as loanManagerMentalFields,
+} from "./loanManager";
 
 export type StaffRole =
   | "coach"
@@ -97,7 +104,8 @@ export type StaffRole =
   | "performanceAnalyst"
   | "headPerformanceAnalyst"
   | "recruitmentAnalyst"
-  | "technicalDirector";
+  | "technicalDirector"
+  | "loanManager";
 
 export const STAFF_ROLES: StaffRole[] = [
   "coach",
@@ -114,6 +122,7 @@ export const STAFF_ROLES: StaffRole[] = [
   "headPerformanceAnalyst",
   "recruitmentAnalyst",
   "technicalDirector",
+  "loanManager",
 ];
 
 export interface AttributeGroup {
@@ -257,5 +266,14 @@ export const ROLES: Record<StaffRole, RoleUIDefinition> = {
     mentalFields: technicalDirectorMentalFields,
     extraDisplayGroups: technicalDirectorExtraDisplayGroups,
     defaultAttributes: technicalDirectorDefaultAttributes as unknown as Record<string, number>,
+  },
+  loanManager: {
+    key: "loanManager",
+    label: "Loan Manager",
+    categories: LOAN_MANAGER_CATEGORIES,
+    formGroups: loanManagerFormGroups,
+    mentalFields: loanManagerMentalFields,
+    extraDisplayGroups: loanManagerExtraDisplayGroups,
+    defaultAttributes: loanManagerDefaultAttributes as unknown as Record<string, number>,
   },
 };

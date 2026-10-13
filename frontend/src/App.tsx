@@ -49,7 +49,10 @@ function toStaffInput(member: StaffMember): StaffInput {
   if (member.role === "recruitmentAnalyst") {
     return { role: "recruitmentAnalyst", name: member.name, tags: member.tags, attributes: member.attributes };
   }
-  return { role: "technicalDirector", name: member.name, tags: member.tags, attributes: member.attributes };
+  if (member.role === "technicalDirector") {
+    return { role: "technicalDirector", name: member.name, tags: member.tags, attributes: member.attributes };
+  }
+  return { role: "loanManager", name: member.name, tags: member.tags, attributes: member.attributes };
 }
 
 export function App() {

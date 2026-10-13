@@ -253,6 +253,25 @@ const technicalDirectorSample: StaffMember = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 } as StaffMember;
 
+const loanManagerSample: StaffMember = {
+  id: 13,
+  name: "Loan Manager One",
+  role: "loanManager",
+  tags: [],
+  attributes: {
+    analysingData: 6,
+    jpa: 3,
+    jpp: 5,
+    determination: 6,
+    adaptability: 2,
+    manManagement: 2,
+  } as never,
+  categories: { "Analysing Data": 4, "Judging Player Ability": 2, "Judging Player Potential": 3 },
+  bestFit: "Analysing Data",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+} as StaffMember;
+
 test("shows a placeholder when there is no staff member", () => {
   render(<DetailPanel staff={null} mode="empty" />);
   expect(screen.getByText(/hover a row/i)).toBeInTheDocument();
@@ -599,4 +618,29 @@ test("asks for confirmation naming the Technical Director before deleting, ident
 
   expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Technical Director One"));
   expect(onDelete).toHaveBeenCalledWith(technicalDirectorSample.id);
+});
+
+test("shows a Loan Manager's three categories and mental attributes, with no extra display section", () => {
+  render(<DetailPanel staff={loanManagerSample} mode="preview" />);
+
+  expect(screen.getByText("Loan Manager One")).toBeInTheDocument();
+  expect(screen.getByText("determination")).toBeInTheDocument();
+  expect(screen.getByText("adaptability")).toBeInTheDocument();
+  expect(screen.getByText("manManagement")).toBeInTheDocument();
+  expect(screen.getByText("Analysing Data")).toBeInTheDocument();
+  expect(screen.getByText("Judging Player Ability")).toBeInTheDocument();
+  expect(screen.getByText("Judging Player Potential")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
+});
+
+test("asks for confirmation naming the Loan Manager before deleting, identical to every other role", () => {
+  const onDelete = vi.fn();
+  const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+  render(<DetailPanel staff={loanManagerSample} mode="pinned" onDelete={onDelete} />);
+
+  fireEvent.click(screen.getByText("Delete"));
+
+  expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Loan Manager One"));
+  expect(onDelete).toHaveBeenCalledWith(loanManagerSample.id);
 });
