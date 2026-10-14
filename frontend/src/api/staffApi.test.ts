@@ -119,3 +119,9 @@ test("parseScreenshot throws when the response is not ok", async () => {
 
   await expect(parseScreenshot("physio", "base64data")).rejects.toThrow();
 });
+
+test("parseScreenshot tags a 413 response so callers can tell the image was too large", async () => {
+  global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 413 }) as unknown as typeof fetch;
+
+  await expect(parseScreenshot("physio", "base64data")).rejects.toMatchObject({ code: "IMAGE_TOO_LARGE" });
+});

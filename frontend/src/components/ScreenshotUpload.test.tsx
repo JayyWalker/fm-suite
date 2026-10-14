@@ -1,7 +1,13 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 import * as staffApi from "../api/staffApi";
-import { ScreenshotUpload } from "./ScreenshotUpload";
+import { MAX_SCREENSHOT_BYTES, ScreenshotUpload } from "./ScreenshotUpload";
+
+function oversizedFile(): File {
+  const file = new File(["fake image bytes"], "huge.png", { type: "image/png" });
+  Object.defineProperty(file, "size", { value: MAX_SCREENSHOT_BYTES + 1 });
+  return file;
+}
 
 test("uploading a file calls parseScreenshot and forwards the result", async () => {
   const mockResult = { matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] };
@@ -38,4 +44,28 @@ test("shows an error message when parseScreenshot fails", async () => {
   fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
 
   await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Couldn't read that screenshot"));
+});
+
+test("rejects an oversized image locally, with its own message and no request", async () => {
+  vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue({ matched: {}, unmatched: [], lowConfidence: [] });
+
+  render(<ScreenshotUpload role="physio" label="Upload screenshot" onResult={vi.fn()} />);
+
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [oversizedFile()] } });
+
+  await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Image too large"));
+  expect(staffApi.parseScreenshot).not.toHaveBeenCalled();
+});
+
+test("shows the too-large message when the server rejects the payload as too large", async () => {
+  vi.spyOn(staffApi, "parseScreenshot").mockRejectedValue(
+    Object.assign(new Error("Screenshot too large"), { code: "IMAGE_TOO_LARGE" }),
+  );
+
+  render(<ScreenshotUpload role="physio" label="Upload screenshot" onResult={vi.fn()} />);
+
+  const file = new File(["fake image bytes"], "screenshot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Image too large"));
 });

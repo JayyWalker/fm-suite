@@ -82,7 +82,12 @@ export function buildServer(db: Database): FastifyInstance {
     return reply.code(204).send();
   });
 
-  app.post("/staff/parse-screenshot", { schema: parseScreenshotSchema }, async (request, reply) => {
+  // Screenshots arrive base64-encoded, which inflates them by a third, so
+  // Fastify's 1 MiB default would reject any ordinary full-screen capture
+  // before the handler ever ran. Raised for this route only.
+  const PARSE_SCREENSHOT_BODY_LIMIT = 20 * 1024 * 1024;
+
+  app.post("/staff/parse-screenshot", { bodyLimit: PARSE_SCREENSHOT_BODY_LIMIT, schema: parseScreenshotSchema }, async (request, reply) => {
     const body = request.body as { role: string; panel?: "attributes" | "nationKnowledge"; imageBase64: string };
 
     let buffer: Buffer;

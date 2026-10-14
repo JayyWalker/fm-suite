@@ -2,6 +2,18 @@ import { useState } from "react";
 import { parseScreenshot, type ParseScreenshotResult } from "../api/staffApi";
 import styles from "./ScreenshotUpload.module.css";
 
+/**
+ * Base64 inflates an image by a third, and the server's body limit for this
+ * route is 20 MB, so refuse anything that clearly won't fit before uploading.
+ */
+export const MAX_SCREENSHOT_BYTES = 10 * 1024 * 1024;
+
+const MAX_SCREENSHOT_MB = Math.round(MAX_SCREENSHOT_BYTES / (1024 * 1024));
+
+function isTooLargeError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && (error as { code?: string }).code === "IMAGE_TOO_LARGE";
+}
+
 interface ScreenshotUploadProps {
   role: string;
   panel?: "attributes" | "nationKnowledge";
@@ -22,12 +34,17 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 export function ScreenshotUpload({ role, panel, label, onResult }: ScreenshotUploadProps) {
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "error" | "tooLarge">("idle");
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+
+    if (file.size > MAX_SCREENSHOT_BYTES) {
+      setStatus("tooLarge");
+      return;
+    }
 
     setStatus("loading");
     try {
@@ -35,8 +52,8 @@ export function ScreenshotUpload({ role, panel, label, onResult }: ScreenshotUpl
       const result = await parseScreenshot(role, imageBase64, panel);
       onResult(result);
       setStatus("idle");
-    } catch {
-      setStatus("error");
+    } catch (error) {
+      setStatus(isTooLargeError(error) ? "tooLarge" : "error");
     }
   }
 
@@ -52,6 +69,9 @@ export function ScreenshotUpload({ role, panel, label, onResult }: ScreenshotUpl
       />
       {status === "loading" && <span>Reading screenshot…</span>}
       {status === "error" && <span role="alert">Couldn't read that screenshot</span>}
+      {status === "tooLarge" && (
+        <span role="alert">Image too large — please upload a screenshot under {MAX_SCREENSHOT_MB} MB</span>
+      )}
     </label>
   );
 }

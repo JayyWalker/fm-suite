@@ -50,6 +50,9 @@ export async function parseScreenshot(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ role, panel, imageBase64 }),
   });
+  if (res.status === 413) {
+    throw Object.assign(new Error("Screenshot is too large to upload"), { code: "IMAGE_TOO_LARGE" });
+  }
   if (!res.ok) throw new Error(`Failed to parse screenshot: ${res.status}`);
   return res.json();
 }

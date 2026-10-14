@@ -575,6 +575,34 @@ describe("POST /staff/parse-screenshot", () => {
     expect(res.statusCode).toBe(400);
   });
 
+  test("accepts a screenshot payload larger than Fastify's 1 MiB default body limit", async () => {
+    vi.mocked(runOcr).mockResolvedValue([{ text: "Physiotherapy Elite", confidence: 95 }]);
+    // ~4 MB of base64, well past the 1 MiB default a plain Fastify instance uses.
+    const imageBase64 = Buffer.alloc(3 * 1024 * 1024, 1).toString("base64");
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio", imageBase64 },
+    });
+
+    expect(res.statusCode).not.toBe(413);
+    expect(res.statusCode).toBe(200);
+    expect(res.json().matched.physiotherapy).toBe(8);
+  });
+
+  test("rejects a screenshot payload beyond the route's body limit with a 413", async () => {
+    const imageBase64 = Buffer.alloc(21 * 1024 * 1024, 1).toString("base64");
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio", imageBase64 },
+    });
+
+    expect(res.statusCode).toBe(413);
+  });
+
   test("rejects a request missing imageBase64 with a 400", async () => {
     const res = await app.inject({
       method: "POST",
