@@ -1,29 +1,16 @@
 import type { AttributeGroup } from "./index";
 
+export interface NationKnowledgeEntry {
+  nation: string;
+  tier: number;
+}
+
 export interface ScoutAttributes {
   jpa: number;
   jpp: number;
   determination: number;
   adaptability: number;
-  westernEurope: number;
-  centralEurope: number;
-  ukAndIreland: number;
-  southernEurope: number;
-  southEasternEurope: number;
-  northEasternEurope: number;
-  northernEurope: number;
-  easternEurope: number;
-  southAmericaNorth: number;
-  southAmericaSouth: number;
-  northAmerica: number;
-  westernAfrica: number;
-  centralAfrica: number;
-  southernAfrica: number;
-  northAfrica: number;
-  middleEast: number;
-  eastAsia: number;
-  southEastAsia: number;
-  oceania: number;
+  nationKnowledge: NationKnowledgeEntry[];
 }
 
 export type ScoutCategory = "Current Ability Judging" | "Potential Judging";
@@ -32,28 +19,14 @@ export const SCOUT_CATEGORIES: ScoutCategory[] = ["Current Ability Judging", "Po
 
 export const mentalFields: (keyof ScoutAttributes)[] = ["determination", "adaptability"];
 
-type ScoutRegionKey = Exclude<keyof ScoutAttributes, "jpa" | "jpp" | "determination" | "adaptability">;
-
-const regionFields: { key: ScoutRegionKey; label: string }[] = [
-  { key: "westernEurope", label: "Western Europe" },
-  { key: "centralEurope", label: "Central Europe" },
-  { key: "ukAndIreland", label: "UK and Ireland" },
-  { key: "southernEurope", label: "Southern Europe" },
-  { key: "southEasternEurope", label: "South Eastern Europe" },
-  { key: "northEasternEurope", label: "North Eastern Europe" },
-  { key: "northernEurope", label: "Northern Europe" },
-  { key: "easternEurope", label: "Eastern Europe" },
-  { key: "southAmericaNorth", label: "South America (North)" },
-  { key: "southAmericaSouth", label: "South America (South)" },
-  { key: "northAmerica", label: "North America" },
-  { key: "westernAfrica", label: "Western Africa" },
-  { key: "centralAfrica", label: "Central Africa" },
-  { key: "southernAfrica", label: "Southern Africa" },
-  { key: "northAfrica", label: "North Africa" },
-  { key: "middleEast", label: "Middle East" },
-  { key: "eastAsia", label: "East Asia" },
-  { key: "southEastAsia", label: "South East Asia" },
-  { key: "oceania", label: "Oceania" },
+export const NATION_KNOWLEDGE_LEVELS: { value: number; label: string }[] = [
+  { value: 1, label: "None" },
+  { value: 2, label: "Minimal" },
+  { value: 3, label: "Good" },
+  { value: 4, label: "Very Good" },
+  { value: 5, label: "Extensive" },
+  { value: 6, label: "Exceptional" },
+  { value: 7, label: "Complete" },
 ];
 
 export const formGroups: AttributeGroup[] = [
@@ -71,18 +44,13 @@ export const formGroups: AttributeGroup[] = [
       { key: "adaptability", label: "Adaptability" },
     ],
   },
-  {
-    title: "Regional Knowledge",
-    fields: regionFields,
-  },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [{ title: "Regional Knowledge", fields: regionFields }];
+export const extraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: ScoutAttributes = {
+export const defaultAttributes: Record<string, number> = {
   jpa: 4,
   jpp: 4,
   determination: 4,
   adaptability: 4,
-  ...(Object.fromEntries(regionFields.map((field) => [field.key, 4])) as Record<ScoutRegionKey, number>),
 };

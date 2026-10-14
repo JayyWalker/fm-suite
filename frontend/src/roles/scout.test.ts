@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { SCOUT_CATEGORIES, defaultAttributes, extraDisplayGroups, formGroups, mentalFields } from "./scout";
+import { NATION_KNOWLEDGE_LEVELS, SCOUT_CATEGORIES, defaultAttributes, extraDisplayGroups, formGroups, mentalFields } from "./scout";
 
 test("exposes the 2 scout categories, Current Ability Judging first", () => {
   expect(SCOUT_CATEGORIES).toEqual(["Current Ability Judging", "Potential Judging"]);
@@ -14,12 +14,23 @@ test("form groups cover every attribute exactly once", () => {
   expect(allKeys.sort()).toEqual(Object.keys(defaultAttributes).sort());
 });
 
-test("regional knowledge is its own extra display group covering all 19 regions", () => {
-  expect(extraDisplayGroups).toHaveLength(1);
-  expect(extraDisplayGroups[0].title).toBe("Regional Knowledge");
-  expect(extraDisplayGroups[0].fields).toHaveLength(19);
+test("default attributes are all Average (4) and do not include nationKnowledge", () => {
+  expect(defaultAttributes).toEqual({ jpa: 4, jpp: 4, determination: 4, adaptability: 4 });
 });
 
-test("default attributes are all Average (4)", () => {
-  expect(Object.values(defaultAttributes).every((value) => value === 4)).toBe(true);
+test("there is no generic extra display group for nation knowledge (it's rendered as a Scout-only special case)", () => {
+  expect(extraDisplayGroups).toEqual([]);
+});
+
+test("nation knowledge has exactly 7 tiers, None through Complete", () => {
+  expect(NATION_KNOWLEDGE_LEVELS.map((level) => level.label)).toEqual([
+    "None",
+    "Minimal",
+    "Good",
+    "Very Good",
+    "Extensive",
+    "Exceptional",
+    "Complete",
+  ]);
+  expect(NATION_KNOWLEDGE_LEVELS.map((level) => level.value)).toEqual([1, 2, 3, 4, 5, 6, 7]);
 });
