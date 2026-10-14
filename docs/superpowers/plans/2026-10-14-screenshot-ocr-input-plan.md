@@ -2058,7 +2058,7 @@ test("parseScreenshot posts role, panel, and imageBase64 and returns the parsed 
   global.fetch = vi.fn().mockResolvedValue({
     ok: true,
     json: async () => mockResponse,
-  });
+  }) as unknown as typeof fetch;
 
   const result = await parseScreenshot("physio", "base64data", "attributes");
 
@@ -2073,7 +2073,7 @@ test("parseScreenshot posts role, panel, and imageBase64 and returns the parsed 
 });
 
 test("parseScreenshot throws when the response is not ok", async () => {
-  global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 400 });
+  global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 400 }) as unknown as typeof fetch;
 
   await expect(parseScreenshot("physio", "base64data")).rejects.toThrow();
 });
@@ -2304,11 +2304,19 @@ git commit -m "Add ScreenshotUpload component"
 
 - [ ] **Step 1: Write the failing tests**
 
-In `frontend/src/components/StaffForm.test.tsx`, add (mocking `../api/staffApi`'s `parseScreenshot`, following whatever mocking convention the file already uses for `staffApi`, e.g. `vi.mock("../api/staffApi")` at the top plus `vi.mocked(parseScreenshot).mockResolvedValue(...)` per test):
+`StaffForm.test.tsx` does not currently mock `../api/staffApi` (StaffForm has never called it directly before this task). Use the exact pattern `frontend/src/App.test.tsx` already uses for mocking this same module (`import * as staffApi from "./api/staffApi"; vi.mock("./api/staffApi");` then `vi.mocked(staffApi.listStaff).mockResolvedValue(...)` per test), adapted to this file's relative import path (`../api/staffApi`, since `StaffForm.test.tsx` lives in `src/components/`, one level deeper than `App.test.tsx`). Add near the top of `StaffForm.test.tsx`, below the existing imports:
+
+```ts
+import * as staffApi from "../api/staffApi";
+
+vi.mock("../api/staffApi");
+```
+
+Then add the following tests (using `vi.mocked(staffApi.parseScreenshot).mockResolvedValue(...)` per test, matching that same convention). These tests use `waitFor` for the async upload-then-update flow — add `waitFor` to the existing `import { fireEvent, render, screen } from "@testing-library/react";` line at the top of the file (making it `import { fireEvent, render, screen, waitFor } from "@testing-library/react";`), since asserting on state that updates after an awaited `parseScreenshot` call requires it:
 
 ```tsx
 test("uploading a standard attribute screenshot merges matched values into the form", async () => {
-  vi.mocked(parseScreenshot).mockResolvedValue({ matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] });
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] });
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Physio" }));
 
@@ -2319,7 +2327,7 @@ test("uploading a standard attribute screenshot merges matched values into the f
 });
 
 test("uploaded unmatched attributes render as a visible warning", async () => {
-  vi.mocked(parseScreenshot).mockResolvedValue({ matched: {}, unmatched: ["Physiotherapy"], lowConfidence: [] });
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: {}, unmatched: ["Physiotherapy"], lowConfidence: [] });
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Physio" }));
 
@@ -2330,7 +2338,7 @@ test("uploaded unmatched attributes render as a visible warning", async () => {
 });
 
 test("scout shows a separate nation knowledge upload that appends entries by nation, last read wins", async () => {
-  vi.mocked(parseScreenshot).mockResolvedValueOnce({
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValueOnce({
     nationEntries: [{ nation: "England", tier: 3 }],
     unmatched: [],
     lowConfidence: [],
@@ -2343,7 +2351,7 @@ test("scout shows a separate nation knowledge upload that appends entries by nat
   await waitFor(() => expect(screen.getByLabelText("Nation 1")).toHaveValue("England"));
   expect(screen.getByLabelText("Knowledge 1")).toHaveValue("3");
 
-  vi.mocked(parseScreenshot).mockResolvedValueOnce({
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValueOnce({
     nationEntries: [{ nation: "England", tier: 7 }, { nation: "Brazil", tier: 2 }],
     unmatched: [],
     lowConfidence: [],
@@ -2355,8 +2363,6 @@ test("scout shows a separate nation knowledge upload that appends entries by nat
   expect(screen.getByLabelText("Knowledge 1")).toHaveValue("7");
 });
 ```
-
-Add `parseScreenshot` to the mocked `../api/staffApi` import at the top of the test file.
 
 - [ ] **Step 2: Run it to confirm it fails**
 
