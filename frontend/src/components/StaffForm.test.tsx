@@ -290,13 +290,25 @@ test("editing an existing scout pre-fills the nation knowledge editor", () => {
   expect(screen.getByLabelText("Knowledge 1")).toHaveValue("5");
 });
 
-test("switching away from scout and back resets the nation knowledge editor", () => {
+test("picking scout starts the nation knowledge editor empty", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+
+  expect(screen.queryByLabelText("Nation 1")).toBeNull();
+
   fireEvent.click(screen.getByRole("button", { name: "Add nation" }));
   expect(screen.getByLabelText("Nation 1")).toBeInTheDocument();
+});
 
-  fireEvent.click(screen.getByRole("button", { name: "Close" }));
+test("choosing a role replaces the picker, so the role cannot be switched in place", () => {
+  // Documents why a "switch away from scout and back" test can't exist: the
+  // picker is unmounted as soon as a role is chosen, and the only way back is
+  // to close the dialog and open a fresh form.
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+
+  expect(screen.queryByRole("button", { name: "Coach" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Scout" })).toBeNull();
 });
 
 test("editing a coach skips the picker and pre-fills its fields", () => {
