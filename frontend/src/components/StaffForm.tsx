@@ -3,6 +3,8 @@ import { ATTRIBUTE_LEVELS, type StaffInput } from "../types";
 import { ROLES, STAFF_ROLES, type StaffRole } from "../roles/index";
 import { NationKnowledgeEditor } from "./NationKnowledgeEditor";
 import type { NationKnowledgeEntry } from "../roles/scout";
+import { ScreenshotUpload } from "./ScreenshotUpload";
+import type { ParseScreenshotResult } from "../api/staffApi";
 import styles from "./StaffForm.module.css";
 
 interface StaffFormProps {
@@ -24,6 +26,10 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
       : [],
   );
   const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<{ unmatched: string[]; lowConfidence: string[] }>({
+    unmatched: [],
+    lowConfidence: [],
+  });
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -37,10 +43,31 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
     setSelectedRole(role);
     setAttributes(ROLES[role].defaultAttributes);
     setNationKnowledge([]);
+    setWarnings({ unmatched: [], lowConfidence: [] });
   }
 
   function handleAttributeChange(key: string, value: string) {
     setAttributes((prev) => ({ ...prev, [key]: Number(value) }));
+  }
+
+  function handleAttributesResult(result: ParseScreenshotResult) {
+    if (result.matched) {
+      setAttributes((prev) => ({ ...prev, ...result.matched }));
+    }
+    setWarnings({ unmatched: result.unmatched, lowConfidence: result.lowConfidence });
+  }
+
+  function handleNationResult(result: ParseScreenshotResult) {
+    if (result.nationEntries) {
+      setNationKnowledge((prev) => {
+        const byNation = new Map(prev.map((entry) => [entry.nation, entry]));
+        for (const entry of result.nationEntries!) {
+          byNation.set(entry.nation, entry);
+        }
+        return Array.from(byNation.values());
+      });
+    }
+    setWarnings({ unmatched: result.unmatched, lowConfidence: result.lowConfidence });
   }
 
   function parseTags(text: string): string[] {
@@ -141,6 +168,29 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
                 </div>
               </div>
             ))}
+
+            {selectedRole && (
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Import from screenshot</div>
+                <ScreenshotUpload role={selectedRole} label="Upload screenshot" onResult={handleAttributesResult} />
+                {selectedRole === "scout" && (
+                  <ScreenshotUpload
+                    role="scout"
+                    panel="nationKnowledge"
+                    label="Upload nation knowledge screenshot"
+                    onResult={handleNationResult}
+                  />
+                )}
+                {(warnings.unmatched.length > 0 || warnings.lowConfidence.length > 0) && (
+                  <div role="status">
+                    {warnings.unmatched.length > 0 && <div>Couldn't confidently read: {warnings.unmatched.join(", ")}</div>}
+                    {warnings.lowConfidence.length > 0 && (
+                      <div>Low confidence, please double check: {warnings.lowConfidence.join(", ")}</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {selectedRole === "scout" && (
               <div className={styles.section}>

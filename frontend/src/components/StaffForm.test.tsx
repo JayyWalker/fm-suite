@@ -1,7 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 import { StaffForm } from "./StaffForm";
 import type { StaffInput } from "../types";
+import * as staffApi from "../api/staffApi";
+
+vi.mock("../api/staffApi");
 
 const coachInitialValue: StaffInput = {
   role: "coach",
@@ -392,4 +395,52 @@ test("clicking the close button calls onCancel", () => {
   fireEvent.click(screen.getByLabelText("Close"));
 
   expect(onCancel).toHaveBeenCalledTimes(1);
+});
+
+test("uploading a standard attribute screenshot merges matched values into the form", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+
+  const file = new File(["bytes"], "shot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByLabelText("Physiotherapy")).toHaveValue("8"));
+});
+
+test("uploaded unmatched attributes render as a visible warning", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: {}, unmatched: ["Physiotherapy"], lowConfidence: [] });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+
+  const file = new File(["bytes"], "shot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByText(/Couldn't confidently read: Physiotherapy/)).toBeInTheDocument());
+});
+
+test("scout shows a separate nation knowledge upload that appends entries by nation, last read wins", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValueOnce({
+    nationEntries: [{ nation: "England", tier: 3 }],
+    unmatched: [],
+    lowConfidence: [],
+  });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+
+  const file1 = new File(["bytes"], "shot1.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload nation knowledge screenshot"), { target: { files: [file1] } });
+  await waitFor(() => expect(screen.getByLabelText("Nation 1")).toHaveValue("England"));
+  expect(screen.getByLabelText("Knowledge 1")).toHaveValue("3");
+
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValueOnce({
+    nationEntries: [{ nation: "England", tier: 7 }, { nation: "Brazil", tier: 2 }],
+    unmatched: [],
+    lowConfidence: [],
+  });
+  const file2 = new File(["bytes"], "shot2.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload nation knowledge screenshot"), { target: { files: [file2] } });
+
+  await waitFor(() => expect(screen.getByLabelText("Nation 2")).toHaveValue("Brazil"));
+  expect(screen.getByLabelText("Knowledge 1")).toHaveValue("7");
 });
