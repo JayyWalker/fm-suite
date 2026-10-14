@@ -33,10 +33,3 @@ export function findBestMatch(query: string, candidates: string[]): string | nul
   const threshold = Math.max(1, Math.floor(best.candidate.length * 0.3));
   return best.distance <= threshold ? best.candidate : null;
 }
-
-export function splitTwoColumnLine(text: string): { left: string; right: string } | null {
-  const trimmed = text.trim();
-  const match = trimmed.match(/^(.+?)\s{2,}(\S.*)$/);
-  if (!match) return null;
-  return { left: match[1].trim(), right: match[2].trim() };
-}

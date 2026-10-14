@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { findBestMatch, levenshteinDistance, splitTwoColumnLine } from "./fuzzyMatch";
+import { findBestMatch, levenshteinDistance } from "./fuzzyMatch";
 
 describe("levenshteinDistance", () => {
   test("is 0 for identical strings, case-insensitively", () => {
@@ -27,19 +27,5 @@ describe("findBestMatch", () => {
 
   test("returns null for an empty candidate list", () => {
     expect(findBestMatch("Determination", [])).toBeNull();
-  });
-});
-
-describe("splitTwoColumnLine", () => {
-  test("splits on a wide gap into left and right parts", () => {
-    expect(splitTwoColumnLine("Determination     Very Good")).toEqual({ left: "Determination", right: "Very Good" });
-  });
-
-  test("returns null when there's no wide gap", () => {
-    expect(splitTwoColumnLine("Determination")).toBeNull();
-  });
-
-  test("trims surrounding whitespace from both parts", () => {
-    expect(splitTwoColumnLine("  England      Complete  ")).toEqual({ left: "England", right: "Complete" });
   });
 });

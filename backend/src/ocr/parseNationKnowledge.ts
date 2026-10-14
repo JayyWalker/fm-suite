@@ -1,5 +1,6 @@
 import type { OcrLine } from "./runOcr";
-import { findBestMatch, splitTwoColumnLine } from "./fuzzyMatch";
+import { extractLinePairs } from "./linePairs";
+import { ABILITY_WORDS } from "./abilityVocabulary";
 import { NATION_KNOWLEDGE_WORDS, knowledgeWordToValue } from "./nationKnowledgeVocabulary";
 import { NATIONS } from "./nations";
 
@@ -11,33 +12,36 @@ export interface ParseNationKnowledgeResult {
 
 const LOW_CONFIDENCE_THRESHOLD = 60;
 
+/**
+ * "Good" and "Very Good" exist on both the ability scale and the knowledge
+ * scale, so seeing one of those with no nation in front of it just means we
+ * read an attributes row. The knowledge-only words can't be explained that way:
+ * those really are nation rows we failed to read, so they're worth reporting.
+ */
+const KNOWLEDGE_ONLY_WORDS = NATION_KNOWLEDGE_WORDS.filter(
+  (word) => !ABILITY_WORDS.some((ability) => ability.toLowerCase() === word.toLowerCase()),
+);
+
 export function parseNationKnowledge(lines: OcrLine[]): ParseNationKnowledgeResult {
   const nationEntries: { nation: string; tier: number }[] = [];
   const unmatched: string[] = [];
   const lowConfidence: string[] = [];
 
   for (const line of lines) {
-    const split = splitTwoColumnLine(line.text);
-    if (!split) continue;
+    const { pairs, orphanValues } = extractLinePairs(line.text, NATION_KNOWLEDGE_WORDS, NATIONS);
 
-    const nationMatch = findBestMatch(split.left, NATIONS);
-    if (!nationMatch) {
-      unmatched.push(split.left);
-      continue;
+    for (const pair of pairs) {
+      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
+        lowConfidence.push(pair.candidate);
+        continue;
+      }
+      nationEntries.push({ nation: pair.candidate, tier: knowledgeWordToValue(pair.value)! });
     }
 
-    const tierMatch = findBestMatch(split.right, NATION_KNOWLEDGE_WORDS);
-    if (!tierMatch) {
-      unmatched.push(nationMatch);
-      continue;
+    for (const orphan of orphanValues) {
+      if (!KNOWLEDGE_ONLY_WORDS.includes(orphan.value)) continue;
+      unmatched.push(orphan.precedingText);
     }
-
-    if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
-      lowConfidence.push(nationMatch);
-      continue;
-    }
-
-    nationEntries.push({ nation: nationMatch, tier: knowledgeWordToValue(tierMatch)! });
   }
 
   return { nationEntries, unmatched, lowConfidence };

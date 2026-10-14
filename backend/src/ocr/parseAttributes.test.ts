@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { parseAttributes } from "./parseAttributes";
+import { MEDICAL_TAB_OCR_LINES, SCOUTING_TAB_OCR_LINES } from "./realScreenshotFixtures";
 
 function line(text: string, confidence = 95) {
   return { text, confidence };
@@ -64,5 +65,60 @@ describe("parseAttributes", () => {
 
     expect(result.matched).toEqual({ jpa: 8, jpp: 5, determination: 5, adaptability: 5 });
     expect(result.unmatched).toEqual([]);
+  });
+});
+
+describe("parseAttributes on real captured OCR output", () => {
+  test("reads the physio attributes off a real FM26 Medical tab screenshot", () => {
+    const result = parseAttributes("physio", MEDICAL_TAB_OCR_LINES);
+
+    // "Physiotherapy Average Adaptability Good" is one OCR line carrying two
+    // side-by-side panel pairs, with ordinary single spaces between them.
+    expect(result.matched.physiotherapy).toBe(4); // Average
+    expect(result.matched.adaptability).toBe(5); // Good
+    expect(result.matched.determination).toBe(6); // Very Good
+  });
+
+  test("does not invent values from the unrelated panels of a real Medical tab screenshot", () => {
+    const result = parseAttributes("physio", MEDICAL_TAB_OCR_LINES);
+
+    // Authority / Motivating / Negotiating / Judging ... are all on screen but
+    // are not physio attributes, so nothing may leak into the physio result.
+    expect(Object.keys(result.matched).sort()).toEqual(
+      ["adaptability", "determination", "manManagement", "physiotherapy"].sort(),
+    );
+  });
+
+  test("reads the scout attributes off a real FM26 Scouting tab screenshot", () => {
+    const result = parseAttributes("scout", SCOUTING_TAB_OCR_LINES);
+
+    expect(result.matched.jpa).toBe(6); // Very Good
+    expect(result.matched.jpp).toBe(6); // Very Good
+    expect(result.matched.determination).toBe(6); // Very Good, on a line shared with a nation row
+    // Adaptability was only legible on a badly-read line ("laptability
+    // utstanding", confidence 58), so it is flagged rather than trusted.
+    expect(result.lowConfidence).toEqual(["Adaptability"]);
+    expect(result.matched.adaptability).toBeUndefined();
+  });
+
+  test("reads the coach-shaped mental attributes off the same real Scouting tab screenshot", () => {
+    const result = parseAttributes("coach", SCOUTING_TAB_OCR_LINES);
+
+    expect(result.matched.authority).toBe(1); // Unsuited
+    expect(result.matched.motivating).toBe(1); // Unsuited
+    expect(result.matched.determination).toBe(6); // Very Good
+    expect(result.matched.tacticalKnowledge).toBe(3); // Competent
+    // The coaching attributes simply aren't on this tab.
+    expect(result.unmatched).toEqual(
+      expect.arrayContaining(["Attacking", "Defending", "Goalkeeping", "Possession"]),
+    );
+  });
+
+  test("prefers the first reading of a label over a later look-alike label on a real screenshot", () => {
+    const result = parseAttributes("scout", SCOUTING_TAB_OCR_LINES);
+
+    // "Judging Staff Ability Reasonable" is close enough to "Judging Player
+    // Ability" to fuzzy-match it, but the real row was read earlier.
+    expect(result.matched.jpa).not.toBe(2);
   });
 });

@@ -1,6 +1,6 @@
 import type { StaffRole } from "../roles/index";
 import type { OcrLine } from "./runOcr";
-import { findBestMatch, splitTwoColumnLine } from "./fuzzyMatch";
+import { extractLinePairs } from "./linePairs";
 import { ABILITY_WORDS, abilityWordToValue } from "./abilityVocabulary";
 import { ATTRIBUTE_LABELS } from "./attributeLabels";
 
@@ -14,42 +14,35 @@ const LOW_CONFIDENCE_THRESHOLD = 60;
 
 export function parseAttributes(role: StaffRole, lines: OcrLine[]): ParseAttributesResult {
   const labels = ATTRIBUTE_LABELS[role];
+  const labelEntries = Object.entries(labels);
+  const labelValues = labelEntries.map(([, label]) => label);
+
   const matched: Record<string, number> = {};
-  const unmatched: string[] = [];
   const lowConfidence: string[] = [];
+  const unmatched: string[] = [];
+  const resolved = new Set<string>();
 
-  for (const [key, label] of Object.entries(labels)) {
-    const matchedLine = findLineForLabel(label, lines);
-    if (!matchedLine) {
-      unmatched.push(label);
-      continue;
+  for (const line of lines) {
+    const { pairs } = extractLinePairs(line.text, ABILITY_WORDS, labelValues);
+    for (const pair of pairs) {
+      // First reading of a label wins: a later line can hold a label that only
+      // looks similar (e.g. "Judging Staff Ability" vs "Judging Player Ability").
+      if (resolved.has(pair.candidate)) continue;
+      resolved.add(pair.candidate);
+
+      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
+        lowConfidence.push(pair.candidate);
+        continue;
+      }
+
+      const key = labelEntries.find(([, label]) => label === pair.candidate)![0];
+      matched[key] = abilityWordToValue(pair.value)!;
     }
+  }
 
-    const split = splitTwoColumnLine(matchedLine.text);
-    const valueMatch = split ? findBestMatch(split.right, ABILITY_WORDS) : null;
-    if (!valueMatch) {
-      unmatched.push(label);
-      continue;
-    }
-
-    if (matchedLine.confidence < LOW_CONFIDENCE_THRESHOLD) {
-      lowConfidence.push(label);
-      continue;
-    }
-
-    matched[key] = abilityWordToValue(valueMatch)!;
+  for (const [, label] of labelEntries) {
+    if (!resolved.has(label)) unmatched.push(label);
   }
 
   return { matched, unmatched, lowConfidence };
-}
-
-function findLineForLabel(label: string, lines: OcrLine[]): OcrLine | null {
-  for (const line of lines) {
-    const split = splitTwoColumnLine(line.text);
-    const left = split ? split.left : line.text;
-    if (findBestMatch(left, [label])) {
-      return line;
-    }
-  }
-  return null;
 }
