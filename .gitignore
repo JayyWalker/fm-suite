@@ -2,5 +2,6 @@ node_modules/
 dist/
 backend/data/
 *.sqlite
+*.traineddata
 .superpowers/
 .worktrees/
