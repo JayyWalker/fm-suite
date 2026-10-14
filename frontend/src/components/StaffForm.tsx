@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ATTRIBUTE_LEVELS, type StaffInput } from "../types";
 import { ROLES, STAFF_ROLES, type StaffRole } from "../roles/index";
+import { NationKnowledgeEditor } from "./NationKnowledgeEditor";
+import type { NationKnowledgeEntry } from "../roles/scout";
 import styles from "./StaffForm.module.css";
 
 interface StaffFormProps {
@@ -16,6 +18,11 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   const [attributes, setAttributes] = useState<Record<string, number>>(
     (initialValue?.attributes as unknown as Record<string, number>) ?? {},
   );
+  const [nationKnowledge, setNationKnowledge] = useState<NationKnowledgeEntry[]>(
+    initialValue?.role === "scout"
+      ? ((initialValue.attributes as unknown as { nationKnowledge: NationKnowledgeEntry[] }).nationKnowledge ?? [])
+      : [],
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,6 +36,7 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   function handleSelectRole(role: StaffRole) {
     setSelectedRole(role);
     setAttributes(ROLES[role].defaultAttributes);
+    setNationKnowledge([]);
   }
 
   function handleAttributeChange(key: string, value: string) {
@@ -50,11 +58,12 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
       return;
     }
     setError(null);
+    const finalAttributes = selectedRole === "scout" ? { ...attributes, nationKnowledge } : attributes;
     onSubmit({
       role: selectedRole,
       name: name.trim(),
       tags: parseTags(tagsText),
-      attributes,
+      attributes: finalAttributes,
     } as unknown as StaffInput);
   }
 
@@ -132,6 +141,13 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
                 </div>
               </div>
             ))}
+
+            {selectedRole === "scout" && (
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Scouting Knowledge</div>
+                <NationKnowledgeEditor entries={nationKnowledge} onChange={setNationKnowledge} />
+              </div>
+            )}
 
             {error && (
               <div role="alert" className={styles.error}>

@@ -362,7 +362,7 @@ test("does not delete a scout when the confirmation is declined", () => {
   expect(onDelete).not.toHaveBeenCalled();
 });
 
-test("shows a scout's own mental attributes, categories, and a Regional Knowledge section", () => {
+test("shows a scout's own mental attributes and categories, with no extra display section", () => {
   render(<DetailPanel staff={scoutSample} mode="preview" />);
 
   expect(screen.getByText("Ana Dimitriou")).toBeInTheDocument();
@@ -370,13 +370,31 @@ test("shows a scout's own mental attributes, categories, and a Regional Knowledg
   expect(screen.getByText("adaptability")).toBeInTheDocument();
   expect(screen.getByText("Current Ability Judging")).toBeInTheDocument();
   expect(screen.getByText("Potential Judging")).toBeInTheDocument();
-  expect(screen.getByText("Regional Knowledge")).toBeInTheDocument();
-  expect(screen.getByText("Western Europe")).toBeInTheDocument();
-  expect(screen.getByText("Oceania")).toBeInTheDocument();
+  expect(screen.queryByText("Regional Knowledge")).not.toBeInTheDocument();
 
   // determination 6 -> 4 stars; scoped to its own row since other chips can share the same text
   const determinationChip = screen.getByText("determination").nextElementSibling;
   expect(determinationChip?.textContent).toBe("4★ Strong");
+});
+
+test("shows scout nation knowledge as its own section", () => {
+  const staff = {
+    id: 1,
+    name: "Scout Name",
+    tags: [],
+    role: "scout" as const,
+    attributes: { jpa: 4, jpp: 4, determination: 4, adaptability: 4, nationKnowledge: [{ nation: "England", tier: 7 }] },
+    categories: { "Current Ability Judging": 3, "Potential Judging": 3 },
+    bestFit: "Current Ability Judging",
+    createdAt: "",
+    updatedAt: "",
+  };
+
+  render(<DetailPanel staff={staff} mode="pinned" />);
+
+  expect(screen.getByText("Scouting Knowledge")).toBeInTheDocument();
+  expect(screen.getByText("England")).toBeInTheDocument();
+  expect(screen.getByText("Complete")).toBeInTheDocument();
 });
 
 test("shows a physio's single category and mental attributes, with no extra display section", () => {

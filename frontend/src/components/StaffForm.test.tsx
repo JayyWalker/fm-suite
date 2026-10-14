@@ -243,16 +243,57 @@ test("picking Coach shows its fields grouped into Identity, Mental attributes, C
   expect(screen.getByText("Knowledge")).toBeInTheDocument();
 });
 
-test("picking Scout shows its fields grouped into Identity, Judging ability, Mental attributes, and Regional Knowledge", () => {
+test("scout role shows a nation knowledge editor with an Add nation button", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
-
   fireEvent.click(screen.getByRole("button", { name: "Scout" }));
 
-  expect(screen.getByLabelText("Name")).toBeInTheDocument();
-  expect(screen.getByLabelText("Judging Player Ability")).toBeInTheDocument();
-  expect(screen.getByLabelText("Western Europe")).toBeInTheDocument();
-  expect(screen.getByText("Judging ability")).toBeInTheDocument();
-  expect(screen.getByText("Regional Knowledge")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Add nation" })).toBeInTheDocument();
+});
+
+test("submitting a scout includes nationKnowledge entries added via the editor", () => {
+  const onSubmit = vi.fn();
+  render(<StaffForm onSubmit={onSubmit} />);
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+  fireEvent.click(screen.getByRole("button", { name: "Add nation" }));
+  fireEvent.change(screen.getByLabelText("Nation 1"), { target: { value: "England" } });
+  fireEvent.change(screen.getByLabelText("Knowledge 1"), { target: { value: "7" } });
+  fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Scout Name" } });
+
+  fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+  expect(onSubmit).toHaveBeenCalledWith(
+    expect.objectContaining({
+      attributes: expect.objectContaining({
+        nationKnowledge: [{ nation: "England", tier: 7 }],
+      }),
+    }),
+  );
+});
+
+test("editing an existing scout pre-fills the nation knowledge editor", () => {
+  render(
+    <StaffForm
+      initialValue={{
+        role: "scout",
+        name: "Existing Scout",
+        tags: [],
+        attributes: { jpa: 4, jpp: 4, determination: 4, adaptability: 4, nationKnowledge: [{ nation: "Brazil", tier: 5 }] },
+      }}
+      onSubmit={vi.fn()}
+    />,
+  );
+
+  expect(screen.getByLabelText("Nation 1")).toHaveValue("Brazil");
+  expect(screen.getByLabelText("Knowledge 1")).toHaveValue("5");
+});
+
+test("switching away from scout and back resets the nation knowledge editor", () => {
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+  fireEvent.click(screen.getByRole("button", { name: "Add nation" }));
+  expect(screen.getByLabelText("Nation 1")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Close" }));
 });
 
 test("editing a coach skips the picker and pre-fills its fields", () => {

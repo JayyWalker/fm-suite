@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import type { StaffMember } from "../types";
 import { ROLES } from "../roles/index";
+import { NATION_KNOWLEDGE_LEVELS, type NationKnowledgeEntry } from "../roles/scout";
 import { GradeChip } from "./GradeChip";
 import { rawAttributeToStars } from "./starRating";
 import styles from "./DetailPanel.module.css";
@@ -67,6 +68,20 @@ export function DetailPanel({ staff, mode, onEdit, onDelete }: DetailPanelProps)
           </dl>
         </div>
       ))}
+
+      {staff.role === "scout" && (attributes.nationKnowledge as unknown as NationKnowledgeEntry[])?.length > 0 && (
+        <div>
+          <div className={styles.sectionLabel}>Scouting Knowledge</div>
+          <dl className={styles.grid}>
+            {(attributes.nationKnowledge as unknown as NationKnowledgeEntry[]).map((entry) => (
+              <Fragment key={entry.nation}>
+                <dt>{entry.nation}</dt>
+                <dd>{NATION_KNOWLEDGE_LEVELS.find((level) => level.value === entry.tier)?.label ?? "Unknown"}</dd>
+              </Fragment>
+            ))}
+          </dl>
+        </div>
+      )}
 
       {mode === "pinned" && (
         <div className={styles.actions}>
