@@ -26,7 +26,7 @@ test("each role definition exposes its label, categories, and form groups", () =
   expect(ROLES.coach.categories).toContain("Attacking");
   expect(ROLES.scout.label).toBe("Scout");
   expect(ROLES.scout.categories).toContain("Potential Judging");
-  expect(ROLES.scout.extraDisplayGroups).toHaveLength(1);
+  expect(ROLES.scout.extraDisplayGroups).toHaveLength(0);
   expect(ROLES.coach.extraDisplayGroups).toHaveLength(0);
   expect(ROLES.physio.label).toBe("Physio");
   expect(ROLES.physio.categories).toEqual(["Physiotherapy"]);
