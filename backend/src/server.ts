@@ -2,7 +2,11 @@ import Fastify, { type FastifyInstance } from "fastify";
 import type { Database } from "better-sqlite3";
 import { StaffRepository, type StaffRecord } from "./staffRepository";
 import { ROLES, type StaffRole } from "./roles/index";
-import { createStaffSchema, updateStaffSchema, idParamSchema, validateAttributes } from "./staffSchemas";
+import { createStaffSchema, updateStaffSchema, idParamSchema, parseScreenshotSchema, validateAttributes } from "./staffSchemas";
+import { preprocessImage } from "./ocr/preprocessImage";
+import { runOcr } from "./ocr/runOcr";
+import { parseAttributes } from "./ocr/parseAttributes";
+import { parseNationKnowledge } from "./ocr/parseNationKnowledge";
 
 function toResponse(record: StaffRecord) {
   const ratings = ROLES[record.role].rate(record.attributes);
@@ -76,6 +80,32 @@ export function buildServer(db: Database): FastifyInstance {
       return reply.code(404).send({ error: "Staff member not found" });
     }
     return reply.code(204).send();
+  });
+
+  app.post("/staff/parse-screenshot", { schema: parseScreenshotSchema }, async (request, reply) => {
+    const body = request.body as { role: string; panel?: "attributes" | "nationKnowledge"; imageBase64: string };
+
+    let buffer: Buffer;
+    try {
+      buffer = Buffer.from(body.imageBase64, "base64");
+      if (buffer.length === 0) throw new Error("empty image");
+    } catch {
+      return reply.code(400).send({ error: "Could not decode image" });
+    }
+
+    let processed: Buffer;
+    try {
+      processed = await preprocessImage(buffer);
+    } catch {
+      return reply.code(400).send({ error: "Could not process image" });
+    }
+
+    const lines = await runOcr(processed);
+
+    if (body.role === "scout" && body.panel === "nationKnowledge") {
+      return parseNationKnowledge(lines);
+    }
+    return parseAttributes(body.role as StaffRole, lines);
   });
 
   return app;

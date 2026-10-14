@@ -31,6 +31,19 @@ export const updateStaffSchema = {
   },
 };
 
+export const parseScreenshotSchema = {
+  body: {
+    type: "object",
+    required: ["role", "imageBase64"],
+    properties: {
+      role: { type: "string", enum: STAFF_ROLES },
+      panel: { type: "string", enum: ["attributes", "nationKnowledge"] },
+      imageBase64: { type: "string", minLength: 1 },
+    },
+    additionalProperties: false,
+  },
+};
+
 export const idParamSchema = {
   params: {
     type: "object",

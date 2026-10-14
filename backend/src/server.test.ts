@@ -1,7 +1,12 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { createDb } from "./db";
 import { buildServer } from "./server";
+
+vi.mock("./ocr/preprocessImage", () => ({ preprocessImage: vi.fn(async (buf: Buffer) => buf) }));
+vi.mock("./ocr/runOcr", () => ({ runOcr: vi.fn() }));
+
+import { runOcr } from "./ocr/runOcr";
 
 function coachAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
   return {
@@ -517,6 +522,67 @@ describe("PATCH /staff/:id", () => {
   test("returns 404 for a non-existent id", async () => {
     const res = await app.inject({ method: "PATCH", url: "/staff/999999", payload: { name: "Nope" } });
     expect(res.statusCode).toBe(404);
+  });
+});
+
+describe("POST /staff/parse-screenshot", () => {
+  test("returns matched attributes for a standard role", async () => {
+    vi.mocked(runOcr).mockResolvedValue([{ text: "Physiotherapy     Elite", confidence: 95 }]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().matched.physiotherapy).toBe(8);
+  });
+
+  test("returns nationEntries when role is scout and panel is nationKnowledge", async () => {
+    vi.mocked(runOcr).mockResolvedValue([{ text: "Germany     Complete", confidence: 95 }]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "scout", panel: "nationKnowledge", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().nationEntries).toEqual([{ nation: "Germany", tier: 7 }]);
+  });
+
+  test("defaults to the standard attribute parser for scout when panel is omitted", async () => {
+    vi.mocked(runOcr).mockResolvedValue([{ text: "Judging Player Ability     Elite", confidence: 95 }]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "scout", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().matched.jpa).toBe(8);
+  });
+
+  test("rejects an unknown role with a 400", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "not-a-real-role", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  test("rejects a request missing imageBase64 with a 400", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio" },
+    });
+
+    expect(res.statusCode).toBe(400);
   });
 });
 
