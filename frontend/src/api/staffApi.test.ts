@@ -1,5 +1,5 @@
 import { beforeEach, expect, test, vi } from "vitest";
-import { listStaff, createStaff, updateStaff, deleteStaff } from "./staffApi";
+import { listStaff, createStaff, updateStaff, deleteStaff, parseScreenshot } from "./staffApi";
 import type { StaffInput, StaffMember } from "../types";
 
 const sampleStaff: StaffMember = {
@@ -93,4 +93,29 @@ test("deleteStaff sends a DELETE request", async () => {
   const [url, options] = (fetch as unknown as { mock: { calls: unknown[][] } }).mock.calls[0] as [string, RequestInit];
   expect(url).toContain("/staff/1");
   expect(options.method).toBe("DELETE");
+});
+
+test("parseScreenshot posts role, panel, and imageBase64 and returns the parsed result", async () => {
+  const mockResponse = { matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] };
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => mockResponse,
+  }) as unknown as typeof fetch;
+
+  const result = await parseScreenshot("physio", "base64data", "attributes");
+
+  expect(global.fetch).toHaveBeenCalledWith(
+    expect.stringContaining("/staff/parse-screenshot"),
+    expect.objectContaining({
+      method: "POST",
+      body: JSON.stringify({ role: "physio", panel: "attributes", imageBase64: "base64data" }),
+    }),
+  );
+  expect(result).toEqual(mockResponse);
+});
+
+test("parseScreenshot throws when the response is not ok", async () => {
+  global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 400 }) as unknown as typeof fetch;
+
+  await expect(parseScreenshot("physio", "base64data")).rejects.toThrow();
 });
