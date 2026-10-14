@@ -21,31 +21,13 @@ function coachAttributes(overrides: Partial<Record<string, number>> = {}): Recor
   };
 }
 
-function scoutAttributes(overrides: Partial<Record<string, number>> = {}): Record<string, number> {
+function scoutAttributes(overrides: Partial<Record<string, unknown>> = {}): Record<string, unknown> {
   return {
     jpa: 5,
     jpp: 4,
     determination: 4,
     adaptability: 3,
-    westernEurope: 1,
-    centralEurope: 1,
-    ukAndIreland: 1,
-    southernEurope: 1,
-    southEasternEurope: 1,
-    northEasternEurope: 1,
-    northernEurope: 1,
-    easternEurope: 1,
-    southAmericaNorth: 1,
-    southAmericaSouth: 1,
-    northAmerica: 1,
-    westernAfrica: 1,
-    centralAfrica: 1,
-    southernAfrica: 1,
-    northAfrica: 1,
-    middleEast: 1,
-    eastAsia: 1,
-    southEastAsia: 1,
-    oceania: 1,
+    nationKnowledge: [],
     ...overrides,
   };
 }

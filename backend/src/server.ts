@@ -37,7 +37,7 @@ export function buildServer(db: Database): FastifyInstance {
   });
 
   app.post("/staff", { schema: createStaffSchema }, async (request, reply) => {
-    const body = request.body as { name: string; role: string; tags?: string[]; attributes: Record<string, number> };
+    const body = request.body as { name: string; role: string; tags?: string[]; attributes: Record<string, unknown> };
     const roleDefinition = ROLES[body.role as StaffRole];
     if (!roleDefinition) {
       return reply.code(400).send({ error: `Unknown role: ${body.role}` });
@@ -61,7 +61,7 @@ export function buildServer(db: Database): FastifyInstance {
     if (!existing) {
       return reply.code(404).send({ error: "Staff member not found" });
     }
-    const body = request.body as Partial<{ name: string; tags: string[]; attributes: Record<string, number> }>;
+    const body = request.body as Partial<{ name: string; tags: string[]; attributes: Record<string, unknown> }>;
     if (body.attributes && !validateAttributes(ROLES[existing.role].attributesSchema, body.attributes)) {
       return reply.code(400).send({ error: `attributes do not match the ${existing.role} role's required shape` });
     }

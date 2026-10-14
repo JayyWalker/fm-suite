@@ -95,7 +95,7 @@ export interface StaffRatings {
 export interface RoleDefinition {
   key: StaffRole;
   categories: string[];
-  rate(attributes: Record<string, number>): StaffRatings;
+  rate(attributes: Record<string, unknown>): StaffRatings;
   attributesSchema: object;
 }
 

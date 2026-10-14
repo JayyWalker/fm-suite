@@ -7,25 +7,7 @@ function attrs(overrides: Partial<ScoutAttributes> = {}): ScoutAttributes {
     jpp: 1,
     determination: 1,
     adaptability: 1,
-    westernEurope: 1,
-    centralEurope: 1,
-    ukAndIreland: 1,
-    southernEurope: 1,
-    southEasternEurope: 1,
-    northEasternEurope: 1,
-    northernEurope: 1,
-    easternEurope: 1,
-    southAmericaNorth: 1,
-    southAmericaSouth: 1,
-    northAmerica: 1,
-    westernAfrica: 1,
-    centralAfrica: 1,
-    southernAfrica: 1,
-    northAfrica: 1,
-    middleEast: 1,
-    eastAsia: 1,
-    southEastAsia: 1,
-    oceania: 1,
+    nationKnowledge: [],
     ...overrides,
   };
 }
@@ -67,11 +49,11 @@ describe("rateScout", () => {
     expect(result.bestFit).toBe("Current Ability Judging");
   });
 
-  test("regional knowledge does not affect either category's score", () => {
-    const highRegion = rateScout(attrs({ westernEurope: 8, oceania: 8 }));
-    const lowRegion = rateScout(attrs());
+  test("nation knowledge does not affect either category's score", () => {
+    const withKnowledge = rateScout(attrs({ nationKnowledge: [{ nation: "England", tier: 7 }] }));
+    const withoutKnowledge = rateScout(attrs({ nationKnowledge: [] }));
 
-    expect(highRegion.categories["Current Ability Judging"]).toBe(lowRegion.categories["Current Ability Judging"]);
-    expect(highRegion.categories["Potential Judging"]).toBe(lowRegion.categories["Potential Judging"]);
+    expect(withKnowledge.categories["Current Ability Judging"]).toBe(withoutKnowledge.categories["Current Ability Judging"]);
+    expect(withKnowledge.categories["Potential Judging"]).toBe(withoutKnowledge.categories["Potential Judging"]);
   });
 });

@@ -6,7 +6,7 @@ export interface StaffRecord {
   name: string;
   role: StaffRole;
   tags: string[];
-  attributes: Record<string, number>;
+  attributes: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,7 +15,7 @@ export interface StaffInput {
   name: string;
   role: StaffRole;
   tags: string[];
-  attributes: Record<string, number>;
+  attributes: Record<string, unknown>;
 }
 
 interface StaffRow {

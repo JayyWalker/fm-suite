@@ -6,30 +6,17 @@ export type ScoutCategory = "Current Ability Judging" | "Potential Judging";
 
 export const SCOUT_CATEGORIES: ScoutCategory[] = ["Current Ability Judging", "Potential Judging"];
 
+export interface NationKnowledgeEntry {
+  nation: string;
+  tier: number;
+}
+
 export interface ScoutAttributes {
   jpa: number;
   jpp: number;
   determination: number;
   adaptability: number;
-  westernEurope: number;
-  centralEurope: number;
-  ukAndIreland: number;
-  southernEurope: number;
-  southEasternEurope: number;
-  northEasternEurope: number;
-  northernEurope: number;
-  easternEurope: number;
-  southAmericaNorth: number;
-  southAmericaSouth: number;
-  northAmerica: number;
-  westernAfrica: number;
-  centralAfrica: number;
-  southernAfrica: number;
-  northAfrica: number;
-  middleEast: number;
-  eastAsia: number;
-  southEastAsia: number;
-  oceania: number;
+  nationKnowledge: NationKnowledgeEntry[];
 }
 
 function mentalAverage(attrs: ScoutAttributes): number {
@@ -67,28 +54,23 @@ export function rateScout(attrs: ScoutAttributes): StaffRatings {
   return { categories, bestFit };
 }
 
-export const scoutAttributesSchema = buildAttributesSchema([
-  "jpa",
-  "jpp",
-  "determination",
-  "adaptability",
-  "westernEurope",
-  "centralEurope",
-  "ukAndIreland",
-  "southernEurope",
-  "southEasternEurope",
-  "northEasternEurope",
-  "northernEurope",
-  "easternEurope",
-  "southAmericaNorth",
-  "southAmericaSouth",
-  "northAmerica",
-  "westernAfrica",
-  "centralAfrica",
-  "southernAfrica",
-  "northAfrica",
-  "middleEast",
-  "eastAsia",
-  "southEastAsia",
-  "oceania",
-]);
+const nationKnowledgeSchema = {
+  type: "array" as const,
+  items: {
+    type: "object" as const,
+    required: ["nation", "tier"],
+    properties: {
+      nation: { type: "string" as const, minLength: 1 },
+      tier: { type: "integer" as const, minimum: 1, maximum: 7 },
+    },
+    additionalProperties: false as const,
+  },
+};
+
+const baseScoutSchema = buildAttributesSchema(["jpa", "jpp", "determination", "adaptability"]);
+
+export const scoutAttributesSchema = {
+  ...baseScoutSchema,
+  required: [...baseScoutSchema.required, "nationKnowledge"],
+  properties: { ...baseScoutSchema.properties, nationKnowledge: nationKnowledgeSchema },
+};
