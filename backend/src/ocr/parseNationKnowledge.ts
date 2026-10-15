@@ -35,10 +35,16 @@ export function parseNationKnowledge(lines: OcrLine[]): ParseNationKnowledgeResu
         lowConfidence.push(pair.candidate);
         continue;
       }
+      // KNOWN ISSUE: no dedup within a single parse — two OCR reads of the
+      // same nation produce two (possibly conflicting) entries. See
+      // docs/KNOWN_ISSUES.md.
       nationEntries.push({ nation: pair.candidate, tier: knowledgeWordToValue(pair.value)! });
     }
 
     for (const orphan of orphanValues) {
+      // KNOWN ISSUE: this only reports Good/Very Good orphans when paired with
+      // a nation, so a badly-OCR'd nation name at a Good/Very Good tier drops
+      // silently instead of surfacing here. See docs/KNOWN_ISSUES.md.
       if (!KNOWLEDGE_ONLY_WORDS.includes(orphan.value)) continue;
       unmatched.push(orphan.precedingText);
     }

@@ -25,17 +25,11 @@ export function parseAttributes(role: StaffRole, lines: OcrLine[]): ParseAttribu
   for (const line of lines) {
     const { pairs } = extractLinePairs(line.text, ABILITY_WORDS, labelValues);
     for (const pair of pairs) {
-      // KNOWN ISSUE: first reading of a label wins, which is the wrong tie-break
-      // for roles whose label set has a near-duplicate rendered earlier on the
-      // same FM26 screen. Confirmed concretely for technicalDirector: "Judging
-      // Player Ability" (rendered first, for every role) is within fuzzy-match
-      // distance of "Judging Staff Ability", so technicalDirector's
-      // judgingStaffAbility silently imports JPA's value instead, at high
-      // confidence, with no unmatched/lowConfidence warning. Verified fix:
-      // prefer the lowest-distance match per label instead of the first one
-      // seen (requires surfacing match distance from extractLinePairs). See
-      // docs/superpowers/specs/2026-10-14-screenshot-ocr-input-design.md's
-      // "Known Issues" section for full details.
+      // KNOWN ISSUE: first reading of a label wins, which can import the
+      // wrong value for roles with a near-duplicate label (e.g.
+      // technicalDirector's judgingStaffAbility), and can also let a
+      // low-confidence reading permanently block a later better one.
+      // See docs/KNOWN_ISSUES.md.
       if (resolved.has(pair.candidate)) continue;
       resolved.add(pair.candidate);
 

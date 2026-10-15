@@ -1,5 +1,8 @@
 import type { StaffRole } from "../roles/index";
 
+// KNOWN ISSUE: "Man Management" below should say "People Management" to
+// match what FM26 actually renders; it currently matches by coincidence.
+// See docs/KNOWN_ISSUES.md.
 export const ATTRIBUTE_LABELS: Record<StaffRole, Record<string, string>> = {
   coach: {
     determination: "Determination",
