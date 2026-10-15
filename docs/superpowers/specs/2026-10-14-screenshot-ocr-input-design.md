@@ -250,3 +250,46 @@ hand, same as today, before saving. Saving goes through the unchanged
   today (currently only `better-sqlite3` and `fastify`).
 - Frontend: a nation-name data source for the dropdown (ISO 3166-1 list)
   if no existing dependency already provides one.
+
+## Known issues (merged with these open, tracked here deliberately)
+
+- **`technicalDirector`'s `judgingStaffAbility` can silently import the
+  wrong value.** `backend/src/ocr/parseAttributes.ts` resolves each label
+  on its *first* matching reading across OCR lines. FM26 always renders
+  "Judging Player Ability" before "Judging Staff Ability" on screen, and
+  the two labels are close enough (Levenshtein distance 5, within the
+  fuzzy-match tolerance) to collide. For `technicalDirector` — the only
+  role whose label set contains "Judging Staff Ability" but not "Judging
+  Player Ability" — the earlier JPA reading wins and its value is imported
+  as `judgingStaffAbility` instead, at high confidence, with no
+  `unmatched`/`lowConfidence` warning shown. Confirmed concretely against
+  two real screenshots (6 instead of 2, and 4 instead of 3). Verified fix:
+  prefer the lowest-distance match per label instead of the first one
+  encountered (requires surfacing the match distance from
+  `extractLinePairs`, currently discarded). See the comment at
+  `backend/src/ocr/parseAttributes.ts`'s `resolved.add(pair.candidate)`
+  line for the exact site.
+- **`parseNationKnowledge`'s `unmatched` list under-reports.** It's
+  populated only when a knowledge-tier-only word (`None`/`Minimal`/
+  `Extensive`/`Exceptional`/`Complete`) appears with no plausible nation
+  before it — deliberately narrowed to avoid false positives from
+  ability-scale attributes sharing vocabulary with the knowledge scale
+  (`Good`/`Very Good` appear in both). The gap: a nation whose name OCRs
+  badly *and* whose tier is `Good` or `Very Good` is dropped with no
+  warning at all, rather than surfacing in `unmatched`. Low real-world
+  likelihood (requires both a bad name read and a mid-scale tier), not
+  blocking, but a real "silently drops data" gap worth closing.
+- **`attributeLabels.ts` says `"Man Management"`; FM26 actually renders
+  `"People Management"`.** Currently works by coincidence — the trailing
+  token `"Management"` alone is exactly at the fuzzy-match distance
+  threshold against `"Man Management"` — but a single further OCR error
+  anywhere in that word breaks the match (falls safely into `unmatched`,
+  never a wrong value, just a missed one). Fix is a one-line label string
+  correction once confirmed against more real screenshots.
+- Two smaller, same-root-cause items noted but not yet filed as the
+  above: a low-confidence *first* reading of a label can permanently
+  block a later high-confidence reading of the same label from being
+  used; `parseNationKnowledge` doesn't dedupe repeated OCR reads of the
+  same nation within one parse (the frontend's merge step already
+  resolves this for cross-upload duplicates, but not within a single
+  upload's own OCR output).
