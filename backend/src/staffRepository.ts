@@ -72,25 +72,27 @@ export class StaffRepository {
     return rows.map(rowToRecord);
   }
 
-  update(id: number, patch: Partial<Pick<StaffInput, "name" | "tags" | "attributes">>): StaffRecord | undefined {
+  update(id: number, patch: Partial<Pick<StaffInput, "name" | "tags" | "role" | "attributes">>): StaffRecord | undefined {
     const existing = this.getById(id);
     if (!existing) return undefined;
 
     const merged = {
       name: patch.name ?? existing.name,
+      role: patch.role ?? existing.role,
       tags: patch.tags ?? existing.tags,
-      attributes: { ...existing.attributes, ...patch.attributes },
+      attributes: patch.attributes ?? existing.attributes,
     };
     const now = new Date().toISOString();
 
     this.db
       .prepare(
-        `UPDATE staff SET name = @name, tags = @tags, attributes = @attributes, updated_at = @updatedAt
+        `UPDATE staff SET name = @name, role = @role, tags = @tags, attributes = @attributes, updated_at = @updatedAt
          WHERE id = @id`
       )
       .run({
         id,
         name: merged.name,
+        role: merged.role,
         tags: JSON.stringify(merged.tags),
         attributes: JSON.stringify(merged.attributes),
         updatedAt: now,

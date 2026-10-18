@@ -67,7 +67,7 @@ describe("StaffRepository", () => {
     expect(repo.list().map((s) => s.name)).toEqual(["Coach A", "Scout B"]);
   });
 
-  test("update merges a partial patch into the existing record without changing its role", () => {
+  test("update keeps the existing role and attributes when the patch omits them", () => {
     const created = repo.create({ name: "Coach C", role: "coach", tags: [], attributes: coachAttributes() });
 
     const updated = repo.update(created.id, { name: "Coach C Updated" });
@@ -75,6 +75,17 @@ describe("StaffRepository", () => {
     expect(updated?.name).toBe("Coach C Updated");
     expect(updated?.role).toBe("coach");
     expect(updated?.attributes).toEqual(coachAttributes());
+  });
+
+  test("update can change role and attributes together, with no keys left over from the old role", () => {
+    const created = repo.create({ name: "Coach F", role: "coach", tags: [], attributes: coachAttributes() });
+    const physioAttributes = { physiotherapy: 5, determination: 4, adaptability: 4, manManagement: 4 };
+
+    const updated = repo.update(created.id, { role: "physio", attributes: physioAttributes });
+
+    expect(updated?.role).toBe("physio");
+    expect(updated?.attributes).toEqual(physioAttributes);
+    expect(Object.keys(updated!.attributes)).not.toContain("attacking");
   });
 
   test("update returns undefined for a missing id", () => {
