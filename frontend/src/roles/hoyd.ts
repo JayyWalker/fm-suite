@@ -17,9 +17,9 @@ export const HOYD_CATEGORIES: HoydCategory[] = [
   "Potential Judging",
 ];
 
-export const mentalFields: (keyof HoydAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const hoydMentalFields: (keyof HoydAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const hoydFormGroups: AttributeGroup[] = [
   {
     title: "Youth development ability",
     fields: [
@@ -38,9 +38,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const hoydExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: HoydAttributes = {
+export const hoydDefaultAttributes: HoydAttributes = {
   workingWithYoungsters: 4,
   jpa: 4,
   jpp: 4,

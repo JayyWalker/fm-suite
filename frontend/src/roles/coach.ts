@@ -34,9 +34,9 @@ export const COACH_CATEGORIES: CoachCategory[] = [
   "Tactical",
 ];
 
-export const mentalFields: (keyof CoachAttributes)[] = ["determination", "authority", "motivating"];
+export const coachMentalFields: (keyof CoachAttributes)[] = ["determination", "authority", "motivating"];
 
-export const formGroups: AttributeGroup[] = [
+export const coachFormGroups: AttributeGroup[] = [
   {
     title: "Mental attributes",
     fields: [
@@ -64,9 +64,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const coachExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: CoachAttributes = {
+export const coachDefaultAttributes: CoachAttributes = {
   authority: 4,
   determination: 4,
   motivating: 4,

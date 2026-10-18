@@ -12,9 +12,9 @@ export type HeadPhysioCategory = "Physiotherapy" | "Judging Player Condition";
 
 export const HEAD_PHYSIO_CATEGORIES: HeadPhysioCategory[] = ["Physiotherapy", "Judging Player Condition"];
 
-export const mentalFields: (keyof HeadPhysioAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const headPhysioMentalFields: (keyof HeadPhysioAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const headPhysioFormGroups: AttributeGroup[] = [
   {
     title: "Medical ability",
     fields: [
@@ -32,9 +32,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const headPhysioExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: HeadPhysioAttributes = {
+export const headPhysioDefaultAttributes: HeadPhysioAttributes = {
   physiotherapy: 4,
   judgingPlayerCondition: 4,
   determination: 4,

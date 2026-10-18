@@ -1,10 +1,10 @@
 import { expect, test } from "vitest";
 import {
   TECHNICAL_DIRECTOR_CATEGORIES,
-  defaultAttributes,
-  extraDisplayGroups,
-  formGroups,
-  mentalFields,
+  technicalDirectorDefaultAttributes,
+  technicalDirectorExtraDisplayGroups,
+  technicalDirectorFormGroups,
+  technicalDirectorMentalFields,
 } from "./technicalDirector";
 
 test("exposes the 2 technical director categories, Negotiating first", () => {
@@ -12,18 +12,18 @@ test("exposes the 2 technical director categories, Negotiating first", () => {
 });
 
 test("mental fields are determination, adaptability, and man management", () => {
-  expect(mentalFields).toEqual(["determination", "adaptability", "manManagement"]);
+  expect(technicalDirectorMentalFields).toEqual(["determination", "adaptability", "manManagement"]);
 });
 
 test("form groups cover every attribute exactly once", () => {
-  const allKeys = formGroups.flatMap((group) => group.fields.map((field) => field.key));
-  expect(allKeys.sort()).toEqual(Object.keys(defaultAttributes).sort());
+  const allKeys = technicalDirectorFormGroups.flatMap((group) => group.fields.map((field) => field.key));
+  expect(allKeys.sort()).toEqual(Object.keys(technicalDirectorDefaultAttributes).sort());
 });
 
 test("has no extra display groups", () => {
-  expect(extraDisplayGroups).toHaveLength(0);
+  expect(technicalDirectorExtraDisplayGroups).toHaveLength(0);
 });
 
 test("default attributes are all Average (4)", () => {
-  expect(Object.values(defaultAttributes).every((value) => value === 4)).toBe(true);
+  expect(Object.values(technicalDirectorDefaultAttributes).every((value) => value === 4)).toBe(true);
 });

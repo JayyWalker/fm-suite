@@ -15,9 +15,9 @@ export const RECRUITMENT_ANALYST_CATEGORIES: RecruitmentAnalystCategory[] = [
   "Judging Player Ability",
 ];
 
-export const mentalFields: (keyof RecruitmentAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const recruitmentAnalystMentalFields: (keyof RecruitmentAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const recruitmentAnalystFormGroups: AttributeGroup[] = [
   {
     title: "Analysis ability",
     fields: [
@@ -35,9 +35,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const recruitmentAnalystExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: RecruitmentAnalystAttributes = {
+export const recruitmentAnalystDefaultAttributes: RecruitmentAnalystAttributes = {
   analysingData: 4,
   jpa: 4,
   determination: 4,

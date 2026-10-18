@@ -11,9 +11,9 @@ export type PhysioCategory = "Physiotherapy";
 
 export const PHYSIO_CATEGORIES: PhysioCategory[] = ["Physiotherapy"];
 
-export const mentalFields: (keyof PhysioAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const physioMentalFields: (keyof PhysioAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const physioFormGroups: AttributeGroup[] = [
   {
     title: "Medical ability",
     fields: [{ key: "physiotherapy", label: "Physiotherapy" }],
@@ -28,9 +28,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const physioExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: PhysioAttributes = {
+export const physioDefaultAttributes: PhysioAttributes = {
   physiotherapy: 4,
   determination: 4,
   adaptability: 4,

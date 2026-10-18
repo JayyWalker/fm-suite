@@ -17,9 +17,9 @@ export const PERFORMANCE_ANALYST_CATEGORIES: PerformanceAnalystCategory[] = [
   "Tactical Knowledge",
 ];
 
-export const mentalFields: (keyof PerformanceAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const performanceAnalystMentalFields: (keyof PerformanceAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const performanceAnalystFormGroups: AttributeGroup[] = [
   {
     title: "Analysis ability",
     fields: [
@@ -38,9 +38,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const performanceAnalystExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: PerformanceAnalystAttributes = {
+export const performanceAnalystDefaultAttributes: PerformanceAnalystAttributes = {
   analysingData: 4,
   jpa: 4,
   tacticalKnowledge: 4,

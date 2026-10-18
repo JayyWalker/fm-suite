@@ -11,9 +11,9 @@ export type SetPieceCoachCategory = "Set Pieces";
 
 export const SET_PIECE_COACH_CATEGORIES: SetPieceCoachCategory[] = ["Set Pieces"];
 
-export const mentalFields: (keyof SetPieceCoachAttributes)[] = ["determination", "authority", "motivating"];
+export const setPieceCoachMentalFields: (keyof SetPieceCoachAttributes)[] = ["determination", "authority", "motivating"];
 
-export const formGroups: AttributeGroup[] = [
+export const setPieceCoachFormGroups: AttributeGroup[] = [
   {
     title: "Coaching attributes",
     fields: [{ key: "setPieces", label: "Set Pieces" }],
@@ -28,9 +28,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const setPieceCoachExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: SetPieceCoachAttributes = {
+export const setPieceCoachDefaultAttributes: SetPieceCoachAttributes = {
   setPieces: 4,
   determination: 4,
   authority: 4,

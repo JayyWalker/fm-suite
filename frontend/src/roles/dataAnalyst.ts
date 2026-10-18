@@ -17,9 +17,9 @@ export const DATA_ANALYST_CATEGORIES: DataAnalystCategory[] = [
   "Presenting Data",
 ];
 
-export const mentalFields: (keyof DataAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const dataAnalystMentalFields: (keyof DataAnalystAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const dataAnalystFormGroups: AttributeGroup[] = [
   {
     title: "Data analysis",
     fields: [
@@ -38,9 +38,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const dataAnalystExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: DataAnalystAttributes = {
+export const dataAnalystDefaultAttributes: DataAnalystAttributes = {
   judgingPlayerData: 4,
   judgingTeamData: 4,
   presentingData: 4,

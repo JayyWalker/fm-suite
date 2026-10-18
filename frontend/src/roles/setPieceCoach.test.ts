@@ -1,23 +1,23 @@
 import { expect, test } from "vitest";
-import { SET_PIECE_COACH_CATEGORIES, defaultAttributes, extraDisplayGroups, formGroups, mentalFields } from "./setPieceCoach";
+import { SET_PIECE_COACH_CATEGORIES, setPieceCoachDefaultAttributes, setPieceCoachExtraDisplayGroups, setPieceCoachFormGroups, setPieceCoachMentalFields } from "./setPieceCoach";
 
 test("exposes the single Set Pieces category", () => {
   expect(SET_PIECE_COACH_CATEGORIES).toEqual(["Set Pieces"]);
 });
 
 test("mental fields are determination, authority, and motivating", () => {
-  expect(mentalFields).toEqual(["determination", "authority", "motivating"]);
+  expect(setPieceCoachMentalFields).toEqual(["determination", "authority", "motivating"]);
 });
 
 test("form groups cover every attribute exactly once", () => {
-  const allKeys = formGroups.flatMap((group) => group.fields.map((field) => field.key));
-  expect(allKeys.sort()).toEqual(Object.keys(defaultAttributes).sort());
+  const allKeys = setPieceCoachFormGroups.flatMap((group) => group.fields.map((field) => field.key));
+  expect(allKeys.sort()).toEqual(Object.keys(setPieceCoachDefaultAttributes).sort());
 });
 
 test("has no extra display groups", () => {
-  expect(extraDisplayGroups).toHaveLength(0);
+  expect(setPieceCoachExtraDisplayGroups).toHaveLength(0);
 });
 
 test("default attributes are all Average (4)", () => {
-  expect(Object.values(defaultAttributes).every((value) => value === 4)).toBe(true);
+  expect(Object.values(setPieceCoachDefaultAttributes).every((value) => value === 4)).toBe(true);
 });

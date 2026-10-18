@@ -12,9 +12,9 @@ export type TechnicalDirectorCategory = "Negotiating" | "Judging Staff Ability";
 
 export const TECHNICAL_DIRECTOR_CATEGORIES: TechnicalDirectorCategory[] = ["Negotiating", "Judging Staff Ability"];
 
-export const mentalFields: (keyof TechnicalDirectorAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const technicalDirectorMentalFields: (keyof TechnicalDirectorAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const technicalDirectorFormGroups: AttributeGroup[] = [
   {
     title: "Staff management",
     fields: [
@@ -32,9 +32,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const technicalDirectorExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: TechnicalDirectorAttributes = {
+export const technicalDirectorDefaultAttributes: TechnicalDirectorAttributes = {
   negotiating: 4,
   judgingStaffAbility: 4,
   determination: 4,

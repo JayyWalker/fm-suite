@@ -17,7 +17,7 @@ export type ScoutCategory = "Current Ability Judging" | "Potential Judging";
 
 export const SCOUT_CATEGORIES: ScoutCategory[] = ["Current Ability Judging", "Potential Judging"];
 
-export const mentalFields: (keyof ScoutAttributes)[] = ["determination", "adaptability"];
+export const scoutMentalFields: (keyof ScoutAttributes)[] = ["determination", "adaptability"];
 
 export const NATION_KNOWLEDGE_LEVELS: { value: number; label: string }[] = [
   { value: 1, label: "None" },
@@ -29,7 +29,7 @@ export const NATION_KNOWLEDGE_LEVELS: { value: number; label: string }[] = [
   { value: 7, label: "Complete" },
 ];
 
-export const formGroups: AttributeGroup[] = [
+export const scoutFormGroups: AttributeGroup[] = [
   {
     title: "Judging ability",
     fields: [
@@ -46,9 +46,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const scoutExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: Record<string, number> = {
+export const scoutDefaultAttributes: Record<string, number> = {
   jpa: 4,
   jpp: 4,
   determination: 4,

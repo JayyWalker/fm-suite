@@ -11,9 +11,9 @@ export type SportsScienceCategory = "Fitness";
 
 export const SPORTS_SCIENCE_CATEGORIES: SportsScienceCategory[] = ["Fitness"];
 
-export const mentalFields: (keyof SportsScienceAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const sportsScienceMentalFields: (keyof SportsScienceAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const sportsScienceFormGroups: AttributeGroup[] = [
   {
     title: "Fitness ability",
     fields: [{ key: "fitness", label: "Fitness" }],
@@ -28,9 +28,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const sportsScienceExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: SportsScienceAttributes = {
+export const sportsScienceDefaultAttributes: SportsScienceAttributes = {
   fitness: 4,
   determination: 4,
   adaptability: 4,

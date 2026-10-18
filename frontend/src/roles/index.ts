@@ -1,93 +1,93 @@
 import {
   COACH_CATEGORIES,
-  defaultAttributes as coachDefaultAttributes,
-  extraDisplayGroups as coachExtraDisplayGroups,
-  formGroups as coachFormGroups,
-  mentalFields as coachMentalFields,
+  coachDefaultAttributes,
+  coachExtraDisplayGroups,
+  coachFormGroups,
+  coachMentalFields,
 } from "./coach";
 import {
   SCOUT_CATEGORIES,
-  defaultAttributes as scoutDefaultAttributes,
-  extraDisplayGroups as scoutExtraDisplayGroups,
-  formGroups as scoutFormGroups,
-  mentalFields as scoutMentalFields,
+  scoutDefaultAttributes,
+  scoutExtraDisplayGroups,
+  scoutFormGroups,
+  scoutMentalFields,
 } from "./scout";
 import {
   PHYSIO_CATEGORIES,
-  defaultAttributes as physioDefaultAttributes,
-  extraDisplayGroups as physioExtraDisplayGroups,
-  formGroups as physioFormGroups,
-  mentalFields as physioMentalFields,
+  physioDefaultAttributes,
+  physioExtraDisplayGroups,
+  physioFormGroups,
+  physioMentalFields,
 } from "./physio";
 import {
   HOYD_CATEGORIES,
-  defaultAttributes as hoydDefaultAttributes,
-  extraDisplayGroups as hoydExtraDisplayGroups,
-  formGroups as hoydFormGroups,
-  mentalFields as hoydMentalFields,
+  hoydDefaultAttributes,
+  hoydExtraDisplayGroups,
+  hoydFormGroups,
+  hoydMentalFields,
 } from "./hoyd";
 import {
   DOF_CATEGORIES,
-  defaultAttributes as dofDefaultAttributes,
-  extraDisplayGroups as dofExtraDisplayGroups,
-  formGroups as dofFormGroups,
-  mentalFields as dofMentalFields,
+  dofDefaultAttributes,
+  dofExtraDisplayGroups,
+  dofFormGroups,
+  dofMentalFields,
 } from "./dof";
 import {
   DATA_ANALYST_CATEGORIES,
-  defaultAttributes as dataAnalystDefaultAttributes,
-  extraDisplayGroups as dataAnalystExtraDisplayGroups,
-  formGroups as dataAnalystFormGroups,
-  mentalFields as dataAnalystMentalFields,
+  dataAnalystDefaultAttributes,
+  dataAnalystExtraDisplayGroups,
+  dataAnalystFormGroups,
+  dataAnalystMentalFields,
 } from "./dataAnalyst";
 import {
   SPORTS_SCIENCE_CATEGORIES,
-  defaultAttributes as sportsScienceDefaultAttributes,
-  extraDisplayGroups as sportsScienceExtraDisplayGroups,
-  formGroups as sportsScienceFormGroups,
-  mentalFields as sportsScienceMentalFields,
+  sportsScienceDefaultAttributes,
+  sportsScienceExtraDisplayGroups,
+  sportsScienceFormGroups,
+  sportsScienceMentalFields,
 } from "./sportsScience";
 import {
   HEAD_PHYSIO_CATEGORIES,
-  defaultAttributes as headPhysioDefaultAttributes,
-  extraDisplayGroups as headPhysioExtraDisplayGroups,
-  formGroups as headPhysioFormGroups,
-  mentalFields as headPhysioMentalFields,
+  headPhysioDefaultAttributes,
+  headPhysioExtraDisplayGroups,
+  headPhysioFormGroups,
+  headPhysioMentalFields,
 } from "./headPhysio";
 import {
   SET_PIECE_COACH_CATEGORIES,
-  defaultAttributes as setPieceCoachDefaultAttributes,
-  extraDisplayGroups as setPieceCoachExtraDisplayGroups,
-  formGroups as setPieceCoachFormGroups,
-  mentalFields as setPieceCoachMentalFields,
+  setPieceCoachDefaultAttributes,
+  setPieceCoachExtraDisplayGroups,
+  setPieceCoachFormGroups,
+  setPieceCoachMentalFields,
 } from "./setPieceCoach";
 import {
   PERFORMANCE_ANALYST_CATEGORIES,
-  defaultAttributes as performanceAnalystDefaultAttributes,
-  extraDisplayGroups as performanceAnalystExtraDisplayGroups,
-  formGroups as performanceAnalystFormGroups,
-  mentalFields as performanceAnalystMentalFields,
+  performanceAnalystDefaultAttributes,
+  performanceAnalystExtraDisplayGroups,
+  performanceAnalystFormGroups,
+  performanceAnalystMentalFields,
 } from "./performanceAnalyst";
 import {
   RECRUITMENT_ANALYST_CATEGORIES,
-  defaultAttributes as recruitmentAnalystDefaultAttributes,
-  extraDisplayGroups as recruitmentAnalystExtraDisplayGroups,
-  formGroups as recruitmentAnalystFormGroups,
-  mentalFields as recruitmentAnalystMentalFields,
+  recruitmentAnalystDefaultAttributes,
+  recruitmentAnalystExtraDisplayGroups,
+  recruitmentAnalystFormGroups,
+  recruitmentAnalystMentalFields,
 } from "./recruitmentAnalyst";
 import {
   TECHNICAL_DIRECTOR_CATEGORIES,
-  defaultAttributes as technicalDirectorDefaultAttributes,
-  extraDisplayGroups as technicalDirectorExtraDisplayGroups,
-  formGroups as technicalDirectorFormGroups,
-  mentalFields as technicalDirectorMentalFields,
+  technicalDirectorDefaultAttributes,
+  technicalDirectorExtraDisplayGroups,
+  technicalDirectorFormGroups,
+  technicalDirectorMentalFields,
 } from "./technicalDirector";
 import {
   LOAN_MANAGER_CATEGORIES,
-  defaultAttributes as loanManagerDefaultAttributes,
-  extraDisplayGroups as loanManagerExtraDisplayGroups,
-  formGroups as loanManagerFormGroups,
-  mentalFields as loanManagerMentalFields,
+  loanManagerDefaultAttributes,
+  loanManagerExtraDisplayGroups,
+  loanManagerFormGroups,
+  loanManagerMentalFields,
 } from "./loanManager";
 
 export type StaffRole =

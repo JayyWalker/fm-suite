@@ -13,9 +13,9 @@ export type DofCategory = "Negotiating" | "Current Ability Judging" | "Potential
 
 export const DOF_CATEGORIES: DofCategory[] = ["Negotiating", "Current Ability Judging", "Potential Judging"];
 
-export const mentalFields: (keyof DofAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const dofMentalFields: (keyof DofAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const dofFormGroups: AttributeGroup[] = [
   {
     title: "Football operations",
     fields: [
@@ -34,9 +34,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const dofExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: DofAttributes = {
+export const dofDefaultAttributes: DofAttributes = {
   negotiating: 4,
   jpa: 4,
   jpp: 4,

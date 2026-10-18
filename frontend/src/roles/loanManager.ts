@@ -17,9 +17,9 @@ export const LOAN_MANAGER_CATEGORIES: LoanManagerCategory[] = [
   "Judging Player Potential",
 ];
 
-export const mentalFields: (keyof LoanManagerAttributes)[] = ["determination", "adaptability", "manManagement"];
+export const loanManagerMentalFields: (keyof LoanManagerAttributes)[] = ["determination", "adaptability", "manManagement"];
 
-export const formGroups: AttributeGroup[] = [
+export const loanManagerFormGroups: AttributeGroup[] = [
   {
     title: "Loan assessment",
     fields: [
@@ -38,9 +38,9 @@ export const formGroups: AttributeGroup[] = [
   },
 ];
 
-export const extraDisplayGroups: AttributeGroup[] = [];
+export const loanManagerExtraDisplayGroups: AttributeGroup[] = [];
 
-export const defaultAttributes: LoanManagerAttributes = {
+export const loanManagerDefaultAttributes: LoanManagerAttributes = {
   analysingData: 4,
   jpa: 4,
   jpp: 4,
