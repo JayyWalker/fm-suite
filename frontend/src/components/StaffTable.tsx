@@ -42,11 +42,12 @@ export function StaffTable({ staff, pinnedId, onRowHover, onRowClick }: StaffTab
 
   const allTags = Array.from(new Set(staff.flatMap((member) => member.tags))).sort();
   const allRoles = Array.from(new Set(staff.map((member) => member.role))).sort();
+  const effectiveRoles = activeRoles.filter((role) => (allRoles as readonly string[]).includes(role));
   const allCategories = Array.from(new Set(staff.flatMap((member) => Object.keys(member.categories)))).sort();
 
   const filtered = staff.filter((member) => {
     const matchesTag = activeTags.length === 0 || member.tags.some((tag) => activeTags.includes(tag));
-    const matchesRole = activeRoles.length === 0 || activeRoles.includes(member.role);
+    const matchesRole = effectiveRoles.length === 0 || effectiveRoles.includes(member.role);
     return matchesTag && matchesRole;
   });
   const sorted = sortStaff(filtered, sortKey, direction);

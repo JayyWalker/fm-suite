@@ -195,3 +195,23 @@ test("the category sort dropdown lists categories from every role present, not j
   expect(optionValues).toContain("Fitness");
   expect(optionValues).toContain("Potential Judging");
 });
+
+test("a role filter that no longer matches any staff member stops hiding the roster once that role disappears", () => {
+  const coach = member({ id: 1, name: "Coach Who Switched", role: "coach" });
+  const { rerender } = render(<StaffTable staff={[coach]} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
+  expect(screen.getByText("Coach Who Switched")).toBeInTheDocument();
+
+  const nowPhysio = member({
+    id: 1,
+    name: "Coach Who Switched",
+    role: "physio",
+    attributes: { physiotherapy: 4, determination: 4, adaptability: 4, manManagement: 4 } as never,
+    categories: { Physiotherapy: 4 },
+    bestFit: "Physiotherapy",
+  });
+  rerender(<StaffTable staff={[nowPhysio]} pinnedId={null} onRowHover={vi.fn()} onRowClick={vi.fn()} />);
+
+  expect(screen.getByText("Coach Who Switched")).toBeInTheDocument();
+});
