@@ -25,6 +25,7 @@ export const updateStaffSchema = {
     properties: {
       name: { type: "string", minLength: 1 },
       tags: { type: "array", items: { type: "string" } },
+      role: { type: "string", enum: STAFF_ROLES },
       attributes: { type: "object" },
     },
     additionalProperties: false,

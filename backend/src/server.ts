@@ -1,6 +1,6 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import type { Database } from "better-sqlite3";
-import { StaffRepository, type StaffRecord } from "./staffRepository";
+import { StaffRepository, type StaffRecord, type StaffInput } from "./staffRepository";
 import { ROLES, type StaffRole } from "./roles/index";
 import { createStaffSchema, updateStaffSchema, idParamSchema, parseScreenshotSchema, validateAttributes } from "./staffSchemas";
 import { preprocessImage } from "./ocr/preprocessImage";
@@ -65,11 +65,23 @@ export function buildServer(db: Database): FastifyInstance {
     if (!existing) {
       return reply.code(404).send({ error: "Staff member not found" });
     }
-    const body = request.body as Partial<{ name: string; tags: string[]; attributes: Record<string, unknown> }>;
-    if (body.attributes && !validateAttributes(ROLES[existing.role].attributesSchema, body.attributes)) {
-      return reply.code(400).send({ error: `attributes do not match the ${existing.role} role's required shape` });
+    const body = request.body as Partial<{
+      name: string;
+      tags: string[];
+      role: string;
+      attributes: Record<string, unknown>;
+    }>;
+
+    if (body.role && !body.attributes) {
+      return reply.code(400).send({ error: "attributes are required when changing role" });
     }
-    const updated = repo.update(Number(id), body);
+
+    const targetRole = (body.role ?? existing.role) as StaffRole;
+    if (body.attributes && !validateAttributes(ROLES[targetRole].attributesSchema, body.attributes)) {
+      return reply.code(400).send({ error: `attributes do not match the ${targetRole} role's required shape` });
+    }
+
+    const updated = repo.update(Number(id), body as Partial<Pick<StaffInput, "name" | "tags" | "role" | "attributes">>);
     return toResponse(updated!);
   });
 

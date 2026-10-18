@@ -492,18 +492,73 @@ describe("PATCH /staff/:id", () => {
     expect(res.json().name).toBe("After");
   });
 
-  test("rejects a role in the PATCH body with a 400 instead of changing it", async () => {
+  test("changes role and attributes together when attributes match the new role's shape", async () => {
     const created = await app.inject({
       method: "POST",
       url: "/staff",
-      payload: { name: "Fixed Role", role: "coach", attributes: coachAttributes() },
+      payload: { name: "Switchable", role: "coach", attributes: coachAttributes() },
     });
     const id = created.json().id;
 
-    const res = await app.inject({ method: "PATCH", url: `/staff/${id}`, payload: { role: "scout" } });
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/staff/${id}`,
+      payload: { role: "physio", attributes: physioAttributes() },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().role).toBe("physio");
+    expect(res.json().attributes).toEqual(physioAttributes());
+  });
+
+  test("reflects the new role's categories immediately after a role-switch PATCH", async () => {
+    const created = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Rescored", role: "coach", attributes: coachAttributes() },
+    });
+    const id = created.json().id;
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/staff/${id}`,
+      payload: { role: "physio", attributes: physioAttributes() },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(Object.keys(res.json().categories)).toEqual(["Physiotherapy"]);
+    expect(res.json().categories.Attacking).toBeUndefined();
+  });
+
+  test("rejects a role change with no attributes in the same PATCH", async () => {
+    const created = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "No Attrs", role: "coach", attributes: coachAttributes() },
+    });
+    const id = created.json().id;
+
+    const res = await app.inject({ method: "PATCH", url: `/staff/${id}`, payload: { role: "physio" } });
 
     expect(res.statusCode).toBe(400);
     expect((await app.inject({ method: "GET", url: `/staff/${id}` })).json().role).toBe("coach");
+  });
+
+  test("rejects a role change whose attributes are shaped for the old role, not the new one", async () => {
+    const created = await app.inject({
+      method: "POST",
+      url: "/staff",
+      payload: { name: "Mismatched Switch", role: "coach", attributes: coachAttributes() },
+    });
+    const id = created.json().id;
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/staff/${id}`,
+      payload: { role: "physio", attributes: coachAttributes() },
+    });
+
+    expect(res.statusCode).toBe(400);
   });
 
   test("validates a patched attributes object against the existing record's own role", async () => {
