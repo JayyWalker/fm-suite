@@ -95,7 +95,7 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
   }
 
   const title = initialValue
-    ? `Edit ${ROLES[initialValue.role].label.toLowerCase()}`
+    ? `Edit ${ROLES[selectedRole!].label.toLowerCase()}`
     : selectedRole
       ? `Add ${ROLES[selectedRole].label.toLowerCase()}`
       : "Add staff";
@@ -141,6 +141,16 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
                 <label className={styles.field}>
                   Tags
                   <input aria-label="Tags" value={tagsText} onChange={(e) => setTagsText(e.target.value)} />
+                </label>
+                <label className={styles.field}>
+                  Role
+                  <select aria-label="Role" value={selectedRole} onChange={(e) => handleSelectRole(e.target.value as StaffRole)}>
+                    {STAFF_ROLES.map((role) => (
+                      <option key={role} value={role}>
+                        {ROLES[role].label}
+                      </option>
+                    ))}
+                  </select>
                 </label>
               </div>
             </div>

@@ -490,6 +490,26 @@ test("editing a Loan Manager and saving sends its own attributes and includes it
   });
 });
 
+test("switching a coach to physio via the role dropdown and saving sends the new role with reset attributes", async () => {
+  const coach = member({ id: 7, name: "Switch Me", role: "coach" });
+  const afterSwitch = member({ id: 7, name: "Switch Me", role: "physio" });
+  vi.mocked(staffApi.listStaff).mockResolvedValue([coach]);
+  vi.mocked(staffApi.updateStaff).mockResolvedValue(afterSwitch);
+
+  render(<App />);
+  await screen.findByText("Switch Me");
+
+  fireEvent.click(rowFor("Switch Me"));
+  fireEvent.click(screen.getByText("Edit"));
+  fireEvent.change(screen.getByLabelText("Role"), { target: { value: "physio" } });
+  fireEvent.click(screen.getByText("Save"));
+
+  await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
+  const [, patch] = vi.mocked(staffApi.updateStaff).mock.calls[0];
+  expect(patch.role).toBe("physio");
+  expect(patch.attributes).toEqual(expect.objectContaining({ physiotherapy: 4 }));
+});
+
 function rowFor(name: string): HTMLElement {
   const match = screen.getAllByText(name).map((el) => el.closest("tr")).find((tr) => tr !== null);
   if (!match) throw new Error(`No table row found for "${name}"`);

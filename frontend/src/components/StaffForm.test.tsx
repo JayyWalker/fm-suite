@@ -300,15 +300,50 @@ test("picking scout starts the nation knowledge editor empty", () => {
   expect(screen.getByLabelText("Nation 1")).toBeInTheDocument();
 });
 
-test("choosing a role replaces the picker, so the role cannot be switched in place", () => {
-  // Documents why a "switch away from scout and back" test can't exist: the
-  // picker is unmounted as soon as a role is chosen, and the only way back is
-  // to close the dialog and open a fresh form.
+test("shows a role dropdown once a role is selected, defaulting to the chosen role", () => {
   render(<StaffForm onSubmit={vi.fn()} />);
-  fireEvent.click(screen.getByRole("button", { name: "Scout" }));
+  fireEvent.click(screen.getByRole("button", { name: "Coach" }));
 
-  expect(screen.queryByRole("button", { name: "Coach" })).toBeNull();
-  expect(screen.queryByRole("button", { name: "Scout" })).toBeNull();
+  expect(screen.getByLabelText("Role")).toHaveValue("coach");
+});
+
+test("switching the role dropdown resets attribute fields to the new role's defaults", () => {
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} />);
+  expect(screen.getByLabelText("Attacking")).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText("Role"), { target: { value: "physio" } });
+
+  expect(screen.queryByLabelText("Attacking")).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Physiotherapy")).toHaveValue("4");
+});
+
+test("switching the role dropdown updates the dialog title", () => {
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} />);
+  expect(screen.getByText("Edit coach")).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText("Role"), { target: { value: "physio" } });
+
+  expect(screen.getByText("Edit physio")).toBeInTheDocument();
+});
+
+test("switching away from scout via the dropdown clears nationKnowledge from what gets submitted", () => {
+  const onSubmit = vi.fn();
+  render(<StaffForm initialValue={scoutInitialValue} onSubmit={onSubmit} />);
+
+  fireEvent.change(screen.getByLabelText("Role"), { target: { value: "physio" } });
+  fireEvent.click(screen.getByText("Save"));
+
+  const submitted = onSubmit.mock.calls[0][0];
+  expect(submitted.attributes.nationKnowledge).toBeUndefined();
+});
+
+test("switching into scout via the dropdown starts nationKnowledge empty", () => {
+  render(<StaffForm initialValue={coachInitialValue} onSubmit={vi.fn()} />);
+
+  fireEvent.change(screen.getByLabelText("Role"), { target: { value: "scout" } });
+
+  expect(screen.queryByLabelText("Nation 1")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Add nation" })).toBeInTheDocument();
 });
 
 test("editing a coach skips the picker and pre-fills its fields", () => {
