@@ -77,8 +77,7 @@ export function App() {
   async function handleSubmit(input: StaffInput) {
     try {
       if (editing) {
-        const { role: _role, ...patch } = input;
-        await updateStaff(editing.id, patch);
+        await updateStaff(editing.id, input);
       } else {
         await createStaff(input);
       }

@@ -119,7 +119,7 @@ test("submitting the add-staff form for a scout creates it with the scout role",
   expect(await screen.findByText("New Scout")).toBeInTheDocument();
 });
 
-test("editing a physio and saving sends its own attributes without a role key", async () => {
+test("editing a physio and saving sends its own attributes and includes its role", async () => {
   const physio = member({
     id: 4,
     name: "Physio One",
@@ -140,13 +140,14 @@ test("editing a physio and saving sends its own attributes without a role key", 
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(physio.id, {
+    role: physio.role,
     name: physio.name,
     tags: physio.tags,
     attributes: physio.attributes,
   });
 });
 
-test("editing a HoYD and saving sends its own attributes without a role key", async () => {
+test("editing a HoYD and saving sends its own attributes and includes its role", async () => {
   const hoyd = member({
     id: 5,
     name: "HoYD One",
@@ -167,13 +168,14 @@ test("editing a HoYD and saving sends its own attributes without a role key", as
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(hoyd.id, {
+    role: hoyd.role,
     name: hoyd.name,
     tags: hoyd.tags,
     attributes: hoyd.attributes,
   });
 });
 
-test("editing a DoF and saving sends its own attributes without a role key", async () => {
+test("editing a DoF and saving sends its own attributes and includes its role", async () => {
   const dof = member({
     id: 6,
     name: "DoF One",
@@ -194,13 +196,14 @@ test("editing a DoF and saving sends its own attributes without a role key", asy
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(dof.id, {
+    role: dof.role,
     name: dof.name,
     tags: dof.tags,
     attributes: dof.attributes,
   });
 });
 
-test("editing a Data Analyst and saving sends its own attributes without a role key", async () => {
+test("editing a Data Analyst and saving sends its own attributes and includes its role", async () => {
   const dataAnalyst = member({
     id: 7,
     name: "Data Analyst One",
@@ -228,13 +231,14 @@ test("editing a Data Analyst and saving sends its own attributes without a role 
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(dataAnalyst.id, {
+    role: dataAnalyst.role,
     name: dataAnalyst.name,
     tags: dataAnalyst.tags,
     attributes: dataAnalyst.attributes,
   });
 });
 
-test("editing a Sports Scientist and saving sends its own attributes without a role key", async () => {
+test("editing a Sports Scientist and saving sends its own attributes and includes its role", async () => {
   const sportsScientist = member({
     id: 8,
     name: "Sports Scientist One",
@@ -255,13 +259,14 @@ test("editing a Sports Scientist and saving sends its own attributes without a r
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(sportsScientist.id, {
+    role: sportsScientist.role,
     name: sportsScientist.name,
     tags: sportsScientist.tags,
     attributes: sportsScientist.attributes,
   });
 });
 
-test("editing a Head of Sports Science and saving sends its own attributes without a role key", async () => {
+test("editing a Head of Sports Science and saving sends its own attributes and includes its role", async () => {
   const headOfSportsScience = member({
     id: 9,
     name: "Head Scientist One",
@@ -282,13 +287,14 @@ test("editing a Head of Sports Science and saving sends its own attributes witho
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(headOfSportsScience.id, {
+    role: headOfSportsScience.role,
     name: headOfSportsScience.name,
     tags: headOfSportsScience.tags,
     attributes: headOfSportsScience.attributes,
   });
 });
 
-test("editing a Head Physio and saving sends its own attributes without a role key", async () => {
+test("editing a Head Physio and saving sends its own attributes and includes its role", async () => {
   const headPhysio = member({
     id: 10,
     name: "Head Physio One",
@@ -309,13 +315,14 @@ test("editing a Head Physio and saving sends its own attributes without a role k
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(headPhysio.id, {
+    role: headPhysio.role,
     name: headPhysio.name,
     tags: headPhysio.tags,
     attributes: headPhysio.attributes,
   });
 });
 
-test("editing a Set Piece Coach and saving sends its own attributes without a role key", async () => {
+test("editing a Set Piece Coach and saving sends its own attributes and includes its role", async () => {
   const setPieceCoach = member({
     id: 11,
     name: "Set Piece Coach One",
@@ -336,13 +343,14 @@ test("editing a Set Piece Coach and saving sends its own attributes without a ro
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(setPieceCoach.id, {
+    role: setPieceCoach.role,
     name: setPieceCoach.name,
     tags: setPieceCoach.tags,
     attributes: setPieceCoach.attributes,
   });
 });
 
-test("editing a Performance Analyst and saving sends its own attributes without a role key", async () => {
+test("editing a Performance Analyst and saving sends its own attributes and includes its role", async () => {
   const performanceAnalyst = member({
     id: 12,
     name: "Performance Analyst One",
@@ -363,13 +371,14 @@ test("editing a Performance Analyst and saving sends its own attributes without 
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(performanceAnalyst.id, {
+    role: performanceAnalyst.role,
     name: performanceAnalyst.name,
     tags: performanceAnalyst.tags,
     attributes: performanceAnalyst.attributes,
   });
 });
 
-test("editing a Head Performance Analyst and saving sends its own attributes without a role key", async () => {
+test("editing a Head Performance Analyst and saving sends its own attributes and includes its role", async () => {
   const headPerformanceAnalyst = member({
     id: 13,
     name: "Head Performance Analyst One",
@@ -390,13 +399,14 @@ test("editing a Head Performance Analyst and saving sends its own attributes wit
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(headPerformanceAnalyst.id, {
+    role: headPerformanceAnalyst.role,
     name: headPerformanceAnalyst.name,
     tags: headPerformanceAnalyst.tags,
     attributes: headPerformanceAnalyst.attributes,
   });
 });
 
-test("editing a Recruitment Analyst and saving sends its own attributes without a role key", async () => {
+test("editing a Recruitment Analyst and saving sends its own attributes and includes its role", async () => {
   const recruitmentAnalyst = member({
     id: 14,
     name: "Recruitment Analyst One",
@@ -417,13 +427,14 @@ test("editing a Recruitment Analyst and saving sends its own attributes without 
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(recruitmentAnalyst.id, {
+    role: recruitmentAnalyst.role,
     name: recruitmentAnalyst.name,
     tags: recruitmentAnalyst.tags,
     attributes: recruitmentAnalyst.attributes,
   });
 });
 
-test("editing a Technical Director and saving sends its own attributes without a role key", async () => {
+test("editing a Technical Director and saving sends its own attributes and includes its role", async () => {
   const technicalDirector = member({
     id: 15,
     name: "Technical Director One",
@@ -444,13 +455,14 @@ test("editing a Technical Director and saving sends its own attributes without a
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(technicalDirector.id, {
+    role: technicalDirector.role,
     name: technicalDirector.name,
     tags: technicalDirector.tags,
     attributes: technicalDirector.attributes,
   });
 });
 
-test("editing a Loan Manager and saving sends its own attributes without a role key", async () => {
+test("editing a Loan Manager and saving sends its own attributes and includes its role", async () => {
   const loanManager = member({
     id: 16,
     name: "Loan Manager One",
@@ -471,6 +483,7 @@ test("editing a Loan Manager and saving sends its own attributes without a role 
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(loanManager.id, {
+    role: loanManager.role,
     name: loanManager.name,
     tags: loanManager.tags,
     attributes: loanManager.attributes,
@@ -518,6 +531,7 @@ test("saving after switching the edit target updates the newly selected coach, n
 
   await waitFor(() => expect(staffApi.updateStaff).toHaveBeenCalledTimes(1));
   expect(staffApi.updateStaff).toHaveBeenCalledWith(coachB.id, {
+    role: coachB.role,
     name: coachB.name,
     tags: coachB.tags,
     attributes: coachB.attributes,
