@@ -39,10 +39,10 @@ describe("parseAttributes", () => {
     expect(result.unmatched).toContain("Physiotherapy");
   });
 
-  test("a confident label+value match below the confidence threshold is lowConfidence, not matched", () => {
+  test("a label+value match below the confidence threshold is still matched, flagged as lowConfidence", () => {
     const result = parseAttributes("physio", [line("Physiotherapy     Elite", 40)]);
 
-    expect(result.matched.physiotherapy).toBeUndefined();
+    expect(result.matched.physiotherapy).toBe(8);
     expect(result.lowConfidence).toContain("Physiotherapy");
   });
 
@@ -96,9 +96,10 @@ describe("parseAttributes on real captured OCR output", () => {
     expect(result.matched.jpp).toBe(6); // Very Good
     expect(result.matched.determination).toBe(6); // Very Good, on a line shared with a nation row
     // Adaptability was only legible on a badly-read line ("laptability
-    // utstanding", confidence 58), so it is flagged rather than trusted.
+    // utstanding", confidence 58) — still filled in so the form isn't left
+    // blank, but flagged so the user knows to double-check it.
     expect(result.lowConfidence).toEqual(["Adaptability"]);
-    expect(result.matched.adaptability).toBeUndefined();
+    expect(result.matched.adaptability).toBe(7); // Outstanding
   });
 
   test("reads the coach-shaped mental attributes off the same real Scouting tab screenshot", () => {

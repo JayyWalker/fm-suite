@@ -68,7 +68,9 @@ screenshots.
 **Status:** open, minor
 
 - A low-confidence *first* reading of a label can permanently block a later,
-  higher-confidence reading of the same label from ever being used.
+  higher-confidence reading of the same label from ever superseding it (the
+  field still ends up filled, correctly flagged as low-confidence, just with
+  the worse of the two readings rather than the better one).
 - `parseNationKnowledge` doesn't dedupe repeated OCR reads of the same
   nation within a single parse (the frontend's merge step already handles
   duplicates *across* separate uploads, just not within one).

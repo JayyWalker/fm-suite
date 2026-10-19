@@ -33,13 +33,12 @@ export function parseAttributes(role: StaffRole, lines: OcrLine[]): ParseAttribu
       if (resolved.has(pair.candidate)) continue;
       resolved.add(pair.candidate);
 
-      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
-        lowConfidence.push(pair.candidate);
-        continue;
-      }
-
       const key = labelEntries.find(([, label]) => label === pair.candidate)![0];
       matched[key] = abilityWordToValue(pair.value)!;
+
+      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
+        lowConfidence.push(pair.candidate);
+      }
     }
   }
 

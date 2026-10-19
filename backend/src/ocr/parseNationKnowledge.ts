@@ -31,14 +31,14 @@ export function parseNationKnowledge(lines: OcrLine[]): ParseNationKnowledgeResu
     const { pairs, orphanValues } = extractLinePairs(line.text, NATION_KNOWLEDGE_WORDS, NATIONS);
 
     for (const pair of pairs) {
-      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
-        lowConfidence.push(pair.candidate);
-        continue;
-      }
       // KNOWN ISSUE: no dedup within a single parse — two OCR reads of the
       // same nation produce two (possibly conflicting) entries. See
       // docs/KNOWN_ISSUES.md.
       nationEntries.push({ nation: pair.candidate, tier: knowledgeWordToValue(pair.value)! });
+
+      if (line.confidence < LOW_CONFIDENCE_THRESHOLD) {
+        lowConfidence.push(pair.candidate);
+      }
     }
 
     for (const orphan of orphanValues) {

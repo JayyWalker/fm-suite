@@ -48,10 +48,10 @@ describe("parseNationKnowledge", () => {
     expect(result.unmatched).toEqual([]);
   });
 
-  test("a confident nation+tier match below the confidence threshold is lowConfidence, not an entry", () => {
+  test("a nation+tier match below the confidence threshold is still an entry, flagged as lowConfidence", () => {
     const result = parseNationKnowledge([line("Germany     Complete", 40)]);
 
-    expect(result.nationEntries).toEqual([]);
+    expect(result.nationEntries).toEqual([{ nation: "Germany", tier: 7 }]);
     expect(result.lowConfidence).toContain("Germany");
   });
 
