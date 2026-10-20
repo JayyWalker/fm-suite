@@ -16,27 +16,32 @@ displays star ratings and a "best fit" category.
 
 ## Commands
 
-Run from the repo root unless noted.
+This is a pnpm workspace (`pnpm-workspace.yaml` lists `backend` and `frontend`); use pnpm, not npm. Run
+from the repo root unless noted.
 
 ```
-npm run dev          # runs backend + frontend dev servers concurrently
-npm test             # backend tests, then frontend tests
+pnpm install         # installs both packages' dependencies
+pnpm run dev         # runs backend + frontend dev servers in parallel
+pnpm test            # backend tests, then frontend tests
 ```
 
-Per-package (run with `--prefix backend` / `--prefix frontend`, or `cd` into the directory):
+Per-package (run with `--filter ./backend` / `--filter ./frontend`, or `cd` into the directory — package
+names are `fm-suite-backend`/`fm-suite-frontend`, not `backend`/`frontend`, so filtering by bare name
+won't match):
 
 ```
-npm run dev          # backend: tsx watch src/index.ts  |  frontend: vite
-npm test             # vitest run (both packages)
-npm run typecheck    # tsc --noEmit (both packages)
-npm run build        # frontend only: vite build
+pnpm --filter ./backend run dev     # tsx watch src/index.ts
+pnpm --filter ./frontend run dev    # vite
+pnpm run test                       # vitest run (both packages, run from within either directory)
+pnpm run typecheck                  # tsc --noEmit (both packages)
+pnpm --filter ./frontend run build  # vite build
 ```
 
 Single test file or test name (vitest):
 
 ```
-cd backend && npx vitest run src/roles/coach.test.ts
-cd frontend && npx vitest run -t "some test name"
+cd backend && pnpm exec vitest run src/roles/coach.test.ts
+cd frontend && pnpm exec vitest run -t "some test name"
 ```
 
 The backend's default DB path is `./data/staff.sqlite` (override with `DB_PATH` env var); tests use
