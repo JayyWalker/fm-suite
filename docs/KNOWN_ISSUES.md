@@ -46,6 +46,32 @@ no warning at all, instead of surfacing in `unmatched`.
 orphaned tier words regardless of which word anchored them, once panel
 context is established.
 
+## OCR label coverage: most roles have never been checked against a real screenshot
+
+**Where:** `backend/src/ocr/attributeLabels.ts`
+**Since:** 2026-10-20 (found while investigating a user report)
+**Status:** open, caution
+
+Found by running `parseAttributes` directly against real captured OCR output
+(`realScreenshotFixtures.ts`): `sportsScientist`/`headOfSportsScience`'s
+label for their `fitness` field said `"Fitness"`, but FM26 actually prints
+**"Sports Science"** on screen — so the role's own signature attribute was
+*always* unmatched, silently, no matter how clean the OCR read. Fixed (the
+label now says `"Sports Science"`), but the way it was found matters: this
+app's internal field names and FM26's on-screen labels were simply assumed
+to match when each role was built, and nothing ever checked that assumption
+against a real screenshot except the two roles (`physio`/`sportsScientist`
+on the Medical tab, `scout`/`technicalDirector`/`coach` on the Scouting tab)
+covered by the two fixtures in `realScreenshotFixtures.ts`. The other 10
+roles' labels have never been verified this way — any of them could have
+the same kind of silent mismatch.
+
+**Fix:** no code fix — this is a coverage gap. Checking a role's labels
+against a real screenshot (ask for one, or reuse an existing fixture if the
+role appears on the Medical or Scouting tab) is the only way to catch this
+class of bug; the existing synthetic tests can't, since they're written
+from the same label strings being tested.
+
 ## OCR label mismatch: "Man Management" vs FM26's "People Management"
 
 **Where:** `backend/src/ocr/attributeLabels.ts`

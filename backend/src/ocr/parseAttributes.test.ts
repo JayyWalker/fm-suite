@@ -89,6 +89,15 @@ describe("parseAttributes on real captured OCR output", () => {
     );
   });
 
+  test("reads a Sports Scientist's own key attribute, which FM26 labels 'Sports Science' on screen", () => {
+    const result = parseAttributes("sportsScientist", MEDICAL_TAB_OCR_LINES);
+
+    // The screen shows "Sports Science Very Good" — not "Fitness" — even
+    // though this app's internal field for it is named `fitness`.
+    expect(result.matched.fitness).toBe(6); // Very Good
+    expect(result.unmatched).not.toContain("Fitness");
+  });
+
   test("reads the scout attributes off a real FM26 Scouting tab screenshot", () => {
     const result = parseAttributes("scout", SCOUTING_TAB_OCR_LINES);
 

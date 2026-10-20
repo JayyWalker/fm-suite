@@ -55,13 +55,16 @@ export const ATTRIBUTE_LABELS: Record<StaffRole, Record<string, string>> = {
     manManagement: "Man Management",
   },
   sportsScientist: {
-    fitness: "Fitness",
+    // FM26 labels this "Sports Science" on screen, not "Fitness" — this
+    // app's internal field is named `fitness`, but the OCR label must match
+    // what's actually printed, not the internal key name.
+    fitness: "Sports Science",
     determination: "Determination",
     adaptability: "Adaptability",
     manManagement: "Man Management",
   },
   headOfSportsScience: {
-    fitness: "Fitness",
+    fitness: "Sports Science",
     determination: "Determination",
     adaptability: "Adaptability",
     manManagement: "Man Management",
