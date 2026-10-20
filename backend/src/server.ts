@@ -7,6 +7,7 @@ import { preprocessImage } from "./ocr/preprocessImage";
 import { runOcr } from "./ocr/runOcr";
 import { parseAttributes } from "./ocr/parseAttributes";
 import { parseNationKnowledge } from "./ocr/parseNationKnowledge";
+import { parseName } from "./ocr/parseName";
 
 function toResponse(record: StaffRecord) {
   const ratings = ROLES[record.role].rate(record.attributes);
@@ -118,11 +119,12 @@ export function buildServer(db: Database): FastifyInstance {
     }
 
     const lines = await runOcr(processed);
+    const { name, lowConfidence: nameLowConfidence } = parseName(lines);
 
     if (body.role === "scout" && body.panel === "nationKnowledge") {
-      return parseNationKnowledge(lines);
+      return { ...parseNationKnowledge(lines), name, nameLowConfidence };
     }
-    return parseAttributes(body.role as StaffRole, lines);
+    return { ...parseAttributes(body.role as StaffRole, lines), name, nameLowConfidence };
   });
 
   return app;

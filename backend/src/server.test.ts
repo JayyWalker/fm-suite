@@ -594,6 +594,36 @@ describe("POST /staff/parse-screenshot", () => {
     expect(res.json().matched.physiotherapy).toBe(8);
   });
 
+  test("returns the staff member's name when the screenshot's header line has one", async () => {
+    vi.mocked(runOcr).mockResolvedValue([
+      { text: "Filipe Sousa qo: 55041575)", confidence: 76 },
+      { text: "Physiotherapy     Elite", confidence: 95 },
+    ]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().name).toBe("Filipe Sousa");
+    expect(res.json().nameLowConfidence).toBe(false);
+  });
+
+  test("returns a null name when the screenshot has no readable name header", async () => {
+    vi.mocked(runOcr).mockResolvedValue([{ text: "Physiotherapy     Elite", confidence: 95 }]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/staff/parse-screenshot",
+      payload: { role: "physio", imageBase64: Buffer.from("fake-image").toString("base64") },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().name).toBeNull();
+  });
+
   test("returns nationEntries when role is scout and panel is nationKnowledge", async () => {
     vi.mocked(runOcr).mockResolvedValue([{ text: "Germany     Complete", confidence: 95 }]);
 
