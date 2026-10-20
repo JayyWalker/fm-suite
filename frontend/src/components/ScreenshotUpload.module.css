@@ -1,6 +1,52 @@
-.upload {
+.wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 6px;
   font-size: 0.9rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  background: #2a2433;
+  color: #eceaf0;
+  border: 1px solid #38324a;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.button:hover {
+  background: #342e42;
+  border-color: #4a4260;
+}
+
+.buttonDisabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.status {
+  color: #8c849c;
+  font-size: 12px;
+}
+
+.error {
+  color: #e86f6f;
+  font-size: 12px;
 }

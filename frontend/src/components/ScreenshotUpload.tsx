@@ -57,21 +57,27 @@ export function ScreenshotUpload({ role, panel, label, onResult }: ScreenshotUpl
     }
   }
 
+  const isLoading = status === "loading";
+
   return (
-    <label className={styles.upload}>
-      {label}
-      <input
-        type="file"
-        accept="image/*"
-        aria-label={label}
-        onChange={handleChange}
-        disabled={status === "loading"}
-      />
-      {status === "loading" && <span>Reading screenshot…</span>}
-      {status === "error" && <span role="alert">Couldn't read that screenshot</span>}
+    <div className={styles.wrapper}>
+      <label className={isLoading ? `${styles.button} ${styles.buttonDisabled}` : styles.button}>
+        {isLoading ? "Reading screenshot…" : label}
+        <input
+          type="file"
+          accept="image/*"
+          aria-label={label}
+          onChange={handleChange}
+          disabled={isLoading}
+          className={styles.input}
+        />
+      </label>
+      {status === "error" && <span role="alert" className={styles.error}>Couldn't read that screenshot</span>}
       {status === "tooLarge" && (
-        <span role="alert">Image too large — please upload a screenshot under {MAX_SCREENSHOT_MB} MB</span>
+        <span role="alert" className={styles.error}>
+          Image too large — please upload a screenshot under {MAX_SCREENSHOT_MB} MB
+        </span>
       )}
-    </label>
+    </div>
   );
 }
