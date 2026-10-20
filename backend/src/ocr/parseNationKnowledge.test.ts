@@ -94,7 +94,9 @@ describe("parseNationKnowledge on real captured OCR output", () => {
     // attributes columns are full of "Very Good" / "Good" ability words.
     expect(result.nationEntries).toHaveLength(1);
     expect(result.unmatched).toEqual([]);
-    expect(result.lowConfidence).toEqual([]);
+    // The England row's OCR line read at confidence 59 — below the
+    // low-confidence threshold — so it's correctly flagged for review.
+    expect(result.lowConfidence).toEqual(["England"]);
   });
 
   test("finds nothing on a real screenshot with no nation panel, despite a nationality header", () => {

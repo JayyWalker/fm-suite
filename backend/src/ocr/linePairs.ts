@@ -46,21 +46,26 @@ function matchVocabularyAt(tokens: string[], start: number, vocabulary: string[]
 
 /**
  * Matches the tokens immediately before a vocabulary hit against `candidates`,
- * trying the closest 1..MAX_CANDIDATE_TOKENS tokens and keeping the best fit.
- * Tokens with no letters (bullets, percentages, stray digits) are dropped so
- * that OCR debris between columns does not hide the label.
+ * trying every contiguous run of 1..MAX_CANDIDATE_TOKENS tokens and keeping
+ * the best fit — not just runs ending at the last token, so a trailing noise
+ * token (e.g. an OCR-mangled fragment after the real candidate) can't hide a
+ * match that would otherwise win. Tokens with no letters (bullets,
+ * percentages, stray digits) are dropped so that OCR debris between columns
+ * does not hide the label either.
  */
 function matchCandidateBefore(region: string[], candidates: string[]): ScoredMatch | null {
   const words = region.filter((token) => /[A-Za-z]/.test(token));
   let best: ScoredMatch | null = null;
 
   for (let length = 1; length <= MAX_CANDIDATE_TOKENS && length <= words.length; length++) {
-    const phrase = words.slice(words.length - length).join(" ");
-    const match = findBestMatch(phrase, candidates);
-    if (!match) continue;
-    const distance = levenshteinDistance(phrase, match);
-    if (!best || distance < best.distance || (distance === best.distance && length > best.length)) {
-      best = { match, distance, length };
+    for (let start = 0; start + length <= words.length; start++) {
+      const phrase = words.slice(start, start + length).join(" ");
+      const match = findBestMatch(phrase, candidates);
+      if (!match) continue;
+      const distance = levenshteinDistance(phrase, match);
+      if (!best || distance < best.distance || (distance === best.distance && length > best.length)) {
+        best = { match, distance, length };
+      }
     }
   }
 

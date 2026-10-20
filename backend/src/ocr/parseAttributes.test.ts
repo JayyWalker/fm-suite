@@ -103,11 +103,11 @@ describe("parseAttributes on real captured OCR output", () => {
 
     expect(result.matched.jpa).toBe(6); // Very Good
     expect(result.matched.jpp).toBe(6); // Very Good
+    // Determination and Adaptability were both only legible on badly-read
+    // lines (confidence 59 and 58 respectively) — still filled in so the
+    // form isn't left blank, but flagged so the user knows to double-check.
     expect(result.matched.determination).toBe(6); // Very Good, on a line shared with a nation row
-    // Adaptability was only legible on a badly-read line ("laptability
-    // utstanding", confidence 58) — still filled in so the form isn't left
-    // blank, but flagged so the user knows to double-check it.
-    expect(result.lowConfidence).toEqual(["Adaptability"]);
+    expect(result.lowConfidence).toEqual(["Adaptability", "Determination"]);
     expect(result.matched.adaptability).toBe(7); // Outstanding
   });
 

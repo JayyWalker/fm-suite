@@ -56,6 +56,14 @@ describe("extractLinePairs", () => {
     expect(pairs).toEqual([{ candidate: "England", value: "Complete" }]);
   });
 
+  test("ignores a trailing noise token after the real candidate", () => {
+    // Real OCR capture: "22 England Zs Complete" — "Zs" is noise sitting
+    // between the real candidate and the vocabulary hit.
+    expect(extractLinePairs("22 England Zs Complete", NATION_KNOWLEDGE_WORDS, NATIONS).pairs).toEqual([
+      { candidate: "England", value: "Complete" },
+    ]);
+  });
+
   test("reports a vocabulary word with no plausible candidate as an orphan, never a guess", () => {
     const { pairs, orphanValues } = extractLinePairs("Negotiating Good", ABILITY_WORDS, PHYSIO_LABELS);
 
