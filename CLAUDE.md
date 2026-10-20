@@ -26,8 +26,8 @@ pnpm test            # backend tests, then frontend tests
 ```
 
 Per-package (run with `--filter ./backend` / `--filter ./frontend`, or `cd` into the directory — package
-names are `fm-suite-backend`/`fm-suite-frontend`, not `backend`/`frontend`, so filtering by bare name
-won't match):
+names are `staff-rating-backend`/`staff-rating-frontend`, not `backend`/`frontend`, so filtering by bare
+name won't match):
 
 ```
 pnpm --filter ./backend run dev     # tsx watch src/index.ts
