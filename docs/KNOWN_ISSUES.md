@@ -9,6 +9,34 @@ not duplicated inline in code or in feature specs.
 
 ---
 
+## OCR name import: fails safe to blank on a few real screenshot layouts
+
+**Where:** `backend/src/ocr/parseName.ts`
+**Since:** 2026-10-20 (screenshot/OCR input feature)
+**Status:** open, by design (fails safe rather than guessing)
+
+`parseName` finds the staff member's name by scanning for FM26's header
+line shape, "`<Name> <id-marker>: <digits>)`" (the id-marker is OCR noise
+like "qo:", "(o:", "ap:" that varies by capture, so it's identified by
+position — the word right before the colon — not matched literally).
+Checked against all 11 real screenshots in `sample-screenshots/`, 3 come
+back with `name: null` instead of the real name:
+
+- Two screenshots' name lines simply don't OCR at all (no colon+digits
+  line anywhere in the output).
+- One (`hoyd-edorta-murua-coaching.png`) has a stray noise line ("Ula (D:
+  812003") that matches the id-marker shape *above* the real name line,
+  which has no colon in that capture. `parseName` rejects any match that
+  resolves to a single word (real names are always 2+ words), so this one
+  correctly falls back to `null` rather than importing "Ula" — but that
+  means the real name isn't recovered either.
+
+**Fix:** no code fix planned — a blank name the user fills in by hand is
+the correct fallback for a layout this heuristic can't parse; the
+alternative (guessing) risks a confidently wrong import with no warning,
+which is worse. If a future capture reveals a name-bearing line with a
+different, reliable shape, extend `parseName` to also try it.
+
 ## OCR screenshot import: Technical Director can get the wrong value
 
 **Where:** `backend/src/ocr/parseAttributes.ts`

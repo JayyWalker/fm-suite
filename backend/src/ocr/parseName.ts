@@ -12,6 +12,8 @@ const LOW_CONFIDENCE_THRESHOLD = 60;
  * e.g. "Filipe Sousa qo: 55041575)" — the id-marker itself is OCR noise
  * ("qo:", "(o:", "ap:", ...) that varies by capture, so it's identified by
  * position (the word right before the colon) rather than matched literally.
+ * Fails safe to `null` rather than guessing on a layout it doesn't
+ * recognize — see docs/KNOWN_ISSUES.md.
  */
 export function parseName(lines: OcrLine[]): ParseNameResult {
   for (const line of lines) {
