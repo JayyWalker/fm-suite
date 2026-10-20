@@ -10,7 +10,7 @@ function oversizedFile(): File {
 }
 
 test("uploading a file calls parseScreenshot and forwards the result", async () => {
-  const mockResult = { matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] };
+  const mockResult = { matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [], name: null, nameLowConfidence: false };
   vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue(mockResult);
   const onResult = vi.fn();
 
@@ -25,7 +25,13 @@ test("uploading a file calls parseScreenshot and forwards the result", async () 
 });
 
 test("passes the panel prop through to parseScreenshot", async () => {
-  vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue({ nationEntries: [], unmatched: [], lowConfidence: [] });
+  vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue({
+    nationEntries: [],
+    unmatched: [],
+    lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
+  });
 
   render(<ScreenshotUpload role="scout" panel="nationKnowledge" label="Upload nation screenshot" onResult={vi.fn()} />);
 
@@ -47,7 +53,13 @@ test("shows an error message when parseScreenshot fails", async () => {
 });
 
 test("rejects an oversized image locally, with its own message and no request", async () => {
-  vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue({ matched: {}, unmatched: [], lowConfidence: [] });
+  vi.spyOn(staffApi, "parseScreenshot").mockResolvedValue({
+    matched: {},
+    unmatched: [],
+    lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
+  });
 
   render(<ScreenshotUpload role="physio" label="Upload screenshot" onResult={vi.fn()} />);
 

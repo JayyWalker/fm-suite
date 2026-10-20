@@ -50,11 +50,16 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
     setAttributes((prev) => ({ ...prev, [key]: Number(value) }));
   }
 
+  function applyParsedName(result: ParseScreenshotResult) {
+    if (result.name) setName(result.name);
+    return result.nameLowConfidence ? [...result.lowConfidence, "Name"] : result.lowConfidence;
+  }
+
   function handleAttributesResult(result: ParseScreenshotResult) {
     if (result.matched) {
       setAttributes((prev) => ({ ...prev, ...result.matched }));
     }
-    setWarnings({ unmatched: result.unmatched, lowConfidence: result.lowConfidence });
+    setWarnings({ unmatched: result.unmatched, lowConfidence: applyParsedName(result) });
   }
 
   function handleNationResult(result: ParseScreenshotResult) {
@@ -67,7 +72,7 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
         return Array.from(byNation.values());
       });
     }
-    setWarnings({ unmatched: result.unmatched, lowConfidence: result.lowConfidence });
+    setWarnings({ unmatched: result.unmatched, lowConfidence: applyParsedName(result) });
   }
 
   function parseTags(text: string): string[] {

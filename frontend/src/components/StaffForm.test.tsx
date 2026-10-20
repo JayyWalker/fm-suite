@@ -445,7 +445,13 @@ test("clicking the close button calls onCancel", () => {
 });
 
 test("uploading a standard attribute screenshot merges matched values into the form", async () => {
-  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: { physiotherapy: 8 }, unmatched: [], lowConfidence: [] });
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({
+    matched: { physiotherapy: 8 },
+    unmatched: [],
+    lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
+  });
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Physio" }));
 
@@ -455,8 +461,67 @@ test("uploading a standard attribute screenshot merges matched values into the f
   await waitFor(() => expect(screen.getByLabelText("Physiotherapy")).toHaveValue("8"));
 });
 
+test("uploading a screenshot fills the name field when the screenshot has a readable name", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({
+    matched: { physiotherapy: 8 },
+    unmatched: [],
+    lowConfidence: [],
+    name: "Filipe Sousa",
+    nameLowConfidence: false,
+  });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+
+  const file = new File(["bytes"], "shot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByLabelText("Name")).toHaveValue("Filipe Sousa"));
+});
+
+test("uploading a screenshot with no readable name leaves an existing name untouched", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({
+    matched: { physiotherapy: 8 },
+    unmatched: [],
+    lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
+  });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+  fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Existing Name" } });
+
+  const file = new File(["bytes"], "shot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByLabelText("Physiotherapy")).toHaveValue("8"));
+  expect(screen.getByLabelText("Name")).toHaveValue("Existing Name");
+});
+
+test("a low-confidence name read is flagged in the warning list", async () => {
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({
+    matched: { physiotherapy: 8 },
+    unmatched: [],
+    lowConfidence: [],
+    name: "lan Marshall",
+    nameLowConfidence: true,
+  });
+  render(<StaffForm onSubmit={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Physio" }));
+
+  const file = new File(["bytes"], "shot.png", { type: "image/png" });
+  fireEvent.change(screen.getByLabelText("Upload screenshot"), { target: { files: [file] } });
+
+  await waitFor(() => expect(screen.getByText(/Low confidence, please double check:.*Name/)).toBeInTheDocument());
+});
+
 test("uploaded unmatched attributes render as a visible warning", async () => {
-  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({ matched: {}, unmatched: ["Physiotherapy"], lowConfidence: [] });
+  vi.mocked(staffApi.parseScreenshot).mockResolvedValue({
+    matched: {},
+    unmatched: ["Physiotherapy"],
+    lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
+  });
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Physio" }));
 
@@ -471,6 +536,8 @@ test("scout shows a separate nation knowledge upload that appends entries by nat
     nationEntries: [{ nation: "England", tier: 3 }],
     unmatched: [],
     lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
   });
   render(<StaffForm onSubmit={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Scout" }));
@@ -484,6 +551,8 @@ test("scout shows a separate nation knowledge upload that appends entries by nat
     nationEntries: [{ nation: "England", tier: 7 }, { nation: "Brazil", tier: 2 }],
     unmatched: [],
     lowConfidence: [],
+    name: null,
+    nameLowConfidence: false,
   });
   const file2 = new File(["bytes"], "shot2.png", { type: "image/png" });
   fireEvent.change(screen.getByLabelText("Upload nation knowledge screenshot"), { target: { files: [file2] } });

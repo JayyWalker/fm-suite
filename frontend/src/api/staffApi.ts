@@ -7,6 +7,8 @@ export interface ParseScreenshotResult {
   nationEntries?: { nation: string; tier: number }[];
   unmatched: string[];
   lowConfidence: string[];
+  name: string | null;
+  nameLowConfidence: boolean;
 }
 
 export async function listStaff(): Promise<StaffMember[]> {
