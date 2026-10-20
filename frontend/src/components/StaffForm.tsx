@@ -116,22 +116,36 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
       >
         <div className={styles.header}>
           <h3>{title}</h3>
-          <button type="button" aria-label="Close" className={styles.closeButton} onClick={() => onCancel?.()}>
+          <button
+            type="button"
+            aria-label="Close"
+            className={styles.closeButton}
+            onClick={() => onCancel?.()}
+          >
             ✕
           </button>
         </div>
 
         {!selectedRole ? (
           <div className={styles.body}>
-            <div className={styles.section}>
-              <div className={styles.sectionTitle}>Choose a role</div>
-              <div className={styles.fieldRow}>
-                {STAFF_ROLES.map((role) => (
-                  <button key={role} type="button" onClick={() => handleSelectRole(role)}>
-                    {ROLES[role].label}
-                  </button>
-                ))}
-              </div>
+            <div className={styles.fieldRow}>
+              <label className={styles.field}>
+                Choose a role
+                <select
+                  aria-label="Choose a role"
+                  value=""
+                  onChange={(e) => handleSelectRole(e.target.value as StaffRole)}
+                >
+                  <option value="" disabled>
+                    Choose a role
+                  </option>
+                  {STAFF_ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {ROLES[role].label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
         ) : (
@@ -141,15 +155,29 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
               <div className={styles.fieldRow}>
                 <label className={styles.field}>
                   Name
-                  <input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                  <input
+                    aria-label="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </label>
                 <label className={styles.field}>
                   Tags
-                  <input aria-label="Tags" value={tagsText} onChange={(e) => setTagsText(e.target.value)} />
+                  <input
+                    aria-label="Tags"
+                    value={tagsText}
+                    onChange={(e) => setTagsText(e.target.value)}
+                  />
                 </label>
                 <label className={styles.field}>
                   Role
-                  <select aria-label="Role" value={selectedRole} onChange={(e) => handleSelectRole(e.target.value as StaffRole)}>
+                  <select
+                    aria-label="Role"
+                    value={selectedRole}
+                    onChange={(e) =>
+                      handleSelectRole(e.target.value as StaffRole)
+                    }
+                  >
                     {STAFF_ROLES.map((role) => (
                       <option key={role} value={role}>
                         {ROLES[role].label}
@@ -170,7 +198,9 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
                       <select
                         aria-label={field.label}
                         value={attributes[field.key]}
-                        onChange={(e) => handleAttributeChange(field.key, e.target.value)}
+                        onChange={(e) =>
+                          handleAttributeChange(field.key, e.target.value)
+                        }
                       >
                         {ATTRIBUTE_LEVELS.map((level) => (
                           <option key={level.value} value={level.value}>
@@ -186,9 +216,15 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
 
             {selectedRole && (
               <div className={styles.section}>
-                <div className={styles.sectionTitle}>Import from screenshot</div>
-                <ScreenshotUpload role={selectedRole} label="Upload screenshot" onResult={handleAttributesResult} />
-                {selectedRole === "scout" && (
+                <div className={styles.sectionTitle}>
+                  Import from screenshot
+                </div>
+                <ScreenshotUpload
+                  role={selectedRole}
+                  label="Upload screenshot"
+                  onResult={handleAttributesResult}
+                />
+                {selectedRole === 'scout' && (
                   <ScreenshotUpload
                     role="scout"
                     panel="nationKnowledge"
@@ -196,21 +232,33 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
                     onResult={handleNationResult}
                   />
                 )}
-                {(warnings.unmatched.length > 0 || warnings.lowConfidence.length > 0) && (
+                {(warnings.unmatched.length > 0 ||
+                  warnings.lowConfidence.length > 0) && (
                   <div role="status">
-                    {warnings.unmatched.length > 0 && <div>Couldn't confidently read: {warnings.unmatched.join(", ")}</div>}
+                    {warnings.unmatched.length > 0 && (
+                      <div>
+                        Couldn't confidently read:{' '}
+                        {warnings.unmatched.join(', ')}
+                      </div>
+                    )}
                     {warnings.lowConfidence.length > 0 && (
-                      <div>Low confidence, please double check: {warnings.lowConfidence.join(", ")}</div>
+                      <div>
+                        Low confidence, please double check:{' '}
+                        {warnings.lowConfidence.join(', ')}
+                      </div>
                     )}
                   </div>
                 )}
               </div>
             )}
 
-            {selectedRole === "scout" && (
+            {selectedRole === 'scout' && (
               <div className={styles.section}>
                 <div className={styles.sectionTitle}>Scouting Knowledge</div>
-                <NationKnowledgeEditor entries={nationKnowledge} onChange={setNationKnowledge} />
+                <NationKnowledgeEditor
+                  entries={nationKnowledge}
+                  onChange={setNationKnowledge}
+                />
               </div>
             )}
 
@@ -231,5 +279,5 @@ export function StaffForm({ initialValue, onSubmit, onCancel }: StaffFormProps) 
         )}
       </div>
     </div>
-  );
+  )
 }
